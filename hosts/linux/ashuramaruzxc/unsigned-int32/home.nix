@@ -70,6 +70,7 @@ let
     ../../../hm/ashuramaruzxc/graphics.nix
     ../../../hm/ashuramaruzxc/nixcord.nix
     ../../../hm/ashuramaruzxc/nushell.nix
+    ../../../hm/ashuramaruzxc/plasma-apps.nix
     ../../../hm/ashuramaruzxc/ssh.nix
     ../../../hm/ashuramaruzxc/vscode.nix
     ../../../linux/shared/protonmail-bridge.nix
@@ -87,11 +88,6 @@ let
       tenacity
       vlc
       youtube-music
-      ;
-    inherit (pkgs.kdePackages)
-      k3b
-      kamera
-      ktorrent
       ;
   };
 

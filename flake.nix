@@ -79,6 +79,9 @@
     zen-browser-trivial.inputs.home-manager.follows = "home-manager-unstable";
     zen-browser-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable";
     zen-browser-trivial.url = "github:0xc000022070/zen-browser-flake";
+    plasma-manager-trivial.url = "github:nix-community/plasma-manager";
+    plasma-manager-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable";
+    plasma-manager-trivial.inputs.home-manager.follows = "home-manager-stable";
 
     # ---- Source ----
     dis-source.inputs.nixpkgs.follows = "nixpkgs-unstable";

@@ -8,6 +8,7 @@
 {
   imports = [
     ./cli
+    ./de
     ./gui
     ./languages.nix
     ./shell

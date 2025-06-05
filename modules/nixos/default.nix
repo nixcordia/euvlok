@@ -21,7 +21,7 @@
   ];
 
   config = lib.mkMerge [
-    (lib.mkIf (config.nixos.plasma.enable or config.nixos.gnome.enable) {
+    (lib.mkIf (config.nixos.plasma.enable or config.nixos.plasma.enable or config.nixos.gnome.enable) {
       xdg.portal = {
         enable = true;
         wlr.enable = true;
