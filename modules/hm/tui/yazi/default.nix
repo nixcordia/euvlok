@@ -4,6 +4,9 @@
   config,
   ...
 }:
+let
+  inherit (pkgs.stdenvNoCC) isLinux;
+in
 {
   _class = "homeManager";
   _file = ./default.nix;
@@ -16,7 +19,12 @@
   options.hm.yazi.enable = lib.options.mkEnableOption "Yazi";
 
   config = lib.modules.mkIf config.hm.yazi.enable {
-    home.packages = builtins.attrValues { inherit (pkgs) mediainfo exiftool clipboard-jh; };
+    home.packages =
+      (builtins.attrValues { inherit (pkgs) mediainfo exiftool; })
+      ++ lib.lists.optionals isLinux [
+        pkgs.wl-clipboard
+        pkgs.xclip
+      ];
     programs.yazi = {
       enable = true;
       package = pkgs.unstable.yazi;
@@ -33,16 +41,10 @@
         {
           diff = "${pluginsRepo}/diff.yazi";
           full-border = "${pluginsRepo}/full-border.yazi";
-          hide-preview = "${pluginsRepo}/hide-preview.yazi";
-          max-preview = "${pluginsRepo}/max-preview.yazi";
           smart-enter = "${pluginsRepo}/smart-enter.yazi";
           smart-paste = "${pluginsRepo}/smart-paste.yazi";
-          system-clipboard = pkgs.fetchFromGitHub {
-            owner = "orhnk";
-            repo = "system-clipboard.yazi";
-            rev = "888026c6d5988bd9dc5be51f7f96787bb8cadc4b";
-            hash = "sha256-8YtYYxNDfQBTyMxn6Q7/BCiTiscpiZFXRuX0riMlRWQ=";
-          };
+          system-clipboard = ./system-clipboard.yazi;
+          types = "${pluginsRepo}/types.yazi";
         }
         // lib.attrsets.optionalAttrs config.programs.git.enable { git = "${pluginsRepo}/git.yazi"; }
         // lib.attrsets.optionalAttrs config.programs.starship.enable {
@@ -53,11 +55,22 @@
             hash = "sha256-PYeR6fiWDbUMpJbTFSkM57FzmCbsB4W4IXXe25wLncg=";
           };
         };
-      initLua = builtins.concatStringsSep "\n" (
-        [ "require('full-border'):setup()" ]
-        ++ lib.lists.optional config.programs.git.enable ''require("git"):setup()''
-        ++ lib.lists.optional config.programs.starship.enable ''require("starship"):setup()''
-      );
+      initLua = ''
+        local function setup_plugin(name, opts)
+          local ok, plugin = pcall(require, name)
+          if ok and type(plugin.setup) == "function" then
+            if opts == nil then
+              plugin:setup()
+            else
+              plugin:setup(opts)
+            end
+          end
+        end
+
+        setup_plugin("full-border")
+        ${lib.strings.optionalString config.programs.git.enable ''setup_plugin("git", { order = 1500 })''}
+        ${lib.strings.optionalString config.programs.starship.enable ''setup_plugin("starship")''}
+      '';
     };
   };
 }

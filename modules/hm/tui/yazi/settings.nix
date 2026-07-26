@@ -1,112 +1,127 @@
-{ pkgs, lib, ... }:
-{
+_: {
   _class = "homeManager";
   _file = ./settings.nix;
   key = toString ./settings.nix;
+
   programs.yazi.settings = {
     mgr = {
       show_hidden = true;
       sort_by = "mtime";
       sort_dir_first = true;
       sort_reverse = true;
+      sort_fallback = "alphabetical";
     };
-    plugin = {
-      prepend_fetchers = [
-        {
-          id = "git";
-          name = "*";
-          run = "git";
-        }
-        {
-          id = "git";
-          name = "*/";
-          run = "git";
-        }
-      ];
-    };
-    open = {
-      rules = [
-        # Folder
-        {
-          name = "*/";
-          use = [
-            "edit"
-            "open"
-            "reveal"
-          ];
-        }
-        # Text
-        {
-          mime = "text/*";
-          use = [
-            "edit"
-            "reveal"
-          ];
-        }
-        # Image
-        {
-          mime = "image/*";
-          use = [
-            "open"
-            "reveal"
-          ];
-        }
-        # Media
-        {
-          mime = "{audio,video}/*";
-          use = [
-            (if pkgs.stdenvNoCC.isDarwin then "open" else "")
-            (lib.modules.mkIf pkgs.stdenvNoCC.isDarwin "open")
-            "reveal"
-          ];
-        }
-        # Archive
-        {
-          mime = "application/{,g}zip";
-          use = [
-            "unzip"
-            "reveal"
-          ];
-        }
-        {
-          mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}";
-          use = [
-            "extract"
-            "reveal"
-          ];
-        }
-        # JSON
-        {
-          mime = "application/{json,x-ndjson}";
-          use = [
-            "edit"
-            "reveal"
-          ];
-        }
-        {
-          mime = "*/javascript";
-          use = [
-            "edit"
-            "reveal"
-          ];
-        }
-        # Empty file
-        {
-          mime = "inode/x-empty";
-          use = [
-            "edit"
-            "reveal"
-          ];
-        }
-        # Fallback
-        {
-          name = "*";
-          use = [
-            "open"
-            "reveal"
-          ];
-        }
-      ];
-    };
+
+    plugin.prepend_fetchers = [
+      {
+        url = "*";
+        run = "git";
+        group = "git";
+      }
+      {
+        url = "*/";
+        run = "git";
+        group = "git";
+      }
+    ];
+
+    open.rules = [
+      {
+        url = "*/";
+        use = [
+          "edit"
+          "open"
+          "reveal"
+        ];
+      }
+      {
+        mime = "text/*";
+        use = [
+          "edit"
+          "reveal"
+        ];
+      }
+      {
+        mime = "image/*";
+        use = [
+          "open"
+          "reveal"
+        ];
+      }
+      {
+        mime = "{audio,video}/*";
+        use = [
+          "play"
+          "reveal"
+        ];
+      }
+      {
+        mime = "application/{json,ndjson,javascript,wine-extension-ini}";
+        use = [
+          "edit"
+          "reveal"
+        ];
+      }
+      {
+        mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
+        use = [
+          "extract"
+          "reveal"
+        ];
+      }
+      {
+        mime = "application/{debian*-package,redhat-package-manager,rpm,android.package-archive}";
+        use = [
+          "extract"
+          "reveal"
+        ];
+      }
+      {
+        url = "*.{AppImage,appimage}";
+        use = [
+          "extract"
+          "reveal"
+        ];
+      }
+      {
+        mime = "application/{iso9660-image,qemu-disk,ms-wim,apple-diskimage}";
+        use = [
+          "extract"
+          "reveal"
+        ];
+      }
+      {
+        mime = "application/virtualbox-{vhd,vhdx}";
+        use = [
+          "extract"
+          "reveal"
+        ];
+      }
+      {
+        url = "*.{img,fat,ext,ext2,ext3,ext4,squashfs,ntfs,hfs,hfsx}";
+        use = [
+          "extract"
+          "reveal"
+        ];
+      }
+      {
+        mime = "inode/empty";
+        use = [
+          "edit"
+          "reveal"
+        ];
+      }
+      {
+        mime = "vfs/{absent,stale}";
+        use = "download";
+      }
+      {
+        url = "*";
+        use = [
+          "open"
+          "reveal"
+        ];
+      }
+    ];
   };
 }
