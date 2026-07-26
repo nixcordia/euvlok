@@ -6,7 +6,7 @@
   <a href="https://github.com/euvlok/euvlok"><img alt="License" src="https://img.shields.io/github/license/euvlok/euvlok?style=for-the-badge&colorA=303446&colorB=8caaee"></a>
 </p>
 EUVlok is a shared Nix flake for a few friends' machines. It contains NixOS,
-nix-darwin, Home Manager, Chezmoi dotfiles, and small maintenance tools.
+nix-darwin, Home Manager, and small maintenance tools.
 
 The point of keeping this together is practical: we can read each other's
 configs, copy the parts that make sense, and move useful patterns into shared
@@ -29,7 +29,6 @@ carefully.
 | [`flake-modules/`](./flake-modules) | Flake-parts modules for hosts and public outputs.             |
 | [`hosts/`](./hosts)                 | NixOS, nix-darwin, and Home Manager entrypoints and profiles. |
 | [`modules/`](./modules)             | Reusable NixOS, nix-darwin, and Home Manager modules.         |
-| [`dotfiles/`](./dotfiles)           | Chezmoi dotfiles and templates.                               |
 | [`lib/`](./lib)                     | Shared Nix helpers.                                           |
 | [`secrets/`](./secrets)             | SOPS-encrypted host and user secrets.                         |
 
