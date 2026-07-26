@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  _class = "nixos";
+  _file = ./overlays.nix;
+  key = toString ./overlays.nix;
   nixpkgs.overlays = [
     (final: _prev: {
       gtk-nocsd = final.stdenv.mkDerivation {

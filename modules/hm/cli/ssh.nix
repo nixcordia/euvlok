@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./ssh.nix;
+  key = toString ./ssh.nix;
   options.hm.ssh.enable = lib.options.mkEnableOption "SSH" // {
     default = true;
   };

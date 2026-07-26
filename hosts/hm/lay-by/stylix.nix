@@ -6,6 +6,9 @@
 }:
 
 {
+  _class = "homeManager";
+  _file = ./stylix.nix;
+  key = toString ./stylix.nix;
   stylix = {
     enable = true;
     polarity = "dark";

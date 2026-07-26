@@ -1,5 +1,8 @@
 { lib, config, ... }:
 {
+  _class = "homeManager";
+  _file = ./mpv.nix;
+  key = toString ./mpv.nix;
   options.hm.mpv.enable = lib.options.mkEnableOption "MPV";
 
   config = lib.modules.mkIf config.hm.mpv.enable {

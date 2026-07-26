@@ -8,12 +8,9 @@ let
   hmConfig = config.home-manager.users.${config.system.primaryUser};
   paths = import ../hm/shell/paths.nix { inherit lib; };
 
-  userAliasesPath = ../../hosts/hm/${hmConfig.programs.git.settings.user.name}/aliases.nix;
-  shellAliases =
-    ((pkgs.callPackage ../../modules/hm/shell/aliases.nix { }).programs.zsh.shellAliases)
-    // lib.attrsets.optionalAttrs (builtins.pathExists userAliasesPath) (
-      (pkgs.callPackage userAliasesPath { }).programs.zsh.shellAliases
-    );
+  # Home Manager has already merged the shared and user-specific aliases.
+  # Consume that module result instead of reaching back into hosts/ by name.
+  shellAliases = hmConfig.programs.zsh.shellAliases;
   shellAliasesStr = lib.trivial.pipe shellAliases [
     (attrs: lib.attrsets.filterAttrs (_: value: builtins.isString value) attrs)
     (
@@ -63,6 +60,9 @@ let
   omzPluginsStr = "plugins=(${lib.strings.concatStringsSep " " omzPlugins})";
 in
 {
+  _class = "darwin";
+  _file = ./zsh.nix;
+  key = toString ./zsh.nix;
   programs.zsh.interactiveShellInit = lib.strings.concatStringsSep "\n" [
     "# PATH"
     paths.hm.shell.binPaths.zsh
@@ -112,11 +112,6 @@ in
       }
     '')
     (lib.strings.optionalString (hmConfig.hm.zoxide.enable) ''eval "$(zoxide init zsh)"'')
-    (lib.strings.optionalString (hmConfig.services.ssh-agent.enable) ''
-      if [ -z "$SSH_AUTH_SOCK" -o -z "$SSH_CONNECTION" ]; then
-        export SSH_AUTH_SOCK="$(${lib.meta.getExe pkgs.getconf} DARWIN_USER_TEMP_DIR)/${hmConfig.services.ssh-agent.socket}"
-      fi
-    '')
   ];
 
   launchd.user.agents."symlink-zsh-config" = {

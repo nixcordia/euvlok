@@ -1,10 +1,13 @@
 {
-  inputs,
   config,
+  euvlokInputs,
   ...
 }:
 {
-  imports = [ inputs.flatpak-declerative-trivial.homeModules.default ];
+  _class = "homeManager";
+  _file = ./flatpak.nix;
+  key = toString ./flatpak.nix;
+  imports = [ euvlokInputs.flatpak-declerative-trivial.homeModules.default ];
 
   services.flatpak = {
     enable = true;

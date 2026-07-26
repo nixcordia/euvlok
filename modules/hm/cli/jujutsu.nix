@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./jujutsu.nix;
+  key = toString ./jujutsu.nix;
   options.hm.jujutsu.enable = lib.options.mkEnableOption "Jujutsu";
 
   config = lib.modules.mkIf config.hm.jujutsu.enable {

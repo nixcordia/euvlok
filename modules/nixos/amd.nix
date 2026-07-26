@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./amd.nix;
+  key = toString ./amd.nix;
   options.nixos.amd.enable = lib.options.mkEnableOption "AMD drivers";
 
   config = lib.modules.mkMerge [

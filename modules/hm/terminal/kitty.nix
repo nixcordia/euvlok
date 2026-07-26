@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./kitty.nix;
+  key = toString ./kitty.nix;
   options.hm.kitty.enable = lib.options.mkEnableOption "Kitty";
 
   config = lib.modules.mkIf config.hm.kitty.enable {

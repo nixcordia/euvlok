@@ -4,6 +4,9 @@ let
   email = "97749920+bigshaq9999@users.noreply.github.com";
 in
 {
+  _class = "homeManager";
+  _file = ./git.nix;
+  key = toString ./git.nix;
   # home.packages = builtins.attrValues { inherit (pkgs) watchman; };
 
   programs = {

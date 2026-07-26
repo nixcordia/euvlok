@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  _class = "nixos";
+  _file = ./programs.nix;
+  key = toString ./programs.nix;
   programs = {
     thunar = {
       enable = true;

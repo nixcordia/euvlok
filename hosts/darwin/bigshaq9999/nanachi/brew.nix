@@ -1,5 +1,8 @@
 { config, ... }:
 {
+  _class = "darwin";
+  _file = ./brew.nix;
+  key = toString ./brew.nix;
   homebrew = {
     enable = true;
     onActivation = {

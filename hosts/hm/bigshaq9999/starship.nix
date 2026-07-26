@@ -1,5 +1,8 @@
 { lib, ... }:
 {
+  _class = "homeManager";
+  _file = ./starship.nix;
+  key = toString ./starship.nix;
   programs.starship.enable = true;
   programs.starship.settings = {
     add_newline = true;

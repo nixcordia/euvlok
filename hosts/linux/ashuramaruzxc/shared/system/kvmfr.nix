@@ -3,6 +3,9 @@ let
   cfg = config.virtualisation.kvmfr;
 in
 {
+  _class = "nixos";
+  _file = ./kvmfr.nix;
+  key = toString ./kvmfr.nix;
   options.virtualisation.kvmfr = {
     enable = lib.options.mkEnableOption "Kvmfr";
 

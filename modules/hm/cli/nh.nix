@@ -1,5 +1,8 @@
 { lib, config, ... }:
 {
+  _class = "homeManager";
+  _file = ./nh.nix;
+  key = toString ./nh.nix;
   options.hm.nh.enable = lib.options.mkEnableOption "Nh";
 
   config = lib.modules.mkIf config.hm.nh.enable {

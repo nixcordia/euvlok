@@ -4,6 +4,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./grafana.nix;
+  key = toString ./grafana.nix;
   sops.secrets.grafana_pgsql = {
     mode = "0640";
     owner = config.users.users.grafana.name;

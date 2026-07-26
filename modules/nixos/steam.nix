@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./steam.nix;
+  key = toString ./steam.nix;
   options.nixos.steam.enable = lib.options.mkEnableOption "Steam";
 
   config = lib.modules.mkIf config.nixos.steam.enable {

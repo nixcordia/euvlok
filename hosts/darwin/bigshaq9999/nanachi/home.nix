@@ -8,6 +8,9 @@ let
   inherit (pkgs.stdenvNoCC) isLinux;
 in
 {
+  _class = "darwin";
+  _file = ./home.nix;
+  key = toString ./home.nix;
   imports = [ inputs.home-manager.darwinModules.home-manager ];
 
   home-manager = {
@@ -62,8 +65,7 @@ in
       ]
       ++ [
         inputs.self.homeModules.default
-        inputs.self.homeModules.os
-        inputs.self.homeConfigurations.bigshaq9999
+        inputs.self.homeModules.bigshaq9999
         {
           hm = {
             fastfetch.enable = true;

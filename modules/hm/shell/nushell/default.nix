@@ -14,6 +14,9 @@ let
   paths = import ../paths.nix { inherit lib; };
 in
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   options.hm.nushell.enable = lib.options.mkEnableOption "Nushell";
 
   config = lib.modules.mkIf config.hm.nushell.enable {

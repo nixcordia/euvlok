@@ -1,5 +1,8 @@
 { lib, config, ... }:
 {
+  _class = "nixos";
+  _file = ./zram.nix;
+  key = toString ./zram.nix;
   options.nixos.zram.enable = lib.options.mkEnableOption "ZRAM Swap";
 
   config = lib.modules.mkIf config.nixos.zram.enable {

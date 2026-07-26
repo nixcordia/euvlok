@@ -10,6 +10,9 @@
 }:
 
 {
+  _class = "nixos";
+  _file = ./hardware-configuration.nix;
+  key = toString ./hardware-configuration.nix;
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];

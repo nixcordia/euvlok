@@ -4,6 +4,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./rofi.nix;
+  key = toString ./rofi.nix;
   programs.rofi = {
     enable = true;
     package = pkgs.unstable.rofi;

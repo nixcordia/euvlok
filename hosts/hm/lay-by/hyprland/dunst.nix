@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  _class = "homeManager";
+  _file = ./dunst.nix;
+  key = toString ./dunst.nix;
   services.dunst = {
     enable = true;
     iconTheme = {

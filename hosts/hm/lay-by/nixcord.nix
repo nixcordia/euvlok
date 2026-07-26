@@ -1,4 +1,7 @@
 _: {
+  _class = "homeManager";
+  _file = ./nixcord.nix;
+  key = toString ./nixcord.nix;
   programs.nixcord.config.enableReactDevtools = true;
   programs.nixcord.config.plugins = {
     betterGifPicker.enable = true;

@@ -36,138 +36,144 @@ let
         "service_tier=\"fast\""
       ];
 in
-lib.modules.mkMerge [
-  {
-    programs.zed-editor = {
-      enableMcpIntegration = true;
-      installRemoteServer = true;
-      package = pkgs.unstable.zed-editor;
-      extraPackages = [
-        pkgs.codex-acp
-      ];
+{
+  _class = "homeManager";
+  _file = ./zed.nix;
+  key = toString ./zed.nix;
 
-      extensions = [
-        "docker-compose"
-        "dockerfile"
-        "emmet"
-        "git-firefly"
-        "github-actions"
-        "graphql"
-        "mcp-server-context7"
-        "mcp-server-github"
-        "prisma"
-      ];
+  config = lib.modules.mkMerge [
+    {
+      programs.zed-editor = {
+        enableMcpIntegration = true;
+        installRemoteServer = true;
+        package = pkgs.unstable.zed-editor;
+        extraPackages = [
+          pkgs.codex-acp
+        ];
 
-      userSettings = {
-        agent = {
-          dock = "right";
-          model_parameters = [ ];
-          sidebar_side = "right";
-        };
+        extensions = [
+          "docker-compose"
+          "dockerfile"
+          "emmet"
+          "git-firefly"
+          "github-actions"
+          "graphql"
+          "mcp-server-context7"
+          "mcp-server-github"
+          "prisma"
+        ];
 
-        agent_servers = {
-          # cline = {
-          #   type = "custom";
-          #   command = lib.meta.getExe' pkgs.eupkgs.cline-ai "cline";
-          #   args = [ "--acp" ];
-          #   env = { };
-          # };
-
-          "codex-acp" = {
-            type = "custom";
-            command = "codex-acp";
-            args = [ ];
-            env.CODEX_HOME = "${config.home.homeDirectory}/.codex";
+        userSettings = {
+          agent = {
+            dock = "right";
+            model_parameters = [ ];
+            sidebar_side = "right";
           };
+
+          agent_servers = {
+            # cline = {
+            #   type = "custom";
+            #   command = lib.meta.getExe' pkgs.eupkgs.cline-ai "cline";
+            #   args = [ "--acp" ];
+            #   env = { };
+            # };
+
+            "codex-acp" = {
+              type = "custom";
+              command = "codex-acp";
+              args = [ ];
+              env.CODEX_HOME = "${config.home.homeDirectory}/.codex";
+            };
+          };
+
+          autosave.after_delay.milliseconds = 1000;
+
+          buffer_font_family = "MesloLGL Nerd Font";
+          buffer_font_size = 18;
+
+          cli_default_open_behavior = "existing_window";
+          collaboration_panel.dock = "left";
+          colorize_brackets = true;
+
+          context.Workspace.bindings."ctrl-b" = "workspace::ToggleRightDock";
+          context_servers = {
+            "mcp-server-context7".settings = { };
+            "mcp-server-github".settings = { };
+            openaiDeveloperDocs.url = "https://developers.openai.com/mcp";
+          };
+
+          diff_view_style = "unified";
+          disable_ai = false;
+          edit_predictions.provider = "zed";
+          ensure_final_newline_on_save = true;
+          format_on_save = "on";
+
+          git_panel.dock = "right";
+          outline_panel.dock = "left";
+          preferred_line_length = 120;
+          project_panel.dock = "right";
+          remove_trailing_whitespace_on_save = true;
+          semantic_tokens = "combined";
+          show_edit_predictions = false;
+          show_whitespaces = "selection";
+          soft_wrap = "editor_width";
+          tab_size = 2;
+
+          terminal = {
+            blinking = "on";
+            cursor_shape = "bar";
+            font_family = "Hack Nerd Font";
+            font_size = 16;
+            minimum_contrast = 0;
+          };
+
+          title_bar.button_layout = "platform_default";
+          ui_font_family = "NotoSans Nerd Font Propo";
+          ui_font_size = 18;
         };
-
-        autosave.after_delay.milliseconds = 1000;
-
-        buffer_font_family = "MesloLGL Nerd Font";
-        buffer_font_size = 18;
-
-        cli_default_open_behavior = "existing_window";
-        collaboration_panel.dock = "left";
-        colorize_brackets = true;
-
-        context.Workspace.bindings."ctrl-b" = "workspace::ToggleRightDock";
-        context_servers = {
-          "mcp-server-context7".settings = { };
-          "mcp-server-github".settings = { };
-          openaiDeveloperDocs.url = "https://developers.openai.com/mcp";
-        };
-
-        diff_view_style = "unified";
-        disable_ai = false;
-        edit_predictions.provider = "zed";
-        ensure_final_newline_on_save = true;
-        format_on_save = "on";
-
-        git_panel.dock = "right";
-        outline_panel.dock = "left";
-        preferred_line_length = 120;
-        project_panel.dock = "right";
-        remove_trailing_whitespace_on_save = true;
-        semantic_tokens = "combined";
-        show_edit_predictions = false;
-        show_whitespaces = "selection";
-        soft_wrap = "editor_width";
-        tab_size = 2;
-
-        terminal = {
-          blinking = "on";
-          cursor_shape = "bar";
-          font_family = "Hack Nerd Font";
-          font_size = 16;
-          minimum_contrast = 0;
-        };
-
-        title_bar.button_layout = "platform_default";
-        ui_font_family = "NotoSans Nerd Font Propo";
-        ui_font_size = 18;
       };
-    };
-  }
+    }
 
-  (lib.modules.mkIf (osConfig != null && osConfig.networking.hostName == "unsigned-int32") {
-    sops.secrets.openrouter_api_key = { };
+    (lib.modules.mkIf (osConfig != null && osConfig.networking.hostName == "unsigned-int32") {
+      sops.secrets.openrouter_api_key = { };
 
-    sops.templates."codex-openrouter.env".content = ''
-      OPENROUTER_API_KEY=${config.sops.placeholder.openrouter_api_key}
-    '';
+      sops.templates."codex-openrouter.env".content = ''
+        OPENROUTER_API_KEY=${config.sops.placeholder.openrouter_api_key}
+      '';
 
-    programs.zed-editor = {
-      extraPackages = [ codexAcpOpenrouter ];
+      programs.zed-editor = {
+        extraPackages = [ codexAcpOpenrouter ];
 
-      userSettings = {
-        agent = {
-          default_model = {
-            enable_thinking = true;
-            effort = "medium";
-            model = "gpt-5.5";
-            provider = "openai-subscribed";
-          };
-          favorite_models = [
-            {
+        userSettings = {
+          agent = {
+            default_model = {
               enable_thinking = true;
               effort = "medium";
               model = "gpt-5.5";
               provider = "openai-subscribed";
-            }
-            {
-              model = "deepseek/deepseek-v4-pro";
-              provider = "openrouter";
-            }
-          ];
-        };
+            };
+            favorite_models = [
+              {
+                enable_thinking = true;
+                effort = "medium";
+                model = "gpt-5.5";
+                provider = "openai-subscribed";
+              }
+              {
+                model = "deepseek/deepseek-v4-pro";
+                provider = "openrouter";
+              }
+            ];
+          };
 
-        agent_servers.codex_openrouter = {
-          type = "custom";
-          command = "codex-acp-openrouter";
-          args = openrouterArgs;
-          env.CODEX_HOME = "${config.home.homeDirectory}/.codex";
+          agent_servers.codex_openrouter = {
+            type = "custom";
+            command = "codex-acp-openrouter";
+            args = openrouterArgs;
+            env.CODEX_HOME = "${config.home.homeDirectory}/.codex";
+          };
         };
       };
-    };
-  })
-]
+    })
+  ];
+}

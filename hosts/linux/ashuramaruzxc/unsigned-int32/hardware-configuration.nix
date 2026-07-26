@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./hardware-configuration.nix;
+  key = toString ./hardware-configuration.nix;
   nixpkgs.hostPlatform = lib.modules.mkDefault "x86_64-linux";
 
   boot = {
@@ -128,6 +131,9 @@
   ### ----------------BOOT------------------- ###
 
   boot.initrd = {
+    # This host still uses the legacy YubiKey LUKS slots below. Migrating to
+    # systemd stage 1 requires enrolling replacement slots on the machine with
+    # systemd-cryptenroll before this can be enabled safely.
     systemd.enable = false;
     ### ---------------------LUKS--------------------- ###
     luks = {

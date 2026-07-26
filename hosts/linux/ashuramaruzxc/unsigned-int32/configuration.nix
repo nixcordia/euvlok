@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./configuration.nix;
+  key = toString ./configuration.nix;
   imports = [
     ../shared/system/android.nix
     ../shared/system/containers.nix
@@ -196,5 +199,7 @@
 
   nix.settings.extra-sandbox-paths = [ config.programs.ccache.cacheDir ];
 
-  system.stateVersion = config.system.nixos.release;
+  # This must describe the installation, not follow the current nixpkgs
+  # release. Keep it aligned with this host's Home Manager state version.
+  system.stateVersion = "26.11";
 }

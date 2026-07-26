@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./services.nix;
+  key = toString ./services.nix;
   options.nixos.gui.enable = lib.options.mkEnableOption "graphical session (display server + common GUI daemons)";
 
   config = lib.modules.mkIf config.nixos.gui.enable {

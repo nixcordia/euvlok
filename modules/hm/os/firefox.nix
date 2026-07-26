@@ -24,6 +24,9 @@ let
     };
 in
 {
+  _class = "homeManager";
+  _file = ./firefox.nix;
+  key = toString ./firefox.nix;
   config = lib.modules.mkIf isLinux (
     lib.modules.mkMerge [
       (lib.modules.mkIf config.hm.firefox.firefox.enable {

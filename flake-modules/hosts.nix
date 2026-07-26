@@ -6,40 +6,43 @@
 }:
 let
   inherit (lib)
-    concatMapAttrs
+    concatStringsSep
+    foldlAttrs
+    intersectAttrs
     mapAttrs
     mapAttrs'
+    mkDefault
     mkOption
     nameValuePair
+    optionalAttrs
     types
     ;
 
-  hostSpec = types.submodule (
-    { ... }:
-    {
-      options = {
-        path = mkOption {
-          type = types.nullOr types.path;
-          default = null;
-          description = "Path to a Nix expression that returns this host configuration.";
-        };
-
-        output = mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = "Attribute to select from the imported path. Defaults to the host name.";
-        };
-
-        configuration = mkOption {
-          type = types.nullOr types.raw;
-          default = null;
-          description = "Pre-built configuration value. Useful for nested flakes or unusual inputs.";
-        };
+  hostSpec = types.submodule {
+    options = {
+      path = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        description = "Path to a Nix expression that returns this host configuration.";
       };
 
-      config.output = lib.modules.mkDefault null;
-    }
-  );
+      output = mkOption {
+        type = types.nullOr types.nonEmptyStr;
+        default = null;
+        description = "Attribute to select from the imported path. Defaults to the host name.";
+      };
+
+      configuration = mkOption {
+        type = types.nullOr (
+          types.unique {
+            message = "A host may only define one pre-built configuration.";
+          } types.attrs
+        );
+        default = null;
+        description = "Pre-built configuration value. Useful for nested flakes or unusual inputs.";
+      };
+    };
+  };
 
   userType = types.submodule {
     options = {
@@ -55,15 +58,27 @@ let
         description = "nix-darwin hosts owned by this contributor.";
       };
 
-      homeConfigurations = mkOption {
-        type = types.lazyAttrsOf types.raw;
+      homeModules = mkOption {
+        type = types.lazyAttrsOf types.deferredModule;
         default = { };
-        description = "Home Manager configurations or modules owned by this contributor.";
+        description = "Home Manager modules owned by this contributor.";
       };
     };
   };
 
-  mergeUsers = attr: concatMapAttrs (_userName: user: user.${attr}) config.euvlok.users;
+  mergeUsers =
+    attr:
+    foldlAttrs (
+      result: userName: user:
+      let
+        entries = user.${attr};
+        duplicateNames = builtins.attrNames (intersectAttrs result entries);
+      in
+      if duplicateNames == [ ] then
+        result // entries
+      else
+        throw "euvlok contributor ${userName} duplicates ${attr}: ${concatStringsSep ", " duplicateNames}"
+    ) { } config.euvlok.users;
 
   mkHost =
     name: spec:
@@ -81,9 +96,26 @@ let
 
   nixosConfigurations = mapAttrs mkHost (mergeUsers "nixosHosts");
   darwinConfigurations = mapAttrs mkHost (mergeUsers "darwinHosts");
+  homeModules = mapAttrs (
+    name: module:
+    let
+      moduleKey = "${toString ./hosts.nix}#homeModules.${name}";
+    in
+    {
+      _class = "homeManager";
+      _file = moduleKey;
+      key = moduleKey;
+
+      _module.args.euvlokInputs = mkDefault inputs;
+      imports = [ module ];
+    }
+  ) (mergeUsers "homeModules");
 
 in
 {
+  _class = "flake";
+  _file = ./hosts.nix;
+  key = toString ./hosts.nix;
   options.euvlok.users = mkOption {
     type = types.attrsOf userType;
     default = { };
@@ -92,8 +124,7 @@ in
 
   config = {
     flake = {
-      inherit nixosConfigurations darwinConfigurations;
-      homeConfigurations = mergeUsers "homeConfigurations";
+      inherit nixosConfigurations darwinConfigurations homeModules;
     };
 
     perSystem =
@@ -104,12 +135,12 @@ in
           nameValuePair "eval-${kind}-${name}" (
             pkgs.runCommand "eval-${kind}-${name}" { } ''
               mkdir "$out"
-              printf '%s\n' ${lib.strings.escapeShellArg (builtins.unsafeDiscardStringContext (toString value))} > "$out/drv-path"
+              printf '%s\n' ${lib.escapeShellArg (builtins.unsafeDiscardStringContext (toString value))} > "$out/drv-path"
             ''
           );
       in
       {
-        checks = lib.attrsets.optionalAttrs (system == "x86_64-linux") (
+        checks = optionalAttrs (system == "x86_64-linux") (
           mapAttrs' (
             name: value: mkEvalCheck "nixos" name value.config.system.build.toplevel.drvPath
           ) nixosConfigurations

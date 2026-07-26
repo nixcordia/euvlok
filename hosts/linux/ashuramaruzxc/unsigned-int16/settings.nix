@@ -1,5 +1,8 @@
 { lib, ... }:
 {
+  _class = "nixos";
+  _file = ./settings.nix;
+  key = toString ./settings.nix;
   networking = {
     hostName = "unsigned-int16";
     hostId = "8425e349";

@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./fish.nix;
+  key = toString ./fish.nix;
   options.hm.fish.enable = lib.options.mkEnableOption "Fish";
 
   config = lib.modules.mkIf config.hm.fish.enable {

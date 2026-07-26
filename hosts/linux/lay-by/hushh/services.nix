@@ -1,5 +1,7 @@
-{ pkgs, ... }:
-{
+_: {
+  _class = "nixos";
+  _file = ./services.nix;
+  key = toString ./services.nix;
 
   systemd.services.navidrome.serviceConfig = {
     BindReadOnlyPaths = [ "/media/HDD/spotmusic/" ];

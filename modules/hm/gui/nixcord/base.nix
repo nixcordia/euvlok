@@ -4,6 +4,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./base.nix;
+  key = toString ./base.nix;
   options.hm.nixcord.basePlugins.enable = lib.options.mkEnableOption "shared Nixcord plugin set" // {
     default = config.hm.nixcord.enable;
   };

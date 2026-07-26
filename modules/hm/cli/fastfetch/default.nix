@@ -1,5 +1,8 @@
 { lib, config, ... }:
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   options.hm.fastfetch.enable = lib.options.mkEnableOption "Fastfetch";
 
   config = lib.modules.mkIf config.hm.fastfetch.enable {

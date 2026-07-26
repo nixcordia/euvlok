@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  _class = "homeManager";
+  _file = ./git.nix;
+  key = toString ./git.nix;
   home.packages = builtins.attrValues { inherit (pkgs) watchman; };
 
   programs = {

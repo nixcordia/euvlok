@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./torrent.nix;
+  key = toString ./torrent.nix;
   sops.secrets.transmission_env = {
     mode = "0640";
     owner = config.users.users.transmission.name;

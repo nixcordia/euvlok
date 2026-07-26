@@ -1,8 +1,15 @@
-{ pkgs, inputs, ... }:
 {
+  euvlokInputs,
+  pkgs,
+  ...
+}:
+{
+  _class = "homeManager";
+  _file = ./packages.nix;
+  key = toString ./packages.nix;
   home.packages = builtins.attrValues {
     # CLI
-    dis = inputs.dis-source.packages.${pkgs.stdenvNoCC.hostPlatform.system}.default;
+    dis = euvlokInputs.dis-source.packages.${pkgs.stdenvNoCC.hostPlatform.system}.default;
 
     inherit (pkgs)
       appimage-run

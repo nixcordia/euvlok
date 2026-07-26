@@ -4,6 +4,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./home.nix;
+  key = toString ./home.nix;
   imports = [ inputs.home-manager.nixosModules.home-manager ];
 
   home-manager = {
@@ -35,20 +38,19 @@
             no_display = true;
           };
           fonts.fontconfig.enable = true;
+          home.pointerCursor.enable = true;
           xsession.numlock.enable = true;
         }
       ]
       ++ [
         ./home-packages.nix
         inputs.self.homeModules.default
-        inputs.self.homeModules.os
-        inputs.self.homeConfigurations.lay-by
+        inputs.self.homeModules.lay-by
         {
           euvlok.nixpkgs.unstableSource = inputs.nixpkgs-unstable;
           home.shell.enableShellIntegration = true;
           hm = {
-            clankers.codex.enable = true;
-            clankers.codex.statusLine.enable = true;
+            codex.enable = true;
             fastfetch.enable = true;
             firefox.zen-browser.enable = true;
             bash.enable = true;

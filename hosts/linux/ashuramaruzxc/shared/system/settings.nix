@@ -1,5 +1,8 @@
 { pkgs, config, ... }:
 {
+  _class = "nixos";
+  _file = ./settings.nix;
+  key = toString ./settings.nix;
   services = {
     fstrim.enable = true;
     fstrim.interval = "weekly";

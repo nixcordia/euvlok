@@ -1,4 +1,7 @@
 _: {
+  _class = "darwin";
+  _file = ./system.nix;
+  key = toString ./system.nix;
   environment.pathsToLink = [
     "/share/btop"
   ];

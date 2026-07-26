@@ -68,6 +68,9 @@ let
   aliases = editor // rustdogshit // networking // utility // git // scripts // darwin // linux;
 in
 {
+  _class = "homeManager";
+  _file = ./aliases.nix;
+  key = toString ./aliases.nix;
   programs.bash.shellAliases = aliases;
   programs.zsh.shellAliases = aliases;
 }

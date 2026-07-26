@@ -1,32 +1,32 @@
+{ euvlokInputs }:
 {
-  lib,
   config,
-  inputs,
+  lib,
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
-    inputs.catppuccin-trivial.nixosModules.catppuccin
-    ../cross
+    euvlokInputs.catppuccin-trivial.nixosModules.catppuccin
+    (lib.modules.importApply ../cross { inherit euvlokInputs; })
     ./amd.nix
     ./audio.nix
     ./boot.nix
     ./cosmic.nix
-    ./ghidra-mcp.nix
     ./gnome.nix
     ./hardware.nix
     ./locale.nix
     ./networking.nix
     ./nix.nix
-    ./nvidia.nix
+    (lib.modules.importApply ./nvidia.nix { inherit euvlokInputs; })
     ./plasma.nix
     ./security.nix
     ./services.nix
     ./sessionVariables.nix
-    ./sops.nix
+    (lib.modules.importApply ./sops.nix { inherit euvlokInputs; })
     ./steam.nix
-    ./vscode-server.nix
-    ./zed-remote.nix
     ./zram.nix
   ];
 

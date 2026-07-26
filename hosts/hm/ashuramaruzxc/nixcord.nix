@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./nixcord.nix;
+  key = toString ./nixcord.nix;
   programs.nixcord.quickCss = lib.strings.optionalString config.catppuccin.enable ''
     /* ----- CATPPUCCIN THEME ----- */
     @import url("https://catppuccin.github.io/discord/dist/catppuccin-${config.catppuccin.flavor}-${config.catppuccin.accent}.theme.css")

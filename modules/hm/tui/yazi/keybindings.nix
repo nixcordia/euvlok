@@ -122,6 +122,9 @@ let
   ];
 in
 {
+  _class = "homeManager";
+  _file = ./keybindings.nix;
+  key = toString ./keybindings.nix;
   programs.yazi.keymap = {
     mgr.prepend_keymap = prependKeymap;
     mgr.keymap =

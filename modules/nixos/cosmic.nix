@@ -4,6 +4,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./cosmic.nix;
+  key = toString ./cosmic.nix;
   #! temp remove cosmic from nixos-unstable
   # disabledModules = [ "services/desktop-managers/cosmic.nix" ];
 

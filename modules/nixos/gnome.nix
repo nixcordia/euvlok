@@ -17,6 +17,9 @@ let
     };
 in
 {
+  _class = "nixos";
+  _file = ./gnome.nix;
+  key = toString ./gnome.nix;
   #! temp remove gnome from nixos-unstable
   # disabledModules = [ "services/desktop-managers/gnome.nix" ];
 

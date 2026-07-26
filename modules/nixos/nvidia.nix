@@ -1,8 +1,8 @@
+{ euvlokInputs }:
 {
-  inputs,
-  pkgs,
-  lib,
   config,
+  lib,
+  pkgs,
   ...
 }:
 let
@@ -10,6 +10,9 @@ let
   nvidiaDriver = config.boot.kernelPackages.nvidiaPackages.mkDriver nvidiaDriverConfig;
 in
 {
+  _class = "nixos";
+  _file = ./nvidia.nix;
+  key = toString ./nvidia.nix;
   options.nixos.nvidia.enable = lib.options.mkEnableOption "NVIDIA Drivers & Env Variables";
 
   config = lib.modules.mkMerge [
@@ -67,7 +70,7 @@ in
         (map (browser: _: prev: {
           ${browser} = prev.${browser}.override { inherit commandLineArgs; };
         }) browsers)
-        ++ [ inputs.nvidia-patch-trivial.overlays.default ];
+        ++ [ euvlokInputs.nvidia-patch-trivial.overlays.default ];
     })
   ];
 }

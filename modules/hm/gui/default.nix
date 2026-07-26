@@ -1,9 +1,14 @@
-_: {
+{ euvlokInputs }:
+{ lib, ... }:
+{
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
     ./chromium
-    ./firefox
+    (lib.modules.importApply ./firefox { inherit euvlokInputs; })
     ./mpv.nix
-    ./nixcord
+    (lib.modules.importApply ./nixcord { inherit euvlokInputs; })
     ./vscode
     ./zed.nix
   ];

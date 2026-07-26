@@ -1,8 +1,8 @@
+{ euvlokInputs }:
 {
-  inputs,
-  pkgs,
-  lib,
   config,
+  lib,
+  pkgs,
   ...
 }:
 let
@@ -10,7 +10,8 @@ let
     extensions.packages = builtins.filter (lib.attrsets.isDerivation) (
       builtins.attrValues (
         pkgs.callPackage ./extensions.nix {
-          buildFirefoxXpiAddon = (pkgs.callPackage ./firefox-addons.nix { }).buildFirefoxXpiAddon;
+          buildFirefoxXpiAddon =
+            (pkgs.callPackage ../../../../lib/firefox-addons.nix { }).buildFirefoxXpiAddon;
         }
       )
     );
@@ -197,21 +198,23 @@ let
   };
 in
 {
-  imports = [ inputs.zen-browser-trivial.homeModules.twilight ];
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  imports = [ euvlokInputs.zen-browser-trivial.homeModules.twilight ];
 
   options.hm.firefox = {
-    enable = lib.options.mkEnableOption "Declarative Firefox-based Browsers";
-    firefox.enable = lib.options.mkOption {
+    enable = lib.options.mkEnableOption "declarative Firefox-based browsers";
+    firefox.enable = lib.options.mkEnableOption "declarative Firefox" // {
       default = true;
-      description = "Enable Declerative Firefox";
     };
-    floorp.enable = lib.options.mkEnableOption "Declarative Floorp";
-    librewolf.enable = lib.options.mkEnableOption "Declarative LibreWolf";
-    zen-browser.enable = lib.options.mkEnableOption "Declarative Zen Browser";
+    floorp.enable = lib.options.mkEnableOption "declarative Floorp";
+    librewolf.enable = lib.options.mkEnableOption "declarative LibreWolf";
+    zen-browser.enable = lib.options.mkEnableOption "declarative Zen Browser";
     defaultSearchEngine = lib.options.mkOption {
       default = "google";
-      description = "Which Search Engine to set as Default";
-      example = lib.options.literalExpression "Google";
+      description = "Search engine used by default in normal and private windows.";
+      example = "kagi";
       type = lib.types.enum [
         "ddg"
         "google"

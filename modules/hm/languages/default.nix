@@ -8,6 +8,9 @@ let
   languageDefinitions = import ./catalog { inherit pkgs lib; };
 in
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
     ./helix.nix
     ./vscode.nix

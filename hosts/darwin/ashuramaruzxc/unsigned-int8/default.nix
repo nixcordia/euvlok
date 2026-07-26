@@ -3,7 +3,7 @@ inputs.nix-darwin.lib.darwinSystem {
   specialArgs = { inherit inputs; };
   modules = [
     inputs.self.darwinModules.default
-    ../../../../modules/darwin/zsh.nix
+    inputs.self.darwinModules.zsh
     ./brew.nix
     ./configuration.nix
     ./home.nix

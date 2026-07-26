@@ -1,13 +1,16 @@
+{ euvlokInputs }:
 {
-  pkgs,
-  inputs,
-  lib,
   config,
+  lib,
+  pkgs,
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
-    inputs.nixcord-trivial.homeModules.nixcord
+    euvlokInputs.nixcord-trivial.homeModules.nixcord
     ./base.nix
   ];
 

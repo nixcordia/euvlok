@@ -1,10 +1,12 @@
 {
-  lib,
   config,
   pkgs,
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./nextcloud.nix;
+  key = toString ./nextcloud.nix;
   sops.secrets.admin = {
     mode = "0740";
     owner = "nextcloud";

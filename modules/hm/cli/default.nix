@@ -1,6 +1,10 @@
 _: {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
-    ./clankers.nix
+    ./codex
+    ./devenv.nix
     ./direnv.nix
     ./fastfetch
     ./fzf.nix

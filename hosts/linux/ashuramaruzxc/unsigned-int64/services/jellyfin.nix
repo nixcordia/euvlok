@@ -1,4 +1,7 @@
 _: {
+  _class = "nixos";
+  _file = ./jellyfin.nix;
+  key = toString ./jellyfin.nix;
   services.jellyfin = {
     enable = true;
     user = "jellyfin";

@@ -112,12 +112,15 @@ let
     builtins.attrValues (
       pkgs.callPackage ./extensions.nix {
         buildFirefoxXpiAddon =
-          (pkgs.callPackage ../../../../modules/hm/gui/firefox/firefox-addons.nix { }).buildFirefoxXpiAddon;
+          (pkgs.callPackage ../../../../lib/firefox-addons.nix { }).buildFirefoxXpiAddon;
       }
     )
   );
 in
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   programs.floorp = {
     profiles.default = {
       extensions.packages = defaultExtensionsList;

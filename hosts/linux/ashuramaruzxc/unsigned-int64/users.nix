@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./users.nix;
+  key = toString ./users.nix;
   programs.zsh.enable = true;
   users.mutableUsers = false;
   users.groups = {

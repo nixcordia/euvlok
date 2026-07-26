@@ -13,64 +13,14 @@ let
 
   baseImports = [
     { home.stateVersion = "26.05"; }
-    ../../../../modules/hm/catppuccin-gtk.nix
+    ../../../hm/ashuramaruzxc/catppuccin.nix
   ];
-
-  catppuccinConfig =
-    { osConfig, ... }:
-    {
-      catppuccin = {
-        inherit (osConfig.catppuccin) enable accent flavor;
-        sources.gitui = "${
-          builtins.fetchTree {
-            type = "github";
-            owner = "catppuccin";
-            repo = "gitui";
-            rev = "df2f59f847e047ff119a105afff49238311b2d36";
-            narHash = "sha256-DRK/j3899qJW4qP1HKzgEtefz/tTJtwPkKtoIzuoTj0=";
-          }
-        }/themes";
-      };
-    };
 
   ashuramaruHmConfig = [
     inputs.self.homeModules.default
-    inputs.self.homeModules.os
-    inputs.self.homeConfigurations.ashuramaruzxc
+    inputs.self.homeModules.ashuramaruzxc
     ../../../hm/ashuramaruzxc/chromium
-    {
-      hm = {
-        fastfetch.enable = true;
-        firefox = {
-          zen-browser.enable = true;
-          defaultSearchEngine = "kagi";
-        };
-        ghostty.enable = true;
-        helix.enable = true;
-        mpv.enable = true;
-        nh.enable = true;
-        zed-editor.enable = true;
-        zellij.enable = true;
-        zsh.enable = true;
-        languages = {
-          cpp.enable = true;
-          csharp.enable = true;
-          csharp.version = "10";
-          go.enable = true;
-          haskell.enable = true;
-          java.enable = true;
-          java.version = "25";
-          javascript.enable = true;
-          kotlin.enable = true;
-          lisp.enable = true;
-          lua.enable = true;
-          python.enable = true;
-          ruby.enable = true;
-          rust.enable = true;
-          scala.enable = true;
-        };
-      };
-    }
+    ../../../hm/ashuramaruzxc/workstation.nix
   ];
 
   allPackages = homePackages.mkPackages [
@@ -83,7 +33,10 @@ let
   ];
 in
 {
-  imports = [ inputs.home-manager.nixosModules.home-manager ];
+  _class = "nixos";
+  _file = ./home.nix;
+  key = toString ./home.nix;
+  imports = [ inputs.home-manager-rpi.nixosModules.home-manager ];
 
   home-manager = {
     useUserPackages = true;
@@ -95,7 +48,6 @@ in
     imports =
       baseImports
       ++ [
-        catppuccinConfig
         { sops.defaultSopsFile = ../../../../secrets/ashuramaruzxc_unsigned-int16.yaml; }
       ]
       ++ ashuramaruHmConfig

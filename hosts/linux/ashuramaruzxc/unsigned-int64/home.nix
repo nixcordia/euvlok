@@ -5,25 +5,8 @@
 let
   baseImports = [
     { home.stateVersion = "26.05"; }
-    ../../../../modules/hm/catppuccin-gtk.nix
+    ../../../hm/ashuramaruzxc/catppuccin.nix
   ];
-
-  catppuccinConfig =
-    { osConfig, ... }:
-    {
-      catppuccin = {
-        inherit (osConfig.catppuccin) enable accent flavor;
-        sources.gitui = "${
-          builtins.fetchTree {
-            type = "github";
-            owner = "catppuccin";
-            repo = "gitui";
-            rev = "df2f59f847e047ff119a105afff49238311b2d36";
-            narHash = "sha256-DRK/j3899qJW4qP1HKzgEtefz/tTJtwPkKtoIzuoTj0=";
-          }
-        }/themes";
-      };
-    };
 
   rootHmConfig = {
     hm = {
@@ -39,8 +22,7 @@ let
 
   commonHmConfig = [
     inputs.self.homeModules.default
-    inputs.self.homeModules.os
-    inputs.self.homeConfigurations.ashuramaruzxc
+    inputs.self.homeModules.ashuramaruzxc
     {
       hm = {
         fastfetch.enable = true;
@@ -57,11 +39,13 @@ let
 
   globalImports = [
     ../shared/home/aliases.nix
-    catppuccinConfig
     { sops.defaultSopsFile = ../../../../secrets/ashuramaruzxc_unsigned-int64.yaml; }
   ];
 in
 {
+  _class = "nixos";
+  _file = ./home.nix;
+  key = toString ./home.nix;
   imports = [ inputs.home-manager.nixosModules.home-manager ];
 
   home-manager = {

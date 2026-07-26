@@ -1,5 +1,8 @@
 { lib, config, ... }:
 {
+  _class = "homeManager";
+  _file = ./direnv.nix;
+  key = toString ./direnv.nix;
   options.hm.direnv.enable = lib.options.mkEnableOption "Direnv" // {
     default = true;
   };

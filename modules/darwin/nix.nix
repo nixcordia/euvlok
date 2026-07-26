@@ -1,4 +1,7 @@
 _: {
+  _class = "darwin";
+  _file = ./nix.nix;
+  key = toString ./nix.nix;
   # nix-daemon runs under launchd without a locale, so Perl-based
   # helpers in nixpkgs fetchers warn "Pathname can't be converted
   # from UTF-8 to current locale" for every non-ASCII path.

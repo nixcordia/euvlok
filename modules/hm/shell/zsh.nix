@@ -8,7 +8,10 @@ let
   paths = import ./paths.nix { inherit lib; };
 in
 {
-  options.hm.zsh.enable = lib.options.mkEnableOption "Declerative Zsh";
+  _class = "homeManager";
+  _file = ./zsh.nix;
+  key = toString ./zsh.nix;
+  options.hm.zsh.enable = lib.options.mkEnableOption "declarative Zsh";
 
   config = lib.modules.mkIf config.hm.zsh.enable {
     assertions = [

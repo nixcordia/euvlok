@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./zed.nix;
+  key = toString ./zed.nix;
   options.hm.zed-editor.enable = lib.options.mkEnableOption "Zed Editor";
 
   config = lib.modules.mkIf config.hm.zed-editor.enable {

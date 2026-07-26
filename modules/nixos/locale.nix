@@ -3,6 +3,9 @@ let
   cfg = config.nixos.locale;
 in
 {
+  _class = "nixos";
+  _file = ./locale.nix;
+  key = toString ./locale.nix;
   options.nixos.locale = {
     enable = lib.options.mkEnableOption "locale configuration" // {
       default = false;

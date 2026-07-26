@@ -34,5 +34,8 @@ let
   ];
 in
 {
+  _class = "homeManager";
+  _file = ./yazi.nix;
+  key = toString ./yazi.nix;
   programs.yazi.keymap.manager.keymap = keymap;
 }

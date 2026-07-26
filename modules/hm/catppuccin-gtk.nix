@@ -1,15 +1,15 @@
 # workaround for https://github.com/catppuccin/nix/pull/644
 
+{ euvlokInputs }:
 {
+  config,
   lib,
   options,
-  config,
-  inputs,
   pkgs,
   ...
 }:
 let
-  catppuccinLib = import (inputs.catppuccin-trivial + /modules/lib) {
+  catppuccinLib = import (euvlokInputs.catppuccin-trivial + /modules/lib) {
     inherit
       lib
       options
@@ -22,6 +22,9 @@ let
   enable = cfg.enable && config.gtk.enable;
 in
 {
+  _class = "homeManager";
+  _file = ./catppuccin-gtk.nix;
+  key = toString ./catppuccin-gtk.nix;
   options.catppuccin.${renamedGtkOption} =
     (catppuccinLib.mkCatppuccinOption {
       name = "gtk";
@@ -76,7 +79,7 @@ in
     })
     {
       catppuccin.sources.gtk =
-        inputs.catppuccin-gtk.packages.${pkgs.stdenvNoCC.hostPlatform.system}.gtk.overrideAttrs
+        euvlokInputs.catppuccin-gtk.packages.${pkgs.stdenvNoCC.hostPlatform.system}.gtk.overrideAttrs
           (oldAttrs: {
             # Python 3.14 rejects `type` for BooleanOptionalAction.
             postPatch = (oldAttrs.postPatch or "") + ''

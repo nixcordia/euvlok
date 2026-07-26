@@ -1,5 +1,8 @@
 { config, ... }:
 {
+  _class = "nixos";
+  _file = ./msmtp.nix;
+  key = toString ./msmtp.nix;
   sops.secrets.mail = {
     mode = "0640";
     owner = config.users.users.mail.name;

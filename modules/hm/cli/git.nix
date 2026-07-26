@@ -6,6 +6,9 @@
 }:
 
 {
+  _class = "homeManager";
+  _file = ./git.nix;
+  key = toString ./git.nix;
   options.hm.git.enable = lib.options.mkEnableOption "Git" // {
     default = true;
   };

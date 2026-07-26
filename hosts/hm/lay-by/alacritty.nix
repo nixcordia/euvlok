@@ -1,5 +1,8 @@
 { lib, ... }:
 {
+  _class = "homeManager";
+  _file = ./alacritty.nix;
+  key = toString ./alacritty.nix;
   programs.alacritty = {
     enable = true;
     settings = {

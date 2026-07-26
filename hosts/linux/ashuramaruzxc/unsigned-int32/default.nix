@@ -1,7 +1,5 @@
 inputs:
-# inputs.nixpkgs-patcher.lib.nixosSystem {
 inputs.nixpkgs.lib.nixosSystem {
-  # nixpkgsPatcher.inputs = inputs;
   specialArgs = { inherit inputs; };
   modules = [
     inputs.self.nixosModules.default

@@ -26,6 +26,9 @@ let
   );
 in
 {
+  _class = "homeManager";
+  _file = ./vscode.nix;
+  key = toString ./vscode.nix;
   config = lib.modules.mkIf config.hm.vscode.enable {
     programs.vscode.profiles.default.extensions =
       pkgs.nix4vscode.forVscodeVersion config.programs.vscode.package.version extensionStrings;

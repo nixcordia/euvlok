@@ -3,6 +3,9 @@
   ...
 }:
 {
+  _class = "darwin";
+  _file = ./configuration.nix;
+  key = toString ./configuration.nix;
   # imports = [
   # inputs.sops-nix-trivial.darwinModules.sops
   # {
@@ -24,7 +27,7 @@
   ];
   system.primaryUser = "ashuramaru";
 
-  nixpkgs.hostPlatform.system = "aarch64-darwin";
+  nixpkgs.hostPlatform = "aarch64-darwin";
 
   security.pam.services.sudo_local.touchIdAuth = true;
   services.openssh.enable = true;

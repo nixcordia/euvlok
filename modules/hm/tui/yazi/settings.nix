@@ -1,5 +1,8 @@
 { pkgs, lib, ... }:
 {
+  _class = "homeManager";
+  _file = ./settings.nix;
+  key = toString ./settings.nix;
   programs.yazi.settings = {
     mgr = {
       show_hidden = true;

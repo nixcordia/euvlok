@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   config = lib.modules.mkIf pkgs.stdenvNoCC.isLinux {
     hm.chromium = {
       enable = true;

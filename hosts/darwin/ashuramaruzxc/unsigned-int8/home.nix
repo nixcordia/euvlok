@@ -25,12 +25,10 @@ let
 
   hmModuleConfig = [
     inputs.self.homeModules.default
-    inputs.self.homeModules.os
-    inputs.self.homeConfigurations.ashuramaruzxc
+    inputs.self.homeModules.ashuramaruzxc
     {
       hm = {
-        clankers.codex.enable = true;
-        clankers.codex.statusLine.enable = true;
+        codex.enable = true;
         fastfetch.enable = true;
         firefox = {
           zen-browser.enable = true;
@@ -186,6 +184,9 @@ let
   ashuramaru = commonImports ++ [ catppuccinConfig ] ++ sopsConfig ++ hmModuleConfig ++ userExtras;
 in
 {
+  _class = "darwin";
+  _file = ./home.nix;
+  key = toString ./home.nix;
   imports = [ inputs.home-manager.darwinModules.home-manager ];
 
   home-manager = {

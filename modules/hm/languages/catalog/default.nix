@@ -51,28 +51,12 @@ let
         ;
     };
 in
-{
-  clojure = callLanguage ./clojure.nix;
-  cpp = callLanguage ./cpp.nix;
-  csharp = callLanguage ./csharp.nix;
-  dart = callLanguage ./dart.nix;
-  elixir = callLanguage ./elixir.nix;
-  fsharp = callLanguage ./fsharp.nix;
-  go = callLanguage ./go.nix;
-  haskell = callLanguage ./haskell.nix;
-  java = callLanguage ./java.nix;
-  javascript = callLanguage ./javascript.nix;
-  kotlin = callLanguage ./kotlin.nix;
-  lisp = callLanguage ./lisp.nix;
-  lua = callLanguage ./lua.nix;
-  nim = callLanguage ./nim.nix;
-  ocaml = callLanguage ./ocaml.nix;
-  perl = callLanguage ./perl.nix;
-  php = callLanguage ./php.nix;
-  python = callLanguage ./python.nix;
-  ruby = callLanguage ./ruby.nix;
-  rust = callLanguage ./rust.nix;
-  scala = callLanguage ./scala.nix;
-  swift = callLanguage ./swift.nix;
-  zig = callLanguage ./zig.nix;
-}
+lib.pipe (builtins.readDir ./.) [
+  (lib.filterAttrs (
+    name: type: type == "regular" && name != "default.nix" && lib.hasSuffix ".nix" name
+  ))
+  (lib.mapAttrs' (
+    name: _type:
+    lib.nameValuePair (lib.removeSuffix ".nix" name) (callLanguage (lib.path.append ./. name))
+  ))
+]

@@ -3,13 +3,16 @@
   ...
 }:
 {
+  _class = "darwin";
+  _file = ./configuration.nix;
+  key = toString ./configuration.nix;
   imports = [
     { sops.defaultSopsFile = ../../../../secrets/bigshaq9999.yaml; }
   ];
 
   system.primaryUser = "faputa";
 
-  nixpkgs.hostPlatform.system = "aarch64-darwin";
+  nixpkgs.hostPlatform = "aarch64-darwin";
 
   networking = {
     computerName = "Marie's boyfriend's Mac Mini M4 Pro nanachi";

@@ -12,6 +12,9 @@
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./cursor.nix;
+  key = toString ./cursor.nix;
   home.pointerCursor = {
     enable = true;
     name = cursorName;

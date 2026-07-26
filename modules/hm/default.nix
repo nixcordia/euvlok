@@ -1,12 +1,17 @@
-_: {
+{ euvlokInputs }:
+{ lib, ... }:
+{
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
-    ./nixpkgs.nix
-    ./catppuccin.nix
-    ./sops.nix
+    (lib.modules.importApply ./os { inherit euvlokInputs; })
+    (lib.modules.importApply ./nixpkgs.nix { inherit euvlokInputs; })
+    (lib.modules.importApply ./catppuccin { inherit euvlokInputs; })
+    (lib.modules.importApply ./sops.nix { inherit euvlokInputs; })
     ./cli
-    ./gui
+    (lib.modules.importApply ./gui { inherit euvlokInputs; })
     ./languages
-    ./services
     ./shell
     ./terminal
     ./tui

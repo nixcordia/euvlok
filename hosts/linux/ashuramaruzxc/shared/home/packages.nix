@@ -35,13 +35,16 @@ let
         ;
     };
 
-    important = builtins.attrValues {
-      inherit (pkgs.unstable)
-        bitwarden-desktop
-        keepassxc
-        thunderbird-bin
-        ;
-    };
+    important =
+      builtins.attrValues {
+        inherit (pkgs.unstable)
+          bitwarden-desktop
+          keepassxc
+          ;
+      }
+      ++ [
+        (if pkgs.stdenvNoCC.isx86_64 then pkgs.unstable.thunderbird-bin else pkgs.unstable.thunderbird)
+      ];
 
     jetbrains = [
       pkgs.unstable.jetbrains.clion

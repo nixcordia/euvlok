@@ -1,27 +1,59 @@
+{ inputs }:
 { config, lib, ... }:
-{
-  # nix-darwin has no flake-parts module, so the `flake.darwinConfigurations`
-  # output would otherwise land on the freeform merger that refuses multiple
-  # definitions. Declaring it as a lazyAttrsOf lets user modules each
-  # contribute their hosts the same way `nixosConfigurations` works.
-  options.flake.darwinConfigurations = lib.options.mkOption {
-    type = lib.types.lazyAttrsOf lib.types.raw;
-    default = { };
+let
+  # Public modules should carry euvlok's implementation dependencies with them
+  # Consumer `inputs` remain available separately for host-specific
+  # configuration and the Nix registry
+  mkEuvlokModule =
+    moduleClass: name: module:
+    let
+      moduleKey = "${toString ./modules.nix}#flake.modules.${moduleClass}.${name}";
+    in
+    {
+      _class = moduleClass;
+      _file = moduleKey;
+      key = moduleKey;
+
+      imports = [ module ];
+    };
+
+  mkEuvlokModules = moduleClass: lib.attrsets.mapAttrs (name: mkEuvlokModule moduleClass name);
+
+  applyEuvlokInputs = module: lib.modules.importApply module { euvlokInputs = inputs; };
+
+  mkDesktopModule = module: {
+    imports = [
+      ../modules/nixos/services.nix
+      module
+    ];
   };
 
+  moduleCatalogs = {
+    nixos = import ./modules/nixos.nix {
+      inherit applyEuvlokInputs mkDesktopModule;
+    };
+    darwin = import ./modules/darwin.nix {
+      inherit applyEuvlokInputs;
+    };
+    homeManager = import ./modules/home-manager.nix {
+      inherit applyEuvlokInputs;
+    };
+  };
+in
+{
+  _class = "flake";
+  _file = ./modules.nix;
+  key = toString ./modules.nix;
   config.flake = {
     modules = {
-      nixos.default = import ../modules/nixos;
-      darwin.default = ../modules/darwin;
-      homeManager.default = ../modules/hm;
-      homeManager.os = ../modules/hm/os;
+      nixos = mkEuvlokModules "nixos" moduleCatalogs.nixos;
+      darwin = mkEuvlokModules "darwin" moduleCatalogs.darwin;
+      homeManager = mkEuvlokModules "homeManager" moduleCatalogs.homeManager;
     };
 
-    # Legacy aliases for external consumers and internal hosts/**/*.nix
-    nixosModules.default = config.flake.modules.nixos.default;
-    darwinModules.default = config.flake.modules.darwin.default;
-    homeModules = {
-      inherit (config.flake.modules.homeManager) default os;
-    };
+    # Conventional aliases for external consumers and internal hosts/**/*.nix.
+    nixosModules = config.flake.modules.nixos;
+    darwinModules = config.flake.modules.darwin;
+    homeModules = config.flake.modules.homeManager;
   };
 }

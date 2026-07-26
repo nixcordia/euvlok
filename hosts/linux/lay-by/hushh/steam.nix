@@ -1,5 +1,8 @@
 { lib, pkgs, ... }:
 {
+  _class = "nixos";
+  _file = ./steam.nix;
+  key = toString ./steam.nix;
   nixpkgs.config.packageOverrides.steam = pkgs.steam.override {
     extraPkgs = lib.attrsets.attrValues {
       inherit (pkgs.xorg)

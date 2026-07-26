@@ -7,6 +7,9 @@ let
   inherit (pkgs.stdenvNoCC) isDarwin;
 in
 {
+  _class = "homeManager";
+  _file = ./nushell.nix;
+  key = toString ./nushell.nix;
   programs.nushell.shellAliases = {
     # Editors
     v = "hx";

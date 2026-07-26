@@ -70,13 +70,12 @@ let
     "ms-ceintl.vscode-language-pack-ja"
     ## -- Dictionary/Languages support -- ##
 
-    ## -- Slop -- ##
-    "saoudrizwan.claude-dev"
-    # "openai.chatgpt"
-    ## -- Slop -- ##
   ];
 in
 {
+  _class = "homeManager";
+  _file = ./vscode.nix;
+  key = toString ./vscode.nix;
   programs.vscode = {
     profiles.default = {
       userSettings = {

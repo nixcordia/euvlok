@@ -1,5 +1,8 @@
 { pkgs, config, ... }:
 {
+  _class = "nixos";
+  _file = ./users.nix;
+  key = toString ./users.nix;
   sops.secrets.ashuramaru.neededForUsers = true;
   users = {
     mutableUsers = false;

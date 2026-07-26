@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  _class = "homeManager";
+  _file = ./graphics.nix;
+  key = toString ./graphics.nix;
   home.packages = builtins.attrValues {
     inherit (pkgs.kdePackages) kdenlive;
     # Graphics & Design

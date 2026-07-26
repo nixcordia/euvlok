@@ -5,6 +5,9 @@
   ...
 }:
 {
+  _class = "nixos";
+  _file = ./nginx.nix;
+  key = toString ./nginx.nix;
   security.pam.services.nginx.setEnvironment = false;
   systemd.services.nginx.serviceConfig = {
     SupplementaryGroups = [ "shadow" ];

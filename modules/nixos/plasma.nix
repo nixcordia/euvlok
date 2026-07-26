@@ -47,6 +47,9 @@ let
   ];
 in
 {
+  _class = "nixos";
+  _file = ./plasma.nix;
+  key = toString ./plasma.nix;
   #! temp remove plasma from nixos-unstable
   # disabledModules = [ "services/desktop-managers/plasma6.nix" ];
 

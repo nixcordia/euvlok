@@ -59,6 +59,9 @@ let
   };
 in
 {
+  _class = "homeManager";
+  _file = ./ghostty.nix;
+  key = toString ./ghostty.nix;
   options.hm.ghostty.enable = lib.options.mkEnableOption "Ghostty";
 
   config = lib.modules.mkIf config.hm.ghostty.enable {

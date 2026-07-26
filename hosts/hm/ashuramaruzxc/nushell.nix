@@ -1,4 +1,7 @@
 _: {
+  _class = "homeManager";
+  _file = ./nushell.nix;
+  key = toString ./nushell.nix;
   programs.nushell.shellAliases = {
     arch = "distrobox enter arch";
     fastping = "ping -c 100";

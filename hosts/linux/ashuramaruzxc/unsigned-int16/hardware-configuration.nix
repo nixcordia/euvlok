@@ -36,6 +36,9 @@ let
   };
 in
 {
+  _class = "nixos";
+  _file = ./hardware-configuration.nix;
+  key = toString ./hardware-configuration.nix;
   nixpkgs.hostPlatform = lib.modules.mkDefault "aarch64-linux";
 
   boot = {

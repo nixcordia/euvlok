@@ -1,0 +1,85 @@
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+let
+  cfg = config.hm.codex;
+  inherit (pkgs.stdenvNoCC) isDarwin;
+
+  codexConfigDir =
+    if config.home.preferXdgDirectories then
+      "${lib.strings.removePrefix config.home.homeDirectory config.xdg.configHome}/codex"
+    else
+      ".codex";
+
+  codexShellAliases = {
+    cx = "command codex --sandbox danger-full-access --ask-for-approval never";
+  };
+  codexNushellAliases = {
+    cx = "^codex --sandbox danger-full-access --ask-for-approval never";
+  };
+
+  codexSettings = {
+    model = "gpt-5.6-sol";
+    model_reasoning_effort = "high";
+    approval_policy = "never";
+    default_permissions = "unrestricted";
+    web_search = "live";
+
+    permissions.unrestricted = {
+      description = "Unrestricted access without the desktop Full access warning";
+      filesystem = {
+        ":root" = "write";
+      };
+      network = {
+        enabled = true;
+        allow_local_binding = true;
+        dangerously_allow_all_unix_sockets = true;
+      };
+    };
+
+    tui = {
+      notification_condition = "always";
+      show_tooltips = false;
+      terminal_resize_reflow_max_rows = 0;
+      keymap.global = {
+        open_external_editor = "ctrl-x";
+      }
+      // lib.attrsets.optionalAttrs isDarwin {
+        open_transcript = "ctrl-t";
+      };
+    }
+    // lib.attrsets.optionalAttrs config.catppuccin.enable {
+      theme = "catppuccin-frappe-pink";
+    };
+  };
+in
+{
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  options.hm.codex.enable = lib.options.mkEnableOption "Codex";
+
+  config = lib.modules.mkIf cfg.enable {
+    home.packages = [
+      pkgs.unstable.codex-acp
+      pkgs.unstable.opencode
+    ];
+
+    programs.codex = {
+      enable = true;
+      package = pkgs.unstable.codex;
+      settings = codexSettings;
+    };
+
+    programs.bash.shellAliases = codexShellAliases;
+    programs.zsh.shellAliases = codexShellAliases;
+    programs.nushell.shellAliases = codexNushellAliases;
+
+    home.file = lib.attrsets.optionalAttrs config.catppuccin.enable {
+      "${codexConfigDir}/themes/catppuccin-frappe-pink.tmTheme".source = ./catppuccin-frappe-pink.tmTheme;
+    };
+  };
+}

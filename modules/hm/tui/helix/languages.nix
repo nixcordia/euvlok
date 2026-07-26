@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ pkgs, lib, ... }:
 let
   language-server = {
     bash-language-server = {
@@ -27,6 +27,10 @@ let
       config.formatter.alignEntries = true;
       config.formatter.columnWidth = 100;
     };
+    rumdl = {
+      command = lib.meta.getExe pkgs.unstable.rumdl;
+      args = [ "server" ];
+    };
   };
 
   language = [
@@ -53,8 +57,25 @@ let
       auto-format = true;
       language-servers = [ "taplo" ];
     }
+    {
+      name = "markdown";
+      auto-format = true;
+      formatter = {
+        command = lib.meta.getExe pkgs.unstable.rumdl;
+        args = [
+          "fmt"
+          "--stdin"
+          "--stdin-filename"
+          "%{buffer_name}"
+        ];
+      };
+      language-servers = [ "rumdl" ];
+    }
   ];
 in
 {
+  _class = "homeManager";
+  _file = ./languages.nix;
+  key = toString ./languages.nix;
   programs.helix.languages = { inherit language-server language; };
 }

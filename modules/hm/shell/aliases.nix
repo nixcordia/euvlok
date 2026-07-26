@@ -100,6 +100,9 @@ let
   };
 in
 {
+  _class = "homeManager";
+  _file = ./aliases.nix;
+  key = toString ./aliases.nix;
   programs.bash.shellAliases = aliases;
   programs.zsh.shellAliases = aliases;
 }

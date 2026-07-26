@@ -5,6 +5,9 @@
 }:
 # GNOME Stuff
 {
+  _class = "nixos";
+  _file = ./desktop.nix;
+  key = toString ./desktop.nix;
   services.gnome = {
     at-spi2-core.enable = true;
     core-developer-tools.enable = true;

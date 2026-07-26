@@ -1,13 +1,16 @@
+{ euvlokInputs }:
 {
-  lib,
-  inputs,
   config,
+  lib,
   osClass,
   ...
 }:
 {
+  _class = "homeManager";
+  _file = ./default.nix;
+  key = toString ./default.nix;
   imports = [
-    inputs.catppuccin-trivial.homeModules.catppuccin
+    euvlokInputs.catppuccin-trivial.homeModules.catppuccin
   ]
   ++ lib.lists.optionals (osClass == "nixos") [ ./firefox.nix ];
 

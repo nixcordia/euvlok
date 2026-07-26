@@ -1,13 +1,18 @@
-let
-  entries = builtins.readDir ./.;
-  userFiles = builtins.filter (
-    name:
-    entries.${name} == "regular"
-    && name != "default.nix"
-    && name != "flake.nix"
-    && builtins.match ".*\\.nix" name != null
-  ) (builtins.attrNames entries);
-in
+{ lib, ... }:
 {
-  imports = map (name: ./. + "/${name}") userFiles;
+  _class = "flake";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  imports = lib.pipe (builtins.readDir ./.) [
+    (lib.filterAttrs (
+      name: type:
+      type == "regular"
+      && lib.hasSuffix ".nix" name
+      && !lib.elem name [
+        "default.nix"
+        "flake.nix"
+      ]
+    ))
+    (lib.mapAttrsToList (name: _type: lib.path.append ./. name))
+  ];
 }

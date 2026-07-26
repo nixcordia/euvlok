@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  _class = "nixos";
+  _file = ./fonts.nix;
+  key = toString ./fonts.nix;
   fonts = {
     enableDefaultPackages = true;
     fontDir.enable = true;

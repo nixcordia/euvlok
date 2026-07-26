@@ -5,15 +5,15 @@
   ...
 }:
 let
+  inherit (lib)
+    hiPrio
+    mkEnableOption
+    mkIf
+    optionals
+    ;
   commonPkgs = (
     builtins.attrValues {
       # Nix Related
-      inherit (pkgs)
-        auto-rebase
-        chezmoi-support
-        lldb-mcp-launcher
-        zellij-theme-tools
-        ;
       inherit (pkgs.unstable)
         cachix
         nixfmt
@@ -21,9 +21,9 @@ let
         nixd
         ;
 
-      uutils-coreutils-noprefix = (lib.meta.hiPrio pkgs.unstable.uutils-coreutils-noprefix);
-      uutils-diffutils = (lib.meta.hiPrio pkgs.unstable.uutils-diffutils);
-      uutils-findutils = (lib.meta.hiPrio pkgs.unstable.uutils-findutils);
+      uutils-coreutils-noprefix = hiPrio pkgs.unstable.uutils-coreutils-noprefix;
+      uutils-diffutils = hiPrio pkgs.unstable.uutils-diffutils;
+      uutils-findutils = hiPrio pkgs.unstable.uutils-findutils;
 
       # GNU
       inherit (pkgs.unstable)
@@ -133,7 +133,7 @@ let
       inherit (pkgs.unstable) sysstat;
     }
     # Pacakges only meant for Desktops
-    ++ lib.lists.optionals (config.nixos.amd.enable or config.nixos.nvidia.enable) (
+    ++ optionals (config.nixos.amd.enable or config.nixos.nvidia.enable) (
       builtins.attrValues {
         inherit (pkgs.unstable)
           networkmanagerapplet
@@ -149,6 +149,15 @@ let
   );
 in
 {
-  environment.systemPackages =
-    commonPkgs ++ lib.lists.optionals config.nixpkgs.hostPlatform.isLinux linuxOnlyPkgs;
+  _class = null;
+  _file = ./packages.nix;
+  key = toString ./packages.nix;
+  options.euvlok.packages.enable = mkEnableOption "euvlok's shared system package profile" // {
+    default = true;
+  };
+
+  config = mkIf config.euvlok.packages.enable {
+    environment.systemPackages =
+      commonPkgs ++ optionals config.nixpkgs.hostPlatform.isLinux linuxOnlyPkgs;
+  };
 }

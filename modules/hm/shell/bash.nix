@@ -3,6 +3,9 @@ let
   paths = import ./paths.nix { inherit lib; };
 in
 {
+  _class = "homeManager";
+  _file = ./bash.nix;
+  key = toString ./bash.nix;
   options.hm.bash.enable = lib.options.mkEnableOption "Bash" // {
     default = true;
   };
