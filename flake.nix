@@ -10,6 +10,7 @@
 
   inputs = {
     # --- Shared ---
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     eupkgs.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     eupkgs.url = "github:euvlok/pkgs";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";

@@ -134,6 +134,30 @@ euvlok.nix.buildParallelism = {
 };
 ```
 
+### Determinate Nix
+
+Every NixOS host that imports `inputs.euvlok.nixosModules.default` uses
+[Determinate Nix](https://docs.determinate.systems/determinate-nix/). Its
+version is pinned by `flake.lock`, and the shared module enables lazy trees,
+all-core parallel evaluation, and weekly multi-threaded store optimisation.
+Existing caches, registries, credentials, and host-specific Nix settings remain
+declarative: the Determinate module writes them to its supported
+`/etc/nix/nix.custom.conf` include.
+
+The first switch from upstream Nix needs Determinate's binary cache so the
+machine does not build Determinate Nix from source:
+
+```sh
+sudo nixos-rebuild switch \
+  --option extra-substituters https://install.determinate.systems \
+  --option extra-trusted-public-keys \
+    'cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=' \
+  --flake .#HOST
+```
+
+Later rebuilds use the normal command. Confirm the activated distribution with
+`nix --version` and `determinate-nixd version`.
+
 ## Working Here
 
 - Keep host-specific choices close to the host or user that needs them.

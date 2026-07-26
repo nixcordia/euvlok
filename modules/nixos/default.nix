@@ -11,6 +11,7 @@
   imports = [
     euvlokInputs.catppuccin-trivial.nixosModules.catppuccin
     (lib.modules.importApply ./catppuccin.nix { inherit euvlokInputs; })
+    euvlokInputs.determinate.nixosModules.default
     (lib.modules.importApply ../cross { inherit euvlokInputs; })
     ./amd.nix
     ./audio.nix
