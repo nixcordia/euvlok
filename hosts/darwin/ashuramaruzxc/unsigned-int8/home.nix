@@ -1,9 +1,4 @@
-{
-  inputs,
-  pkgs,
-  lib,
-  ...
-}:
+{ inputs, pkgs, ... }:
 let
   commonImports = [
     { home.stateVersion = "26.05"; }
@@ -122,9 +117,6 @@ let
       xemu
       ;
     inherit (pkgs.jetbrains) dataspell datagrip;
-    pcsx2-bin = pkgs.pcsx2-bin.overrideAttrs (oldAttrs: {
-      meta = lib.attrsets.recursiveUpdate oldAttrs.meta { platforms = lib.platforms.darwin; };
-    });
   };
 
   jetbrainsPackages =
