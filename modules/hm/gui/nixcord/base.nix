@@ -17,7 +17,6 @@
       dontRoundMyTimestamps.enable = true;
       fixCodeblockGap.enable = true;
       forceOwnerCrown.enable = true;
-      friendshipRanks.enable = true;
       serverInfo.enable = true;
       themeAttributes.enable = true;
       unlockedAvatarZoom.enable = true;

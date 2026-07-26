@@ -18,6 +18,7 @@
       env = {
         NIX_LD = "/run/current-system/sw/share/nix-ld/lib/ld.so";
         NIX_LD_LIBRARY_PATH = "/run/current-system/sw/share/nix-ld/lib";
+        LD_LIBRARY_PATH = "/run/current-system/sw/share/nix-ld/lib";
       };
     };
   };

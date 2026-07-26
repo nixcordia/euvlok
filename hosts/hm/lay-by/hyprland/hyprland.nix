@@ -16,7 +16,7 @@ _: {
     exec-once = [
       "waybar"
       "hyprctl setcursor BreezeX-Dark 24"
-      "wlsunset -S 9:00 -s 21:00"
+      "wlsunset -S 7:00 -s 21:00"
       "systemctl --user start hyprpolkitagent"
       "xrandr --output DP-1 --primary"
       "nicotine -s"

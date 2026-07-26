@@ -47,8 +47,8 @@
           euvlok.nixpkgs.unstableSource = inputs.nixpkgs-unstable;
           home.shell.enableShellIntegration = true;
           hm = {
-            #clankers.codex.enable = true;
-            #clankers.codex.statusLine.enable = true;
+            clankers.codex.enable = true;
+            clankers.codex.statusLine.enable = true;
             fastfetch.enable = true;
             firefox.zen-browser.enable = true;
             bash.enable = true;

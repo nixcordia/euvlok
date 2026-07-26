@@ -72,13 +72,13 @@
   };
 
   # For some reason this piece of shit makes my pc freeze at high ram utilization.
-  swapDevices = [
-    {
-      device = "/var/lib/swapfile";
-      size = 4 * 1024;
-      randomEncryption.enable = true;
-    }
-  ];
+  #swapDevices = [
+  #  {
+  #    device = "/var/lib/swapfile";
+  #    size = 4 * 1024;
+  #    randomEncryption.enable = true;
+  #  }
+  #];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
