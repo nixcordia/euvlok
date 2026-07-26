@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - "renovate/**"
   workflow_dispatch:
 
 permissions:
@@ -37,42 +38,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
 
       - name: Check README links
-        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8  # v2.9.0
         with:
           args: --no-progress --verbose --exclude '^https://nixos.org/manual/nixpkgs/stable/?$' README.md
           fail: true
-
-  rust:
-    name: Rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Set up Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
-
-      - name: Check Rust formatting
-        run: cargo fmt --all -- --check
-
-      - name: Check Rust code
-        run: cargo check --workspace --all-targets --all-features
-
-      - name: Check workflow files
-        run: cargo run --package github-maintenance -- check-workflows
-
-      - name: Lint Rust code
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-
-      - name: Test Rust code
-        run: cargo test --workspace --all-features
 
   nix:
     name: Nix (${{ matrix.system }})
@@ -88,7 +62,7 @@ jobs:
             runner: ubuntu-24.04-arm
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
 
@@ -102,17 +76,5 @@ jobs:
       - name: Check flake inputs
         run: nix flake metadata
 
-      - name: Run pre-commit checks
-        run: nix build --print-build-logs .#checks.${{ matrix.system }}.pre-commit
-
-      - name: Build packages
-        run: |
-          nix build --print-build-logs \
-            .#packages.${{ matrix.system }}.auto-rebase \
-            .#packages.${{ matrix.system }}.bootstrap \
-            .#packages.${{ matrix.system }}.browser-extension-update \
-            .#packages.${{ matrix.system }}.catppuccin-userstyles \
-            .#packages.${{ matrix.system }}.chezmoi-support \
-            .#packages.${{ matrix.system }}.github-maintenance \
-            .#packages.${{ matrix.system }}.nvidia-prefetch \
-            .#packages.${{ matrix.system }}.zellij-theme-tools
+      - name: Run development checks
+        run: nix run nixpkgs#devenv -- test

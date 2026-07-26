@@ -31,7 +31,7 @@ runs:
   using: composite
   steps:
     - name: Install Nix
-      uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+      uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
       with:
         github_access_token: ${{ inputs.github-token }}
         extra_nix_config: |
@@ -43,7 +43,7 @@ runs:
     - name: Configure Cachix
       id: cachix
       continue-on-error: true
-      uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71 # v17
+      uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71  # v17
       with:
         name: ${{ inputs.cachix-cache }}
         extraPullNames: ${{ inputs.extra-cachix-caches }}
@@ -58,7 +58,7 @@ runs:
 
     - name: Configure Flox binary cache
       shell: bash
-      run: |
+      run: | # zizmor: ignore[github-env] RUNNER_TEMP supplies the generated configuration path.
         flox_nix_config="${RUNNER_TEMP}/flox-nix.conf"
 
         {
