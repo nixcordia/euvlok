@@ -1,40 +1,15 @@
 {
-  "window.autoDetectColorScheme": true,
-  "editor.defaultFormatter": "biomejs.biome",
-  "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "explicit",
-    "source.fixAll.biome": "explicit"
-  },
+  "editor.formatOnSave": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
   "files.associations": {
-    "*.bash.tmpl": "shellscript",
-    "*.fish.tmpl": "fish",
-    "*.json.tmpl": "jsonc",
-    "*.kdl.tmpl": "kdl",
-    "*.lua.tmpl": "lua",
-    "*.nix.tmpl": "nix",
-    "*.nu.tmpl": "nushell",
-    "*.sh.tmpl": "shellscript",
-    ".*.toml.tmpl": "toml",
-    "**/.chezmoiexternal.toml.tmpl": "toml",
-    "*.toml.tmpl": "toml",
-    "*.yaml.tmpl": "yaml",
-    "*.yml.tmpl": "yaml",
-    "*.zsh.tmpl": "shellscript",
-    "*.rasi": "css",
-    "*.kbd": "plaintext",
-    "*.tmpl": "plaintext",
-    ".chezmoiignore": "gitignore",
-    ".chezmoiremove": "plaintext",
-    ".envrc": "shellscript"
+    "*.rasi": "css"
   },
   "files.exclude": {
     "**/.devenv": true,
     "**/.direnv": true,
-    "**/.fallow/cache": true,
     "**/.jj": true,
-    "**/.zig-cache": true,
     "**/node_modules": true,
     "**/result": true,
     "**/result-*": true,
@@ -45,12 +20,7 @@
   "search.exclude": {
     "**/.devenv": true,
     "**/.direnv": true,
-    "**/.fallow/cache": true,
     "**/.jj": true,
-    "**/.zig-cache": true,
-    "**/bun.lock": true,
-    "**/Cargo.lock": true,
-    "**/flake.lock": true,
     "**/node_modules": true,
     "**/result": true,
     "**/result-*": true,
@@ -58,12 +28,6 @@
     "**/zig-cache": true,
     "**/zig-out": true
   },
-  "biome.enabled": true,
-  "biome.requireConfiguration": true,
-  "biome.lsp.bin": "./node_modules/.bin/biome",
-  "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
-  "js/ts.preferences.includePackageJsonAutoImports": "on",
   "nix.enableLanguageServer": true,
   "nix.serverPath": "nixd",
   "nix.serverSettings": {
@@ -73,131 +37,54 @@
       }
     }
   },
-  "rust-analyzer.cargo.features": "all",
-  "rust-analyzer.check.command": "clippy",
-  "rust-analyzer.check.allTargets": true,
-  "rust-analyzer.check.workspace": true,
-  "rust-analyzer.check.extraArgs": ["--all-features"],
-  "rust-analyzer.cargo.buildScripts.enable": true,
-  "rust-analyzer.procMacro.enable": true,
-  "zig.path": "zig",
-  "zig.zls.enabled": "on",
-  "zig.zls.path": "zls",
-  "zig.formattingProvider": "zls",
-  "zig.buildOnSaveProvider": "zls",
   "shellcheck.enable": true,
-  "shellcheck.run": "onSave",
   "shellcheck.executablePath": "shellcheck",
+  "shellcheck.run": "onSave",
+  "shellcheck.ignorePatterns": {
+    "**/*.bash.tmpl": true,
+    "**/*.fish": true,
+    "**/*.nu": true,
+    "**/*.sh.tmpl": true,
+    "**/*.zsh": true,
+    "**/*.zsh.tmpl": true,
+    "**/*.zsh-theme": true,
+    "**/dot_bashrc.tmpl": true,
+    "**/dot_zshrc.tmpl": true
+  },
   "shfmt.executablePath": "shfmt",
   "shfmt.formatIgnored": false,
-  "yaml.validate": true,
   "yaml.schemaStore.enable": true,
+  "yaml.validate": true,
   "yaml.schemas": {
-    "https://json.schemastore.org/github-workflow.json": [
-      ".github/workflows/*.yml",
-      ".github/workflows/*.yaml"
-    ],
     "https://json.schemastore.org/github-action.json": [
-      ".github/actions/*/action.yml",
-      ".github/actions/*/action.yaml"
+      ".github/actions/*/action.yaml",
+      ".github/actions/*/action.yml"
     ],
-    "https://json.schemastore.org/dependabot-2.0.json": ".github/dependabot.yml"
+    "https://json.schemastore.org/github-workflow.json": [
+      ".github/workflows/*.yaml",
+      ".github/workflows/*.yml"
+    ]
   },
   "markdownlint.config": {
     "MD013": false,
     "MD033": false
   },
-  "Lua.runtime.version": "LuaJIT",
-  "Lua.workspace.checkThirdParty": false,
-  "shellcheck.ignorePatterns": {
-    "**/*.csh": true,
-    "**/*.cshrc": true,
-    "**/*.fish": true,
-    "**/*.login": true,
-    "**/*.logout": true,
-    "**/*.tcsh": true,
-    "**/*.tcshrc": true,
-    "**/*.xonshrc": true,
-    "**/*.xsh": true,
-    "**/*.zsh": true,
-    "**/*.zshrc": true,
-    "**/zshrc": true,
-    "**/*.zprofile": true,
-    "**/zprofile": true,
-    "**/*.zlogin": true,
-    "**/zlogin": true,
-    "**/*.zlogout": true,
-    "**/zlogout": true,
-    "**/*.zshenv": true,
-    "**/zshenv": true,
-    "**/*.zsh-theme": true,
-    "**/*.bash.tmpl": true,
-    "**/*.sh.tmpl": true,
-    "**/*.zsh.tmpl": true,
-    "**/dot_bashrc.tmpl": true,
-    "**/dot_zshrc.tmpl": true
-  },
-  "bashIde.shellcheckPath": "",
-  "nushellLanguageServer.nushellExecutablePath": "nushell-lsp-filter",
-  "[javascript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
   "[json]": {
-    "editor.defaultFormatter": "biomejs.biome"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[nix]": {
-    "editor.defaultFormatter": "jnoortheen.nix-ide",
-    "editor.formatOnSave": true
-  },
-  "[rust]": {
-    "editor.defaultFormatter": "rust-lang.rust-analyzer",
-    "editor.formatOnSave": true,
-    "editor.inlayHints.enabled": "on"
-  },
-  "[zig]": {
-    "editor.defaultFormatter": "ziglang.vscode-zig",
-    "editor.formatOnSave": true,
-    "editor.suggest.insertMode": "replace"
-  },
-  "[shellscript]": {
-    "editor.defaultFormatter": "mkhl.shfmt",
-    "editor.formatOnSave": true
-  },
-  "[nushell]": {
-    "editor.formatOnSave": true
-  },
-  "[toml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml",
-    "editor.formatOnSave": true
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
-    "editor.formatOnSave": true
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[markdown]": {
-    "editor.formatOnSave": true
+    "editor.defaultFormatter": "davidanson.vscode-markdownlint"
   },
-  "[css]": {
-    "editor.defaultFormatter": "vscode.css-language-features",
-    "editor.formatOnSave": true
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
-  "[kdl]": {
-    "editor.formatOnSave": true
+  "[shellscript]": {
+    "editor.defaultFormatter": "mkhl.shfmt"
   },
-  "[lua]": {
-    "editor.defaultFormatter": "sumneko.lua",
-    "editor.formatOnSave": true
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
   }
 }

@@ -41,6 +41,16 @@ in
     euvlokModule
   ];
 
+  systems = [
+    "aarch64-darwin"
+    "aarch64-linux"
+    "x86_64-linux"
+  ];
+
+  perSystem = { pkgs, ... }: {
+    formatter = pkgs.nixfmt-tree;
+  };
+
   # Keep contributor-owned inputs out of the main entry path. Host outputs
   # opt into those inputs.
   partitionedAttrs = {
