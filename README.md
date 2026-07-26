@@ -22,80 +22,59 @@ carefully.
 
 ## Layout
 
-| Path                                | What it is                                                       |
-| ----------------------------------- | ---------------------------------------------------------------- |
-| [`flake.nix`](./flake.nix)          | Top-level flake wiring and outputs.                              |
-| [`flake-modules/`](./flake-modules) | Flake-parts modules for packages, checks, users, and dev shells. |
-| [`hosts/`](./hosts)                 | NixOS, nix-darwin, and Home Manager entrypoints.                 |
-| [`modules/`](./modules)             | Reusable Nix and Home Manager modules.                           |
-| [`dotfiles/`](./dotfiles)           | Chezmoi dotfiles and templates.                                  |
-| [`lib/`](./lib)                     | Shared Nix helpers.                                              |
-| [`packages/`](./packages)           | Rust automation packages.                                        |
-| [`secrets/`](./secrets)             | SOPS-encrypted host and user secrets.                            |
+| Path                                | What it is                                                    |
+| ----------------------------------- | ------------------------------------------------------------- |
+| [`flake.nix`](./flake.nix)          | Top-level flake wiring and inputs.                            |
+| [`devenv.nix`](./devenv.nix)        | Contributor shell, formatters, and git hooks.                 |
+| [`flake-modules/`](./flake-modules) | Flake-parts modules for hosts and public outputs.             |
+| [`hosts/`](./hosts)                 | NixOS, nix-darwin, and Home Manager entrypoints and profiles. |
+| [`modules/`](./modules)             | Reusable NixOS, nix-darwin, and Home Manager modules.         |
+| [`dotfiles/`](./dotfiles)           | Chezmoi dotfiles and templates.                               |
+| [`lib/`](./lib)                     | Shared Nix helpers.                                           |
+| [`secrets/`](./secrets)             | SOPS-encrypted host and user secrets.                         |
 
 ## Quick Start
 
 ```sh
-nix develop
+devenv shell
 ```
 
-Bootstrap a machine:
+Managed Home Manager profiles install devenv and its automatic shell hook. For
+other profiles, install devenv and add the hook for your shell as described in
+the [auto-activation guide](https://devenv.sh/auto-activation/), then trust this
+checkout once:
 
 ```sh
-bootstrap bootstrap
+devenv allow
 ```
 
-On Windows, the first bootstrap pass installs managed PowerShell from the
-catalog and writes Windows Terminal settings that make that `pwsh` profile the
-default before installing the rest of the catalog.
-
-Run checks:
+Format and run the development checks:
 
 ```sh
-cargo check --workspace
-cargo test --workspace
-```
-
-Format:
-
-```sh
-cargo fmt --all
-nix fmt
+devenv tasks run devenv:treefmt:run
+devenv test
 ```
 
 Build a host:
 
 ```sh
-nix build .#nixosConfigurations.nyx.config.system.build.toplevel
-nix build .#darwinConfigurations.FlameFlags-Mac-mini.system
-```
-
-Run a local tool:
-
-```sh
-nix run .#auto-rebase
-nix run .#browser-extension-update
-nix run .#github-maintenance
-nix run .#nvidia-prefetch
+nix build .#nixosConfigurations.blind-faith.config.system.build.toplevel
+nix build .#darwinConfigurations.faputa.system
 ```
 
 ## Hosts
 
-| Output                | Owner           | Platform   |
-| --------------------- | --------------- | ---------- |
-| `blind-faith`         | `lay-by`        | NixOS      |
-| `nanachi`             | `bigshaq9999`   | NixOS      |
-| `null`                | `sm-idk`        | NixOS      |
-| `nyx`                 | `flameflag`     | NixOS      |
-| `unsigned-int16`      | `ashuramaruzxc` | NixOS      |
-| `unsigned-int32`      | `ashuramaruzxc` | NixOS      |
-| `unsigned-int64`      | `ashuramaruzxc` | NixOS      |
-| `FlameFlags-Mac-mini` | `flameflag`     | nix-darwin |
-| `faputa`              | `bigshaq9999`   | nix-darwin |
-| `unsigned-int8`       | `ashuramaruzxc` | nix-darwin |
+| Output           | Owner           | Platform   |
+| ---------------- | --------------- | ---------- |
+| `blind-faith`    | `lay-by`        | NixOS      |
+| `unsigned-int16` | `ashuramaruzxc` | NixOS      |
+| `unsigned-int32` | `ashuramaruzxc` | NixOS      |
+| `unsigned-int64` | `ashuramaruzxc` | NixOS      |
+| `faputa`         | `bigshaq9999`   | nix-darwin |
+| `unsigned-int8`  | `ashuramaruzxc` | nix-darwin |
 
-Standalone Home Manager outputs are exposed for `ashuramaruzxc`, `bigshaq9999`,
-`lay-by`, and `sm-idk`.
+Home Manager modules are exposed for `ashuramaruzxc`, `bigshaq9999`, and
+`lay-by`.
 
 ## Flake Outputs
 
@@ -108,17 +87,51 @@ inputs.euvlok.homeModules.default
 inputs.euvlok.homeModules.os
 ```
 
-Apps and packages:
+The `default` modules compose the full shared configuration. Named modules can
+be imported independently when a consumer only needs one feature:
 
-```text
-auto-rebase
-bootstrap
-browser-extension-update
-catppuccin-userstyles
-chezmoi-support
-github-maintenance
-nvidia-prefetch
-zellij-theme-tools
+```nix
+inputs.euvlok.nixosModules.nvidia
+inputs.euvlok.darwinModules.system
+inputs.euvlok.homeModules.catppuccin-gtk
+inputs.euvlok.homeModules.languages
+inputs.euvlok.homeModules.wm
+```
+
+Named modules include their shared prerequisites and provider-owned inputs, so
+consumers do not need to reproduce this flake's internal input names or import
+implementation files by relative path.
+
+Nixpkgs overlay:
+
+```nix
+inputs.euvlok.overlays.default
+```
+
+Reusable flake-parts module:
+
+```nix
+inputs.euvlok.flakeModules.default
+```
+
+The default overlay provides the shared VS Code extensions, an `unstable`
+package set, `eupkgs`, and the compatibility overrides used by the host
+modules. To select a different unstable source:
+
+```nix
+inputs.euvlok.lib.overlays.mkNixpkgsOverlay {
+  unstableSource = inputs.nixpkgs-unstable;
+}
+```
+
+The shared Nix module uses Nix's native automatic build scheduling by default.
+Hosts that need fixed limits can override it declaratively:
+
+```nix
+euvlok.nix.buildParallelism = {
+  maxJobs = 4;
+  cores = 8;
+};
 ```
 
 ## Working Here
@@ -131,6 +144,21 @@ zellij-theme-tools
 - Treat automation as source code and test behavior that can drift.
 - Prefer explicit flake outputs over local conventions.
 - Read the host that consumes a module before copying it somewhere else.
+
+### Module metadata
+
+Every module expression carries three top-level fields:
+
+- `_class` prevents importing NixOS, nix-darwin, Home Manager, or flake-parts
+  modules into the wrong evaluator. Cross-platform modules use `null`.
+- `_file` preserves the real source location when a module is imported or
+  wrapped before evaluation, which keeps diagnostics actionable.
+- `key` gives the module a stable identity for import de-duplication and
+  `disabledModules`.
+
+These fields belong to module expressions only. Flakes, overlays, package/data
+sets, source catalogs, and `nixosSystem`/`darwinSystem` builders are ordinary
+Nix values and must not receive module metadata.
 
 ## Resources
 
