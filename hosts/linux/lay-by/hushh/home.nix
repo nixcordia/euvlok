@@ -15,7 +15,7 @@
   };
 
   home-manager.users.hushh =
-    { ... }:
+    { lib, ... }:
     {
       imports = [
         {
@@ -49,6 +49,7 @@
         {
           euvlok.nixpkgs.unstableSource = inputs.nixpkgs-unstable;
           home.shell.enableShellIntegration = true;
+          programs.codex.settings = lib.modules.mkForce { };
           hm = {
             codex.enable = true;
             fastfetch.enable = true;
