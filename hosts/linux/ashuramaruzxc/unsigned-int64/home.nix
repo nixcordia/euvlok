@@ -15,7 +15,6 @@ let
       fzf.enable = true;
       helix.enable = true;
       nh.enable = true;
-      zellij.enable = true;
       zsh.enable = true;
     };
   };
@@ -29,10 +28,8 @@ let
         ghostty.enable = true;
         helix.enable = true;
         nh.enable = true;
-        nushell.enable = true;
         vscode.enable = true;
         yazi.enable = true;
-        zellij.enable = true;
       };
     }
   ];

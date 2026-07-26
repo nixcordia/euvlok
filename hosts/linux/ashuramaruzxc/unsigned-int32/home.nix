@@ -28,7 +28,6 @@ let
         codex.enable = true;
         firefox.floorp.enable = true;
         nixcord.enable = true;
-        nushell.enable = true;
         vscode.enable = true;
       };
     }

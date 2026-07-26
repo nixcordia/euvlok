@@ -5,7 +5,6 @@ let
     ../../../hm/ashuramaruzxc/aliases.nix
     ../../../hm/ashuramaruzxc/git.nix
     ../../../hm/ashuramaruzxc/helix.nix
-    ../../../hm/ashuramaruzxc/nushell.nix
     ../../../hm/ashuramaruzxc/ssh.nix
     ../../../hm/ashuramaruzxc/starship.nix
   ];
@@ -36,7 +35,6 @@ let
         nixcord.enable = true;
         vscode.enable = true;
         zed-editor.enable = true;
-        zellij.enable = true;
         languages = {
           # cpp.enable = true;
           csharp = {

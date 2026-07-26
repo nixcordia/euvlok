@@ -25,7 +25,6 @@ in
         { home.stateVersion = "25.11"; }
       ]
       ++ [
-        ../../../hm/bigshaq9999/nushell.nix
         ../../../hm/bigshaq9999/starship.nix
         ../../../hm/bigshaq9999/git.nix
         ../../../hm/bigshaq9999/helix.nix
@@ -76,11 +75,9 @@ in
             mpv.enable = true;
             nh.enable = true;
             nixcord.enable = true;
-            # nushell.enable = true;
             vscode.enable = true;
             # yazi.enable = true;
             zed-editor.enable = true;
-            zellij.enable = true;
             # zsh.enable = false;
             languages = {
               # cpp.enable = true;

@@ -43,7 +43,6 @@
   "shellcheck.ignorePatterns": {
     "**/*.bash.tmpl": true,
     "**/*.fish": true,
-    "**/*.nu": true,
     "**/*.sh.tmpl": true,
     "**/*.zsh": true,
     "**/*.zsh.tmpl": true,

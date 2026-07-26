@@ -17,9 +17,6 @@ let
   codexShellAliases = {
     cx = "command codex --sandbox danger-full-access --ask-for-approval never";
   };
-  codexNushellAliases = {
-    cx = "^codex --sandbox danger-full-access --ask-for-approval never";
-  };
 
   codexSettings = {
     model = "gpt-5.6-sol";
@@ -76,7 +73,6 @@ in
 
     programs.bash.shellAliases = codexShellAliases;
     programs.zsh.shellAliases = codexShellAliases;
-    programs.nushell.shellAliases = codexNushellAliases;
 
     home.file = lib.attrsets.optionalAttrs config.catppuccin.enable {
       "${codexConfigDir}/themes/catppuccin-frappe-pink.tmTheme".source = ./catppuccin-frappe-pink.tmTheme;

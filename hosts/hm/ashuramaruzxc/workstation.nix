@@ -14,7 +14,6 @@ _: {
     mpv.enable = true;
     nh.enable = true;
     zed-editor.enable = true;
-    zellij.enable = true;
     zsh.enable = true;
     languages = {
       cpp.enable = true;

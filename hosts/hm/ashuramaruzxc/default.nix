@@ -10,7 +10,6 @@ _: {
     ./git.nix
     ./helix.nix
     ./nixcord.nix
-    ./nushell.nix
     ./ssh.nix
     ./starship.nix
     ./vscode.nix
