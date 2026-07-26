@@ -5,6 +5,7 @@ Thumbs.db
 *.swp
 
 .devenv/
+.direnv/
 result
 result-*
 /.pre-commit-config.yaml
