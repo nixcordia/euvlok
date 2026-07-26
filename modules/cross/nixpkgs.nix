@@ -26,13 +26,6 @@
       unstable = import config.euvlok.nixpkgs.unstableSource {
         inherit (prev.stdenv.hostPlatform) system;
         inherit (config.nixpkgs) config;
-        overlays = [
-          (_: unstablePrev: {
-            openldap = unstablePrev.openldap.overrideAttrs (_: {
-              doCheck = false;
-            });
-          })
-        ];
       };
     })
     (final: _prev: {
