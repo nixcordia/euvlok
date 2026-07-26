@@ -12,8 +12,8 @@
     (lib.modules.importApply ../cross/nixpkgs.nix { inherit euvlokInputs; })
   ];
 
-  config = lib.mkIf (osConfig != null && osConfig ? nixos) {
-    nixpkgs.config.cudaSupport = lib.mkDefault (osConfig.nixos.nvidia.enable or false);
-    nixpkgs.config.rocmSupport = lib.mkDefault (osConfig.nixos.amd.enable or false);
+  config = lib.modules.mkIf (osConfig != null && osConfig ? nixos) {
+    nixpkgs.config.cudaSupport = lib.modules.mkDefault (osConfig.nixos.nvidia.enable or false);
+    nixpkgs.config.rocmSupport = lib.modules.mkDefault (osConfig.nixos.amd.enable or false);
   };
 }

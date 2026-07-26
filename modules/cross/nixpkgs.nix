@@ -6,8 +6,7 @@
   ...
 }:
 let
-  inherit (lib) mkOption types;
-  hostPlatform = lib.attrByPath [ "nixpkgs" "hostPlatform" "system" ] (
+  hostPlatform = lib.attrsets.attrByPath [ "nixpkgs" "hostPlatform" "system" ] (
     if osConfig == null then null else osConfig.nixpkgs.hostPlatform.system
   ) config;
 in
@@ -15,8 +14,8 @@ in
   _class = null;
   _file = ./nixpkgs.nix;
   key = toString ./nixpkgs.nix;
-  options.euvlok.nixpkgs.unstableSource = mkOption {
-    type = types.path;
+  options.euvlok.nixpkgs.unstableSource = lib.options.mkOption {
+    type = lib.types.path;
     default = euvlokInputs.nixpkgs-unstable-small;
     description = "Top-level Nixpkgs store path imported as pkgs.unstable.";
   };

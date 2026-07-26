@@ -3,16 +3,16 @@
   _class = "flake";
   _file = ./default.nix;
   key = toString ./default.nix;
-  imports = lib.pipe (builtins.readDir ./.) [
-    (lib.filterAttrs (
+  imports = lib.trivial.pipe (builtins.readDir ./.) [
+    (lib.attrsets.filterAttrs (
       name: type:
       type == "regular"
-      && lib.hasSuffix ".nix" name
-      && !lib.elem name [
+      && lib.strings.hasSuffix ".nix" name
+      && !lib.lists.elem name [
         "default.nix"
         "flake.nix"
       ]
     ))
-    (lib.mapAttrsToList (name: _type: lib.path.append ./. name))
+    (lib.attrsets.mapAttrsToList (name: _type: lib.path.append ./. name))
   ];
 }

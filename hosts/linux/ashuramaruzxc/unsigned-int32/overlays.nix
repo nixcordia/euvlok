@@ -43,7 +43,7 @@
         # Upstream deliberately dlopens GLib instead of linking it. Keep that
         # behavior while making its bare sonames discoverable in the Nix store.
         postFixup = ''
-          patchelf --add-rpath ${final.lib.getLib final.glib}/lib \
+          patchelf --add-rpath ${final.lib.attrsets.getLib final.glib}/lib \
             "$out/lib/libgtk-nocsd.so.0"
         '';
 

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib.strings) toSentenceCase;
+  toSentenceCase = lib.strings.toSentenceCase;
 in
 {
   _class = "homeManager";

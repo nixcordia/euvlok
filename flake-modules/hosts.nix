@@ -135,7 +135,7 @@ in
           nameValuePair "eval-${kind}-${name}" (
             pkgs.runCommand "eval-${kind}-${name}" { } ''
               mkdir "$out"
-              printf '%s\n' ${lib.escapeShellArg (builtins.unsafeDiscardStringContext (toString value))} > "$out/drv-path"
+              printf '%s\n' ${lib.strings.escapeShellArg (builtins.unsafeDiscardStringContext (toString value))} > "$out/drv-path"
             ''
           );
       in

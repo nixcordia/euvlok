@@ -12,13 +12,13 @@ in
   key = toString ./build-parallelism.nix;
 
   options.euvlok.nix.buildParallelism = {
-    maxJobs = lib.mkOption {
+    maxJobs = lib.options.mkOption {
       type = lib.types.either lib.types.ints.positive (lib.types.enum [ "auto" ]);
       default = "auto";
       description = "Maximum number of builds Nix may execute concurrently.";
     };
 
-    cores = lib.mkOption {
+    cores = lib.options.mkOption {
       type = lib.types.ints.unsigned;
       default = 0;
       description = "CPU cores available to each build; zero lets Nix use all cores.";
@@ -26,7 +26,7 @@ in
   };
 
   config.nix.settings = {
-    cores = lib.mkDefault cfg.cores;
-    max-jobs = lib.mkDefault cfg.maxJobs;
+    cores = lib.modules.mkDefault cfg.cores;
+    max-jobs = lib.modules.mkDefault cfg.maxJobs;
   };
 }

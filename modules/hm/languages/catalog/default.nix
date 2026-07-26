@@ -51,12 +51,14 @@ let
         ;
     };
 in
-lib.pipe (builtins.readDir ./.) [
-  (lib.filterAttrs (
-    name: type: type == "regular" && name != "default.nix" && lib.hasSuffix ".nix" name
+lib.trivial.pipe (builtins.readDir ./.) [
+  (lib.attrsets.filterAttrs (
+    name: type: type == "regular" && name != "default.nix" && lib.strings.hasSuffix ".nix" name
   ))
-  (lib.mapAttrs' (
+  (lib.attrsets.mapAttrs' (
     name: _type:
-    lib.nameValuePair (lib.removeSuffix ".nix" name) (callLanguage (lib.path.append ./. name))
+    lib.attrsets.nameValuePair (lib.strings.removeSuffix ".nix" name) (
+      callLanguage (lib.path.append ./. name)
+    )
   ))
 ]

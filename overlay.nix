@@ -28,7 +28,7 @@ let
     });
   };
 in
-inputs.nixpkgs.lib.composeManyExtensions [
+inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   # Establish the independent package sets before overlays that inspect or
   # extend the final package set. This keeps stdenv evaluation acyclic on
   # custom platform bootstraps such as nixos-raspberrypi.
