@@ -32,7 +32,7 @@
     pname = "magnolia@12.34";
     version = "4.4.0.5";
     addonId = "magnolia@12.34";
-    url = "https://gitflic.ru/project/magnolia1234/bpc_uploads/blob/raw?file=bypass_paywalls_clean-latest.xpi&inline=false&commit=ed9308ff88b68c27b3121a22ed419445f48dccf8";
+    url = "https://gitflic.ru/project/magnolia1234/bpc_uploads/blob/raw?file=bypass_paywalls_clean-latest.xpi&inline=false&commit=b1851e14c1ada643a9711486f2a66fc28f73ad61";
     sha256 = "sha256-aWv6kusp4uC0gjRbfzWJbQx4DRm70gXGGHJvZ0DsDzA=";
     meta = with lib; {
       platforms = platforms.all;
@@ -1011,10 +1011,10 @@
   };
   "refined-github-" = buildFirefoxXpiAddon {
     pname = "refined-github-";
-    version = "26.7.12";
+    version = "26.7.26";
     addonId = "{a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad}";
-    url = "https://addons.mozilla.org/firefox/downloads/file/4895101/refined_github-26.7.12.xpi";
-    sha256 = "sha256-12Aa88GmFG/hjQ9fcd72/UqsTE/01GJQBUCogoVdbXg=";
+    url = "https://addons.mozilla.org/firefox/downloads/file/4920035/refined_github-26.7.26.xpi";
+    sha256 = "sha256-ufDdqBY8/3/DHYookICtwkrE7SVci5DPnDZR/Rioit8=";
     meta = with lib; {
       platforms = platforms.all;
       mozPermissions = [
