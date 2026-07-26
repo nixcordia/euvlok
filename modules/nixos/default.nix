@@ -10,6 +10,7 @@
   key = toString ./default.nix;
   imports = [
     euvlokInputs.catppuccin-trivial.nixosModules.catppuccin
+    (lib.modules.importApply ./catppuccin.nix { inherit euvlokInputs; })
     (lib.modules.importApply ../cross { inherit euvlokInputs; })
     ./amd.nix
     ./audio.nix

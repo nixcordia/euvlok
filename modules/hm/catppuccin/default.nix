@@ -1,17 +1,24 @@
 { euvlokInputs }:
 { lib, ... }:
 let
-  paletteLock =
-    (builtins.fromJSON (builtins.readFile (euvlokInputs.catppuccin-trivial + /pkgs/sources.json)))
-    .palette;
-
-  paletteSource = builtins.fetchTree {
-    type = "github";
-    owner = "catppuccin";
-    repo = "palette";
-    inherit (paletteLock) rev;
-    narHash = paletteLock.hash;
-  };
+  sourceLocks = builtins.fromJSON (
+    builtins.readFile (euvlokInputs.catppuccin-trivial + /pkgs/sources.json)
+  );
+  fetchCatppuccinSource =
+    repo:
+    let
+      lock = sourceLocks.${repo};
+    in
+    fetchTree {
+      type = "github";
+      owner = "catppuccin";
+      inherit repo;
+      inherit (lock) rev;
+      narHash = lock.hash;
+    };
+  paletteSource = fetchCatppuccinSource "palette";
+  gituiSource = fetchCatppuccinSource "gitui";
+  starshipSource = fetchCatppuccinSource "starship";
 in
 {
   _class = "homeManager";
@@ -22,4 +29,11 @@ in
     (lib.modules.importApply ./firefox.nix { inherit paletteSource; })
     ./zen-browser.nix
   ];
+
+  # These integrations read theme files during evaluation. Substitute
+  # evaluator-native sources for catppuccin/nix's fetchFromGitHub derivations.
+  catppuccin.sources = {
+    gitui = lib.modules.mkDefault "${gituiSource}/themes";
+    starship = lib.modules.mkDefault "${starshipSource}/themes";
+  };
 }

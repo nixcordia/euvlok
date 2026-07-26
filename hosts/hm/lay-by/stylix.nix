@@ -26,7 +26,9 @@
       url = "https://raw.githubusercontent.com/lay-by/wallpapers/refs/heads/main/starfighter2.png";
       hash = "sha256-eDeJpTVmEt6Ty0HL7KVKe+O6Sgcv8lKX2FlLQwm+v+I";
     };
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-terminal-dark.yaml";
+    # Stylix parses this during module evaluation. Keeping the selected scheme
+    # as source data avoids realising the whole base16-schemes package via IFD.
+    base16Scheme = ./tokyo-night-terminal-dark.yaml;
 
     cursor = {
       package = pkgs.kdePackages.breeze;
