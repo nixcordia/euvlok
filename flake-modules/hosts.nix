@@ -36,7 +36,7 @@ let
         type = types.nullOr (
           types.unique {
             message = "A host may only define one pre-built configuration.";
-          } types.attrs
+          } (types.addCheck types.raw builtins.isAttrs)
         );
         default = null;
         description = "Pre-built configuration value. Useful for nested flakes or unusual inputs.";

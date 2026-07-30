@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  options,
   ...
 }:
 let
@@ -69,12 +70,10 @@ in
     };
 
     extraExtensions = lib.options.mkOption {
-      type = lib.types.listOf lib.types.attrs;
+      type = options.programs.chromium.extensions.type;
       default = [ ];
       description = "A list of extra extensions to append to the base list.";
-      example = ''
-        (pkgs.callPackage ./my-extensions.nix { })
-      '';
+      example = lib.literalExpression "(pkgs.callPackage ./my-extensions.nix { })";
     };
   };
 

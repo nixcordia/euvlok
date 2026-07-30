@@ -7,13 +7,16 @@ in
   _file = ./locale.nix;
   key = toString ./locale.nix;
   options.nixos.locale = {
-    enable = lib.options.mkEnableOption "locale configuration" // {
-      default = false;
+    enable = lib.options.mkEnableOption "locale configuration";
+    timeZone = lib.options.mkOption {
+      type = lib.types.str;
+      example = "Europe/Sofia";
+      description = "IANA time zone to assign to `time.timeZone`.";
     };
-    timeZone = lib.options.mkOption { type = lib.types.str; };
     defaultLocale = lib.options.mkOption {
       type = lib.types.str;
       default = "en_US.UTF-8";
+      description = "Locale to assign to `i18n.defaultLocale`.";
     };
     extraLocaleSettings = lib.options.mkOption {
       type = lib.types.attrsOf lib.types.str;
@@ -28,6 +31,7 @@ in
         LC_TELEPHONE = "en_US.UTF-8";
         LC_TIME = "en_US.UTF-8";
       };
+      description = "Locale categories to assign to `i18n.extraLocaleSettings`.";
     };
   };
 

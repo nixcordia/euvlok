@@ -21,7 +21,7 @@ in
     name: def:
     lib.options.mkOption {
       default = { };
-      description = lib.options.mdDoc "Manages the development environment for the ${lib.strings.toSentenceCase name} language";
+      description = "Manages the development environment for the ${lib.strings.toSentenceCase name} language.";
       type =
         if def ? versionMap then
           lib.types.submodule {
@@ -29,12 +29,12 @@ in
               enable = lib.options.mkOption {
                 type = lib.types.bool;
                 default = false;
-                description = lib.options.mdDoc "Enable the development environment and tools for ${lib.strings.toSentenceCase name}";
+                description = "Whether to enable the development environment and tools for ${lib.strings.toSentenceCase name}.";
               };
               version = lib.options.mkOption {
                 type = lib.types.enum (lib.attrsets.attrNames def.versionMap);
                 default = def.defaultVersion;
-                description = lib.options.mdDoc ''
+                description = ''
                   Select the version of the ${lib.strings.toSentenceCase name} SDK to install
 
                   **Available versions:**
@@ -46,8 +46,8 @@ in
               extraPackages = lib.options.mkOption {
                 type = lib.types.listOf lib.types.package;
                 default = [ ];
-                description = lib.options.mdDoc ''
-                  A list of extra packages to install alongside the standard ${lib.strings.toSentenceCase name} toolchain
+                description = ''
+                  A list of extra packages to install alongside the standard ${lib.strings.toSentenceCase name} toolchain.
                 '';
               };
             };
@@ -58,12 +58,12 @@ in
               enable = lib.options.mkOption {
                 type = lib.types.bool;
                 default = false;
-                description = lib.options.mdDoc "Enable the development environment and tools for ${lib.strings.toSentenceCase name}";
+                description = "Whether to enable the development environment and tools for ${lib.strings.toSentenceCase name}.";
               };
               extraPackages = lib.options.mkOption {
                 type = lib.types.listOf lib.types.package;
                 default = [ ];
-                description = lib.options.mdDoc ''
+                description = ''
                   A list of extra packages to install alongside the standard ${lib.strings.toSentenceCase name} toolchain.
                 '';
               };
