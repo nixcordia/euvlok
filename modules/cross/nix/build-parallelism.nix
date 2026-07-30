@@ -1,3 +1,4 @@
+{ isDarwin }:
 {
   config,
   lib,
@@ -5,6 +6,10 @@
 }:
 let
   cfg = config.euvlok.nix.buildParallelism;
+  settings = {
+    cores = lib.modules.mkDefault cfg.cores;
+    max-jobs = lib.modules.mkDefault cfg.maxJobs;
+  };
 in
 {
   _class = null;
@@ -25,8 +30,6 @@ in
     };
   };
 
-  config.nix.settings = {
-    cores = lib.modules.mkDefault cfg.cores;
-    max-jobs = lib.modules.mkDefault cfg.maxJobs;
-  };
+  config =
+    if isDarwin then { determinateNix.customSettings = settings; } else { nix.settings = settings; };
 }

@@ -2,11 +2,12 @@ _: {
   _class = "darwin";
   _file = ./nix.nix;
   key = toString ./nix.nix;
-  # nix-daemon runs under launchd without a locale, so Perl-based
-  # helpers in nixpkgs fetchers warn "Pathname can't be converted
-  # from UTF-8 to current locale" for every non-ASCII path.
-  launchd.daemons.nix-daemon.serviceConfig.EnvironmentVariables = {
-    LANG = "en_US.UTF-8";
-    LC_ALL = "en_US.UTF-8";
+
+  # Let Determinate own nix.conf and nix-daemon instead of having nix-darwin
+  # generate a competing installation. Custom Nix settings are routed to
+  # /etc/nix/nix.custom.conf by the shared modules.
+  determinateNix = {
+    enable = true;
+    determinateNixd.garbageCollector.strategy = "automatic";
   };
 }

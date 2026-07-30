@@ -12,7 +12,10 @@
     euvlokInputs.catppuccin-trivial.nixosModules.catppuccin
     (lib.modules.importApply ./catppuccin.nix { inherit euvlokInputs; })
     euvlokInputs.determinate.nixosModules.default
-    (lib.modules.importApply ../cross { inherit euvlokInputs; })
+    (lib.modules.importApply ../cross {
+      inherit euvlokInputs;
+      isDarwin = false;
+    })
     ./amd.nix
     ./audio.nix
     ./boot.nix

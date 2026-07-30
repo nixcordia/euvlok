@@ -38,6 +38,7 @@ jobs:
     permissions:
       actions: write
       contents: read
+      id-token: write
     env:
       CACHIX_CACHE: euvlok
     strategy:
@@ -232,6 +233,7 @@ jobs:
     permissions:
       actions: write
       contents: read
+      id-token: write
     env:
       CACHIX_CACHE: euvlok
     strategy:

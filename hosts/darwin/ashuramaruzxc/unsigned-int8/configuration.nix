@@ -113,10 +113,7 @@
   # nix.settings.access-tokens = config.sops.secrets.gh_token.path;
   # nix.settings.netrc-file = config.sops.secrets.netrc_creds.path;
 
-  nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 14d";
-  nix.linux-builder = {
-    enable = true;
-    systems = [ "aarch64-linux" ];
-  };
+  # Use Determinate's native macOS Virtualization.framework Linux builder
+  # instead of nix-darwin's NixOS VM builder.
+  determinateNix.determinateNixd.builder.state = "enabled";
 }

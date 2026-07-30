@@ -1,10 +1,12 @@
-_: {
+{ isDarwin }:
+{ lib, ... }:
+{
   _class = null;
   _file = ./default.nix;
   key = toString ./default.nix;
   imports = [
-    ./build-parallelism.nix
-    ./registry.nix
-    ./settings.nix
+    (lib.modules.importApply ./build-parallelism.nix { inherit isDarwin; })
+    (lib.modules.importApply ./registry.nix { inherit isDarwin; })
+    (lib.modules.importApply ./settings.nix { inherit isDarwin; })
   ];
 }

@@ -17,6 +17,6 @@
   # '';
   #  nix.settings.netrc-file = config.sops.secrets.netrc_creds.path;
 
-  nix.gc.automatic = true;
-  nix.gc.options = "--delete-older-than 14d";
+  # Determinate Nixd owns automatic garbage collection. Keeping a second
+  # nix-gc timer would race its free-space-aware collector.
 }

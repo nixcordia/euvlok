@@ -8,14 +8,6 @@ _: {
   determinate.enable = true;
 
   nix = {
-    # Determinate Nix implements both settings. Lazy trees avoid unnecessary
-    # source copies, while eval-cores enables parallel evaluation for commands
-    # such as nix flake check, nix flake show, and nix eval --json.
-    settings = {
-      eval-cores = 0;
-      lazy-trees = true;
-    };
-
     # Determinate Nix 3.21 makes store optimisation multi-threaded. Running it
     # periodically avoids imposing the cost on every build.
     optimise = {

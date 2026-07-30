@@ -52,6 +52,9 @@ jobs:
     name: Nix (${{ matrix.system }})
     runs-on: ${{ matrix.runner }}
     needs: cachix
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
