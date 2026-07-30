@@ -18,6 +18,10 @@ concurrency:
 jobs:
   cachix:
     name: Cachix Auth
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      github.event.pull_request.user.login == 'github-actions[bot]'
     runs-on: ubuntu-latest
     outputs:
       skip-push: ${{ steps.auth.outputs.skip-push }}
@@ -35,6 +39,10 @@ jobs:
 
   docs:
     name: Docs
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      github.event.pull_request.user.login == 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -50,6 +58,10 @@ jobs:
 
   nix:
     name: Nix (${{ matrix.system }})
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      github.event.pull_request.user.login == 'github-actions[bot]'
     runs-on: ${{ matrix.runner }}
     needs: cachix
     permissions:
