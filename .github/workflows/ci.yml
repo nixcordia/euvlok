@@ -73,9 +73,6 @@ jobs:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           cachix-skip-push: ${{ needs.cachix.outputs.skip-push }}
 
-      - name: Check flake inputs
-        run: nix flake metadata
-
       - name: Evaluate all flake outputs
         if: matrix.system == 'x86_64-linux'
         run: nix flake check --all-systems --no-build
