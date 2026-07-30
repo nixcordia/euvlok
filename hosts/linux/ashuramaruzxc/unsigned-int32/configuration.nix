@@ -161,7 +161,6 @@
     };
     android-development = {
       enable = true;
-      users = [ "${config.users.users.ashuramaru.name}" ];
       waydroid.enable = true;
     };
     appimage = {
