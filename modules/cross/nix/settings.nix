@@ -9,7 +9,12 @@ in
   key = toString ./settings.nix;
   nix = {
     settings = {
-      experimental-features = "nix-command flakes";
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      # Let remote builders use the same binary caches as the coordinator.
+      builders-use-substitutes = true;
       substituters = [
         "https://devenv.cachix.org"
         "https://euvlok.cachix.org"
