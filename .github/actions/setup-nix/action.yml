@@ -31,10 +31,10 @@ runs:
   using: composite
   steps:
     - name: Install Nix
-      uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
+      uses: DeterminateSystems/determinate-nix-action@d96678350ffd6a456235832eb11e1c491589b7bb  # v3.21.8
       with:
-        github_access_token: ${{ inputs.github-token }}
-        extra_nix_config: |
+        github-token: ${{ inputs.github-token }}
+        extra-conf: |
           accept-flake-config = true
           extra-substituters = https://cache.flox.dev
           extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs=
@@ -72,4 +72,16 @@ runs:
     - name: Show Nix cache configuration
       shell: bash
       run: |
-        nix config show | sed -n '/^substituters = /p;/^trusted-public-keys = /p'
+        nix_version="$(nix --version)"
+        echo "${nix_version}"
+
+        case "${nix_version}" in
+          "nix (Determinate Nix "*) ;;
+          *)
+            echo "::error::Expected Determinate Nix, got: ${nix_version}"
+            exit 1
+            ;;
+        esac
+
+        nix config show | sed -n \
+          '/^eval-cores = /p;/^lazy-trees = /p;/^substituters = /p;/^trusted-public-keys = /p'
