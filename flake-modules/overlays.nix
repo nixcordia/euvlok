@@ -1,4 +1,7 @@
-{ inputs }:
+{
+  inputs,
+  supportedSystems,
+}:
 { ... }:
 let
   euvlokLib = import ../lib { inherit inputs; };
@@ -8,7 +11,9 @@ in
   _file = ./overlays.nix;
   key = toString ./overlays.nix;
   flake = {
-    lib = euvlokLib;
+    lib = euvlokLib // {
+      inherit supportedSystems;
+    };
 
     overlays.default = euvlokLib.overlays.mkNixpkgsOverlay { };
   };

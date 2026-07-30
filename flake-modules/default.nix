@@ -4,8 +4,16 @@
   ...
 }:
 let
+  # Keep this list explicit: these are the systems with contributor hosts or
+  # development support in this repository.
+  supportedSystems = [
+    "aarch64-darwin"
+    "aarch64-linux"
+    "x86_64-linux"
+  ];
+
   overlaysModule = flake-parts-lib.importApply ./overlays.nix {
-    inherit inputs;
+    inherit inputs supportedSystems;
   };
   modulesModule = flake-parts-lib.importApply ./modules.nix {
     inherit inputs;
@@ -41,19 +49,18 @@ in
     euvlokModule
   ];
 
-  systems = [
-    "aarch64-darwin"
-    "aarch64-linux"
-    "x86_64-linux"
-  ];
+  systems = supportedSystems;
 
-  perSystem = { pkgs, ... }: {
-    formatter = pkgs.nixfmt-tree;
-  };
+  perSystem =
+    { pkgs, ... }:
+    {
+      formatter = pkgs.nixfmt-tree;
+    };
 
   # Keep contributor-owned inputs out of the main entry path. Host outputs
-  # opt into those inputs.
+  # and their evaluation checks opt into those inputs.
   partitionedAttrs = {
+    checks = "users";
     darwinConfigurations = "users";
     homeModules = "users";
     nixosConfigurations = "users";
@@ -70,6 +77,7 @@ in
   # `flake.modules` is the typed source of truth. The conventional
   # nixosModules/darwinModules/homeModules aliases are the public interface.
   touchup.attr = {
+    flakeModule.enable = false;
     homeConfigurations.enable = false;
     modules.enable = false;
   };

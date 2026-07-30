@@ -76,5 +76,9 @@ jobs:
       - name: Check flake inputs
         run: nix flake metadata
 
+      - name: Evaluate all flake outputs
+        if: matrix.system == 'x86_64-linux'
+        run: nix flake check --all-systems --no-build
+
       - name: Run development checks
         run: nix run nixpkgs#devenv -- test
