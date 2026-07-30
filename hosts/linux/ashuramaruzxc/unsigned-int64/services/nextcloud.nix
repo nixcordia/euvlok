@@ -16,6 +16,8 @@
     enable = true;
     enableImagemagick = true;
     database.createLocally = true;
+    # Nextcloud upgrades must proceed one major version at a time. Keep version
+    # 33 pinned until its migration completes before advancing this host to 34.
     package = pkgs.nextcloud33;
     settings = {
       enablePreview = true;

@@ -47,11 +47,12 @@ checkout once:
 devenv allow
 ```
 
-Format and run the development checks:
+Format, run the development checks, and evaluate all public flake outputs:
 
 ```sh
 devenv tasks run devenv:treefmt:run
 devenv test
+nix flake check --all-systems --no-build
 ```
 
 Build a host:
@@ -113,9 +114,15 @@ Reusable flake-parts module:
 inputs.euvlok.flakeModules.default
 ```
 
+The systems intentionally supported by the flake are available to consumers
+without duplicating the list:
+
+```nix
+inputs.euvlok.lib.supportedSystems
+```
+
 The default overlay provides the shared VS Code extensions, an `unstable`
-package set, `eupkgs`, and the compatibility overrides used by the host
-modules. To select a different unstable source:
+package set, and `eupkgs`. To select a different unstable source:
 
 ```nix
 inputs.euvlok.lib.overlays.mkNixpkgsOverlay {
@@ -141,7 +148,8 @@ version is pinned by `flake.lock`, and the shared module enables lazy trees,
 all-core parallel evaluation, and weekly multi-threaded store optimisation.
 Existing caches, registries, credentials, and host-specific Nix settings remain
 declarative: the Determinate module writes them to its supported
-`/etc/nix/nix.custom.conf` include.
+`/etc/nix/nix.custom.conf` include. Remote builders are also allowed to use the
+configured substituters instead of rebuilding cache hits.
 
 The first switch from upstream Nix needs Determinate's binary cache so the
 machine does not build Determinate Nix from source:
