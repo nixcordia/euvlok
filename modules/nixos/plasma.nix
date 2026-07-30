@@ -50,12 +50,6 @@ in
   _class = "nixos";
   _file = ./plasma.nix;
   key = toString ./plasma.nix;
-  #! temp remove plasma from nixos-unstable
-  # disabledModules = [ "services/desktop-managers/plasma6.nix" ];
-
-  # imports = [
-  #   ("${inputs.nixpkgs-unstable-small.outPath}/nixos/modules/services/desktop-managers/plasma6.nix")
-  # ];
 
   options.nixos.plasma.enable = lib.options.mkEnableOption "KDE Plasma";
 

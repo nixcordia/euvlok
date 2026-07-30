@@ -16,17 +16,6 @@ let
   eupkgsOverlay = final: _prev: {
     eupkgs = final.unstable.extend inputs.eupkgs.overlays.default;
   };
-
-  compatibilityOverlay = _final: prev: {
-    /**
-      nixpkgs @507531
-      nix @6065
-      nix @15638
-    */
-    direnv = prev.direnv.overrideAttrs (_: {
-      doCheck = false;
-    });
-  };
 in
 inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   # Establish the independent package sets before overlays that inspect or
@@ -35,5 +24,4 @@ inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   unstableOverlay
   eupkgsOverlay
   inputs.nix4vscode-trivial.overlays.default
-  compatibilityOverlay
 ]
