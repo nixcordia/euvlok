@@ -124,9 +124,8 @@
 
   systemd = {
     settings.Manager.DefaultLimitNOFILE = "1024:1048576";
-    tmpfiles.rules = [
-      "w /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise"
-    ];
+    tmpfiles.settings.transparent-hugepage."/sys/kernel/mm/transparent_hugepage/defrag".w.argument =
+      "defer+madvise";
     user.settings.Manager.DefaultLimitNOFILE = "1024:1048576";
   };
 

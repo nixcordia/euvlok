@@ -236,7 +236,11 @@
       };
     };
   };
-  systemd.tmpfiles.rules = [ "d /var/lib/fluent-bit 0750 root root -" ];
+  systemd.tmpfiles.settings.fluent-bit."/var/lib/fluent-bit".d = {
+    mode = "0750";
+    user = "root";
+    group = "root";
+  };
 
   services.nginx.virtualHosts = {
     "${config.services.grafana.settings.server.domain}" = {
