@@ -18,22 +18,22 @@
     enable = true;
     timeZone = "Europe/Warsaw";
     extraLocaleSettings = {
-      LC_MESSAGES = "en_US.UTF-8";
       LC_MEASUREMENT = "pl_PL.UTF-8";
       LC_MONETARY = "pl_PL.UTF-8";
       LC_TIME = "pl_PL.UTF-8";
       LC_PAPER = "pl_PL.UTF-8";
       LC_ADDRESS = "pl_PL.UTF-8";
       LC_TELEPHONE = "pl_PL.UTF-8";
-      LC_NUMERIC = "pl_PL.UTF-8";
     };
   };
 
   i18n = {
-    supportedLocales = [
-      "en_US.UTF-8/UTF-8"
+    extraLocales = [
       "pl_PL.UTF-8/UTF-8"
-      "all"
+      "uk_UA.UTF-8/UTF-8"
+      "ru_RU.UTF-8/UTF-8"
+      "ja_JP.UTF-8/UTF-8"
+      "fr_FR.UTF-8/UTF-8"
     ];
     inputMethod = {
       enable = true;

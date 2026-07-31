@@ -182,6 +182,9 @@ let
     settings = {
       "browser.urlbar.suggest.calculator" = true;
       "browser.urlbar.update2.engineAliasRefresh" = true;
+    }
+    // lib.attrsets.optionalAttrs (config.hm.firefox.acceptedLanguages != [ ]) {
+      "intl.accept_languages" = lib.strings.concatStringsSep "," config.hm.firefox.acceptedLanguages;
     };
   };
   policies = {
@@ -221,6 +224,16 @@ in
         "kagi"
       ];
     };
+    acceptedLanguages = lib.options.mkOption {
+      type = lib.types.listOf lib.types.nonEmptyStr;
+      default = [ ];
+      description = "Ordered languages advertised by Firefox-based browsers to websites.";
+    };
+    languagePacks = lib.options.mkOption {
+      type = lib.types.listOf lib.types.nonEmptyStr;
+      default = [ ];
+      description = "Firefox language-pack identifiers to install for each enabled browser.";
+    };
   };
 
   config = lib.modules.mkMerge [
@@ -229,6 +242,7 @@ in
         enable = true;
         package = pkgs.firefox;
         profiles.default = default;
+        inherit (config.hm.firefox) languagePacks;
         inherit policies;
       };
     })
@@ -237,6 +251,7 @@ in
         enable = true;
         package = pkgs.unstable.floorp-bin;
         profiles.default = default;
+        inherit (config.hm.firefox) languagePacks;
         inherit policies;
       };
     })
@@ -245,6 +260,7 @@ in
         enable = true;
         package = pkgs.librewolf;
         profiles.default = default;
+        inherit (config.hm.firefox) languagePacks;
         inherit policies;
       };
     })
@@ -252,6 +268,7 @@ in
       programs.zen-browser = {
         enable = true;
         profiles.default = default;
+        inherit (config.hm.firefox) languagePacks;
         inherit policies;
       };
     })

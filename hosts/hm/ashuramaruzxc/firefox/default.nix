@@ -99,7 +99,6 @@ let
     "media.tenjin-dk.com"
     "media.tenjin.com"
     "metrics.tenjin.com"
-    "metrics.tenjin.com"
     "oauth.accounts.firefox.com"
     "private.tenjin.com"
     "profile.accounts.firefox.com"
@@ -121,6 +120,29 @@ in
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
+
+  hm.firefox = {
+    acceptedLanguages = [
+      "en-US"
+      "en"
+      "pl"
+      "uk"
+      "ru"
+      "ja"
+      "fr"
+    ];
+    languagePacks = [
+      "en-US"
+      "en-GB"
+      "en-CA"
+      "pl"
+      "uk"
+      "ru"
+      "ja"
+      "fr"
+    ];
+  };
+
   programs.floorp = {
     profiles.default = {
       extensions.packages = defaultExtensionsList;
@@ -136,12 +158,6 @@ in
     nativeMessagingHosts = lib.modules.mkIf pkgs.stdenvNoCC.isLinux (
       builtins.attrValues { inherit (pkgs) keepassxc; }
     );
-    languagePacks = [
-      "en-CA"
-      "en-GB"
-      "en-US"
-      "ja"
-    ];
   };
   programs.zen-browser = {
     profiles.default = {
@@ -160,11 +176,5 @@ in
     nativeMessagingHosts = lib.modules.mkIf (pkgs.stdenvNoCC.isLinux && pkgs.stdenvNoCC.isx86_64) (
       builtins.attrValues { inherit (pkgs.unstable) keepassxc; }
     );
-    languagePacks = [
-      "en-CA"
-      "en-GB"
-      "en-US"
-      "ja"
-    ];
   };
 }

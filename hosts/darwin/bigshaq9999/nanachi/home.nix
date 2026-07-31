@@ -68,8 +68,25 @@ in
         {
           hm = {
             fastfetch.enable = true;
-            firefox.enable = true;
-            firefox.zen-browser.enable = true;
+            firefox = {
+              enable = true;
+              acceptedLanguages = [
+                "en-US"
+                "en"
+                "vi"
+                "ja"
+                "fr"
+                "ru"
+              ];
+              languagePacks = [
+                "en-US"
+                "vi"
+                "ja"
+                "fr"
+                "ru"
+              ];
+              zen-browser.enable = true;
+            };
             ghostty.enable = true;
             helix.enable = true;
             mpv.enable = true;

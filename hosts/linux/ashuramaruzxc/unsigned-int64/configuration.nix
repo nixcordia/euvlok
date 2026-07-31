@@ -56,7 +56,6 @@
   nixos.locale = {
     enable = true;
     timeZone = "Europe/Berlin";
-    extraLocaleSettings = { };
   };
 
   services.avahi.enable = lib.modules.mkForce false;
