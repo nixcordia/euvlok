@@ -88,13 +88,9 @@ jobs:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           cachix-skip-push: ${{ needs.cachix.outputs.skip-push }}
 
-      - name: Materialize partition source
+      - name: Evaluate all flake outputs and run checks
         if: matrix.system == 'x86_64-linux'
-        run: nix store add-path ./flake-modules/users
-
-      - name: Evaluate all flake outputs
-        if: matrix.system == 'x86_64-linux'
-        run: nix --option eval-cores 1 flake check --all-systems --no-build
+        run: nix flake check --all-systems
 
       - name: Run development checks
         run: nix run nixpkgs#devenv -- test

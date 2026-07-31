@@ -30,7 +30,7 @@ Format and check:
 ```sh
 devenv tasks run devenv:treefmt:run
 devenv test
-nix flake check --all-systems --no-build
+nix flake check --all-systems
 ```
 
 Build a configuration:
