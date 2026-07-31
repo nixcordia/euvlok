@@ -5,7 +5,7 @@
   _file = ./default.nix;
   key = toString ./default.nix;
   imports = [
-    ./chromium
+    (lib.modules.importApply ./chromium { inherit euvlokInputs; })
     (lib.modules.importApply ./firefox { inherit euvlokInputs; })
     ./mpv.nix
     (lib.modules.importApply ./nixcord { inherit euvlokInputs; })

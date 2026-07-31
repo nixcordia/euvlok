@@ -17,7 +17,7 @@
   };
   sops = applyEuvlokInputs ../../modules/hm/sops.nix;
   cli = ../../modules/hm/cli;
-  chromium = ../../modules/hm/gui/chromium;
+  chromium = applyEuvlokInputs ../../modules/hm/gui/chromium;
   firefox = applyEuvlokInputs ../../modules/hm/gui/firefox;
   gui = applyEuvlokInputs ../../modules/hm/gui;
   hyprland = ../../modules/hm/wm/hyprland;

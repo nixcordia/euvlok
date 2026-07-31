@@ -1,8 +1,8 @@
+{ euvlokInputs }:
 {
   pkgs,
   lib,
   config,
-  options,
   ...
 }:
 let
@@ -35,26 +35,44 @@ let
       ;
   };
 
-  extensions = lib.lists.unique (
-    (pkgs.callPackage ./extensions.nix { inherit config; }) ++ cfg.extraExtensions
-  );
+  browserPackage = browserPackages.${cfg.browser};
 
-  # Helium bundles uBlock Origin and supports Kagi natively
-  heliumExtensions = builtins.filter (
-    ext:
-    !(builtins.elem ext.id [
-      "cjpalhdlnbpafiamejdnhcphjbkeiagm"
-      "cdglnehniifkbagbbombnjghhcihifij"
-    ])
-  ) extensions;
-
-  chromiumExternalExtension = ext: {
-    name = "net.imput.helium/External Extensions/${ext.id}.json";
-    value.text = builtins.toJSON {
-      external_crx = ext.crxPath;
-      external_version = ext.version;
-    };
+  browserExecutables = {
+    brave = "brave";
+    chromium = "chromium";
+    google-chrome = "google-chrome-stable";
+    helium-browser = "helium-browser";
+    ungoogled-chromium = "chromium";
   };
+  browserExecutable = browserExecutables.${cfg.browser};
+
+  browserPaths = {
+    brave = "BraveSoftware/Brave-Browser";
+    chromium = "chromium";
+    google-chrome = "google-chrome";
+    helium-browser = "net.imput.helium";
+    ungoogled-chromium = "chromium";
+  };
+  browserPath = browserPaths.${cfg.browser};
+  browserRuntimeRoot = "${config.xdg.cacheHome}/browser";
+  browserBinDir = "${config.xdg.dataHome}/browser/bin";
+
+  extensionCatalog = lib.attrsets.zipAttrsWith (_: builtins.concatLists) [
+    (import ./extensions.nix { inherit config lib; })
+    cfg.extraExtensions
+  ];
+
+  # Helium bundles uBlock Origin and supports Kagi natively.
+  heliumExtensionIds = [
+    "cjpalhdlnbpafiamejdnhcphjbkeiagm"
+    "cdglnehniifkbagbbombnjghhcihifij"
+  ];
+  managedExtensions = lib.attrsets.mapAttrs (
+    _: extensions:
+    builtins.filter (
+      extension: cfg.browser != "helium-browser" || !(builtins.elem extension.id heliumExtensionIds)
+    ) extensions
+  ) extensionCatalog;
 in
 {
   _class = "homeManager";
@@ -70,12 +88,29 @@ in
     };
 
     extraExtensions = lib.options.mkOption {
-      type = options.programs.chromium.extensions.type;
-      default = [ ];
-      description = "A list of extra extensions to append to the base list.";
-      example = lib.literalExpression "(pkgs.callPackage ./my-extensions.nix { })";
+      type = lib.types.attrsOf (lib.types.listOf lib.types.attrs);
+      default = { };
+      description = "Extra 4evy/browser extension catalog entries to append to the base catalog.";
+      example = lib.literalExpression ''
+        {
+          chrome_store = [
+            {
+              id = "nngceckbapebfimnlniiiahkandclblb";
+              name = "Bitwarden";
+            }
+          ];
+        }
+      '';
+    };
+
+    configureOnActivation = lib.options.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Install and update extensions with 4evy/browser during Home Manager activation.";
     };
   };
+
+  imports = [ euvlokInputs.browser-trivial.homeModules.default ];
 
   config = lib.modules.mkIf cfg.enable {
     assertions = [
@@ -86,12 +121,13 @@ in
     ];
     programs.chromium = {
       enable = true;
-      package = browserPackages.${cfg.browser};
+      package = browserPackage;
       dictionaries = builtins.attrValues {
         inherit (pkgs.hunspellDictsChromium) en_US de_DE fr_FR;
       };
 
-      extensions = if cfg.browser == "helium-browser" then lib.modules.mkForce [ ] else extensions;
+      # 4evy/browser is the single extension installer.
+      extensions = lib.modules.mkForce [ ];
 
       commandLineArgs = [
         # Debug
@@ -110,8 +146,40 @@ in
       ];
     };
 
-    xdg.configFile = lib.modules.mkIf (cfg.browser == "helium-browser") (
-      builtins.listToAttrs (map chromiumExternalExtension heliumExtensions)
+    programs.browser = {
+      enable = true;
+      settings = {
+        browser = {
+          name = cfg.browser;
+          executable_name = browserExecutable;
+          flags = config.programs.chromium.commandLineArgs;
+
+          linux = {
+            app_dir = "${config.home.profileDirectory}/bin";
+            launcher_name = browserExecutable;
+          };
+
+          paths.linux = {
+            profile_dir = "\${config_home}/${browserPath}/Default";
+            external_extension_dirs = [ "\${config_home}/${browserPath}/External Extensions" ];
+          };
+        };
+
+        extensions = managedExtensions;
+      };
+    };
+
+    home.sessionPath = lib.lists.optional cfg.configureOnActivation browserBinDir;
+
+    home.activation.configureChromium = lib.modules.mkIf cfg.configureOnActivation (
+      lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        run ${lib.getExe config.programs.browser.package} configure \
+          --config ${config.programs.browser.configFile} \
+          --mode linux \
+          --root ${lib.escapeShellArg browserRuntimeRoot} \
+          --bin-dir ${lib.escapeShellArg browserBinDir} \
+          --no-apply-settings
+      ''
     );
   };
 }

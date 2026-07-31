@@ -21,6 +21,10 @@
     nix-darwin.url = "github:nix-darwin/nix-darwin";
 
     # --- Trivial ---
+    browser-trivial.inputs.home-manager.follows = "home-manager";
+    browser-trivial.inputs.nix-darwin.follows = "nix-darwin";
+    browser-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    browser-trivial.url = "github:4evy/browser";
     catppuccin-gtk.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     catppuccin-gtk.url = "github:catppuccin/nix/06f0ea19334bcc8112e6d671fd53e61f9e3ad63a";
     catppuccin-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";

@@ -1,5 +1,31 @@
 {
   "nodes": {
+    "browser-trivial": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nix-darwin": [
+          "nix-darwin"
+        ],
+        "nixpkgs": [
+          "nixpkgs-unstable-small"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785420300,
+        "narHash": "sha256-flaIJuG2xknNOLilbsfAaMdqu0qL5/3U8xXoaWn34xg=",
+        "owner": "4evy",
+        "repo": "browser",
+        "rev": "b4f39de39c1d2cf516e78cc2a52803777f6fb02c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "4evy",
+        "repo": "browser",
+        "type": "github"
+      }
+    },
     "catppuccin-gtk": {
       "inputs": {
         "nixpkgs": [
@@ -475,6 +501,7 @@
     },
     "root": {
       "inputs": {
+        "browser-trivial": "browser-trivial",
         "catppuccin-gtk": "catppuccin-gtk",
         "catppuccin-trivial": "catppuccin-trivial",
         "determinate": "determinate",

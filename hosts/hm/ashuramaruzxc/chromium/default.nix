@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  config,
   ...
 }:
 {
@@ -12,7 +11,7 @@
     hm.chromium = {
       enable = true;
       browser = lib.modules.mkDefault "helium-browser";
-      extraExtensions = (pkgs.callPackage ./extensions.nix { inherit config; });
+      extraExtensions = import ./extensions.nix;
     };
   };
 }
