@@ -23,13 +23,6 @@ in
     programs.zsh = {
       enable = true;
       autosuggestion.enable = true;
-      syntaxHighlighting = {
-        enable = true;
-        highlighters = [
-          "main"
-          "brackets"
-        ];
-      };
       autocd = true;
       historySubstringSearch.enable = true;
       oh-my-zsh = {

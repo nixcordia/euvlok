@@ -38,10 +38,6 @@ let
 
   customPlugins = [
     {
-      name = "fast-syntax-highlighting";
-      src = "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh";
-    }
-    {
       name = "nix-shell";
       src = "${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
     }
@@ -63,56 +59,54 @@ in
   _class = "darwin";
   _file = ./zsh.nix;
   key = toString ./zsh.nix;
-  programs.zsh.interactiveShellInit = lib.strings.concatStringsSep "\n" [
-    "# PATH"
-    paths.hm.shell.binPaths.zsh
+  programs.zsh = {
+    enableAutosuggestions = true;
+    enableFastSyntaxHighlighting = true;
 
-    "# Oh My Zsh"
-    omzPluginsStr
-    "source ${pkgs.oh-my-zsh}/share/oh-my-zsh/oh-my-zsh.sh"
+    interactiveShellInit = lib.strings.concatStringsSep "\n" [
+      "# PATH"
+      paths.hm.shell.binPaths.zsh
 
-    "# Aliases"
-    shellAliasesStr
+      "# Oh My Zsh"
+      omzPluginsStr
+      "source ${pkgs.oh-my-zsh}/share/oh-my-zsh/oh-my-zsh.sh"
 
-    "setopt autocd"
+      "# Aliases"
+      shellAliasesStr
 
-    "# Autosuggestions"
-    "source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+      "setopt autocd"
 
-    "# Syntax highlighting"
-    "ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)"
-    "source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+      "# History substring search"
+      "source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
 
-    "# History substring search"
-    "source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+      "# Custom plugins"
+      customPluginsStr
+    ];
 
-    "# Custom plugins"
-    customPluginsStr
-  ];
-
-  programs.zsh.promptInit = lib.modules.mkMerge [
-    (lib.strings.optionalString (hmConfig.hm.ghostty.enable) ''
-      if [[ -n $GHOSTTY_RESOURCES_DIR ]]; then
-        source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
-      fi
-    '')
-    (lib.strings.optionalString (hmConfig.programs.starship.enable) ''
-      if [[ $TERM != "dumb" ]]; then
-        eval "$(starship init zsh)"
-      fi
-    '')
-    (lib.strings.optionalString (hmConfig.hm.yazi.enable) ''
-      function yy() {
-        local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-        yazi "$@" --cwd-file="$tmp"
-          if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
+    promptInit = lib.modules.mkMerge [
+      (lib.strings.optionalString hmConfig.hm.ghostty.enable ''
+        if [[ -r "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration ]]; then
+          source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
         fi
-        rm -f -- "$tmp"
-      }
-    '')
-    (lib.strings.optionalString (hmConfig.hm.zoxide.enable) ''eval "$(zoxide init zsh)"'')
-  ];
+      '')
+      (lib.strings.optionalString hmConfig.programs.starship.enable ''
+        if [[ $TERM != "dumb" ]]; then
+          eval "$(starship init zsh)"
+        fi
+      '')
+      (lib.strings.optionalString hmConfig.hm.yazi.enable ''
+        function yy() {
+          local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+          yazi "$@" --cwd-file="$tmp"
+            if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+          builtin cd -- "$cwd"
+          fi
+          rm -f -- "$tmp"
+        }
+      '')
+      (lib.strings.optionalString hmConfig.hm.zoxide.enable ''eval "$(zoxide init zsh)"'')
+    ];
+  };
 
   launchd.user.agents."symlink-zsh-config" = {
     script = ''
