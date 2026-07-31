@@ -1,9 +1,7 @@
 { euvlokInputs }:
 { lib, ... }:
 let
-  sourceLocks = builtins.fromJSON (
-    builtins.readFile (euvlokInputs.catppuccin + /pkgs/sources.json)
-  );
+  sourceLocks = builtins.fromJSON (builtins.readFile (euvlokInputs.catppuccin + /pkgs/sources.json));
   fetchCatppuccinSource =
     repo:
     let

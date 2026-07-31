@@ -69,8 +69,7 @@
         {
           programs.spicetify.enable = true;
           programs.spicetify.enabledExtensions = builtins.attrValues {
-            inherit
-              (inputs.spicetify-nix.legacyPackages.${pkgs.stdenvNoCC.hostPlatform.system}.extensions)
+            inherit (inputs.spicetify-nix.legacyPackages.${pkgs.stdenvNoCC.hostPlatform.system}.extensions)
               adblock
               beautifulLyrics # Apple Music like Lyrics
               copyLyrics
