@@ -201,7 +201,7 @@ in
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
-  imports = [ euvlokInputs.zen-browser-trivial.homeModules.twilight ];
+  imports = [ euvlokInputs.zen-browser.homeModules.twilight ];
 
   options.hm.firefox = {
     enable = lib.options.mkEnableOption "declarative Firefox-based browsers";

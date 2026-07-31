@@ -8,15 +8,15 @@ inputs.nix-darwin.lib.darwinSystem {
     ./configuration.nix
     ./home.nix
     ./system.nix
-    inputs.nix-homebrew-trivial.darwinModules.nix-homebrew
+    inputs.nix-homebrew.darwinModules.nix-homebrew
     {
       nix-homebrew = {
         enable = true;
         user = "ashuramaru";
         taps = {
-          "homebrew/homebrew-core" = inputs.homebrew-core-trivial;
-          "homebrew/homebrew-cask" = inputs.homebrew-cask-trivial;
-          "cfergeau/homebrew-crc" = inputs.homebrew-crc-trivial;
+          "homebrew/homebrew-core" = inputs.homebrew-core-source;
+          "homebrew/homebrew-cask" = inputs.homebrew-cask-source;
+          "cfergeau/homebrew-crc" = inputs.homebrew-crc-source;
         };
         autoMigrate = true;
       };

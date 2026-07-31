@@ -13,7 +13,7 @@ inputs.nixpkgs.lib.nixosSystem {
         accent = "flamingo";
       };
     }
-    inputs.flatpak-declerative-trivial.nixosModules.default
+    inputs.flatpak-declerative.nixosModules.default
     {
       services.flatpak = {
         enable = true;

@@ -10,7 +10,7 @@
   _file = ./default.nix;
   key = toString ./default.nix;
   imports = [
-    euvlokInputs.catppuccin-trivial.homeModules.catppuccin
+    euvlokInputs.catppuccin.homeModules.catppuccin
   ]
   ++ lib.lists.optionals (osClass == "nixos") [ ./firefox.nix ];
 

@@ -23,5 +23,5 @@ inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   # custom platform bootstraps such as nixos-raspberrypi.
   unstableOverlay
   eupkgsOverlay
-  inputs.nix4vscode-trivial.overlays.default
+  inputs.nix4vscode.overlays.default
 ]

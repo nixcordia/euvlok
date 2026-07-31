@@ -110,7 +110,7 @@ in
     };
   };
 
-  imports = [ euvlokInputs.browser-trivial.homeModules.default ];
+  imports = [ euvlokInputs.browser.homeModules.default ];
 
   config = lib.modules.mkIf cfg.enable {
     assertions = [

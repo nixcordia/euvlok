@@ -12,35 +12,35 @@
     anime-cursors-source.url = "github:ashuramaruzxc/anime-cursors";
     disko-rpi.inputs.nixpkgs.follows = "users-nixpkgs";
     disko-rpi.url = "github:nvmd/disko/gpt-attrs";
-    flatpak-declerative-trivial.url = "github:in-a-dil-emma/declarative-flatpak";
+    flatpak-declerative.url = "github:in-a-dil-emma/declarative-flatpak";
     home-manager-rpi.inputs.nixpkgs.follows = "users-nixpkgs";
     home-manager-rpi.url = "github:nix-community/home-manager/release-26.05";
-    nix-homebrew-trivial.url = "github:zhaofengli/nix-homebrew";
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     nixos-raspberrypi.inputs.flake-compat.follows = "";
     nixos-raspberrypi.inputs.nixpkgs.follows = "users-nixpkgs";
     nixos-raspberrypi.url = "github:nvmd/nixos-raspberrypi";
-    homebrew-core-trivial = {
+    homebrew-core-source = {
       url = "github:homebrew/homebrew-core";
       flake = false;
     };
-    homebrew-cask-trivial = {
+    homebrew-cask-source = {
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    homebrew-crc-trivial = {
+    homebrew-crc-source = {
       url = "github:cfergeau/homebrew-crc";
       flake = false;
     };
 
     # Lay-by
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    spicetify-nix-trivial.inputs.nixpkgs.follows = "users-nixpkgs-unstable-small";
-    spicetify-nix-trivial.inputs.systems.follows = "users-flake-utils/systems";
-    spicetify-nix-trivial.url = "github:Gerg-L/spicetify-nix";
-    stylix-trivial.inputs.flake-parts.follows = "users-flake-parts";
-    stylix-trivial.inputs.nixpkgs.follows = "users-nixpkgs-unstable-small";
-    stylix-trivial.inputs.systems.follows = "users-flake-utils/systems";
-    stylix-trivial.url = "github:danth/stylix";
+    spicetify-nix.inputs.nixpkgs.follows = "users-nixpkgs-unstable-small";
+    spicetify-nix.inputs.systems.follows = "users-flake-utils/systems";
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    stylix.inputs.flake-parts.follows = "users-flake-parts";
+    stylix.inputs.nixpkgs.follows = "users-nixpkgs-unstable-small";
+    stylix.inputs.systems.follows = "users-flake-utils/systems";
+    stylix.url = "github:danth/stylix";
 
     # Support inputs needed by contributor-owned sources.
     users-devenv.inputs.cachix.inputs.flake-compat.follows = "";

@@ -53,6 +53,6 @@
       breeze-icons
       ;
     inherit (pkgs) seahorse;
-    inherit (inputs.zen-browser-trivial.packages.x86_64-linux) default;
+    inherit (inputs.zen-browser.packages.x86_64-linux) default;
   };
 }

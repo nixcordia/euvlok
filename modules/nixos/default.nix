@@ -9,7 +9,7 @@
   _file = ./default.nix;
   key = toString ./default.nix;
   imports = [
-    euvlokInputs.catppuccin-trivial.nixosModules.catppuccin
+    euvlokInputs.catppuccin.nixosModules.catppuccin
     (lib.modules.importApply ./catppuccin.nix { inherit euvlokInputs; })
     euvlokInputs.determinate.nixosModules.default
     (lib.modules.importApply ../cross {

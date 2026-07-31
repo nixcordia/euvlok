@@ -21,29 +21,29 @@
     nix-darwin.url = "github:nix-darwin/nix-darwin";
 
     # --- Trivial ---
-    browser-trivial.inputs.home-manager.follows = "home-manager";
-    browser-trivial.inputs.nix-darwin.follows = "nix-darwin";
-    browser-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    browser-trivial.url = "github:4evy/browser";
+    browser.inputs.home-manager.follows = "home-manager";
+    browser.inputs.nix-darwin.follows = "nix-darwin";
+    browser.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    browser.url = "github:4evy/browser";
     catppuccin-gtk.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     catppuccin-gtk.url = "github:catppuccin/nix/06f0ea19334bcc8112e6d671fd53e61f9e3ad63a";
-    catppuccin-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    catppuccin-trivial.url = "github:catppuccin/nix";
-    nix4vscode-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    nix4vscode-trivial.inputs.systems.follows = "flake-utils/systems";
-    nix4vscode-trivial.url = "github:nix-community/nix4vscode";
-    nixcord-trivial.inputs.flake-compat.follows = "";
-    nixcord-trivial.inputs.flake-parts.follows = "flake-parts";
-    nixcord-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    nixcord-trivial.url = "github:FlameFlag/nixcord";
-    nvidia-patch-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    nvidia-patch-trivial.inputs.utils.follows = "flake-utils";
-    nvidia-patch-trivial.url = "github:icewind1991/nvidia-patch-nixos";
-    sops-nix-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    sops-nix-trivial.url = "github:Mic92/sops-nix";
-    zen-browser-trivial.inputs.home-manager.follows = "home-manager";
-    zen-browser-trivial.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
-    zen-browser-trivial.url = "github:0xc000022070/zen-browser-flake";
+    catppuccin.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    catppuccin.url = "github:catppuccin/nix";
+    nix4vscode.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    nix4vscode.inputs.systems.follows = "flake-utils/systems";
+    nix4vscode.url = "github:nix-community/nix4vscode";
+    nixcord.inputs.flake-compat.follows = "";
+    nixcord.inputs.flake-parts.follows = "flake-parts";
+    nixcord.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    nixcord.url = "github:FlameFlag/nixcord";
+    nvidia-patch.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    nvidia-patch.inputs.utils.follows = "flake-utils";
+    nvidia-patch.url = "github:icewind1991/nvidia-patch-nixos";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    sops-nix.url = "github:Mic92/sops-nix";
+    zen-browser.inputs.home-manager.follows = "home-manager";
+    zen-browser.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
     # Infra / Shared / Core Inputs
     flake-parts.url = "github:hercules-ci/flake-parts";

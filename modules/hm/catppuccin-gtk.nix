@@ -9,7 +9,7 @@
   ...
 }:
 let
-  catppuccinLib = import (euvlokInputs.catppuccin-trivial + /modules/lib) {
+  catppuccinLib = import (euvlokInputs.catppuccin + /modules/lib) {
     inherit
       lib
       options

@@ -1,6 +1,6 @@
 {
   "nodes": {
-    "browser-trivial": {
+    "browser": {
       "inputs": {
         "home-manager": [
           "home-manager"
@@ -47,7 +47,7 @@
         "type": "github"
       }
     },
-    "catppuccin-trivial": {
+    "catppuccin": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs-unstable-small"
@@ -304,7 +304,7 @@
         "type": "github"
       }
     },
-    "nix4vscode-trivial": {
+    "nix4vscode": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs-unstable-small"
@@ -328,7 +328,7 @@
         "type": "github"
       }
     },
-    "nixcord-trivial": {
+    "nixcord": {
       "inputs": {
         "flake-compat": [],
         "flake-parts": [
@@ -476,7 +476,7 @@
         "type": "github"
       }
     },
-    "nvidia-patch-trivial": {
+    "nvidia-patch": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs-unstable-small"
@@ -501,25 +501,25 @@
     },
     "root": {
       "inputs": {
-        "browser-trivial": "browser-trivial",
+        "browser": "browser",
         "catppuccin-gtk": "catppuccin-gtk",
-        "catppuccin-trivial": "catppuccin-trivial",
+        "catppuccin": "catppuccin",
         "determinate": "determinate",
         "eupkgs": "eupkgs",
         "flake-parts": "flake-parts_2",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
-        "nix4vscode-trivial": "nix4vscode-trivial",
-        "nixcord-trivial": "nixcord-trivial",
+        "nix4vscode": "nix4vscode",
+        "nixcord": "nixcord",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable-small": "nixpkgs-unstable-small",
-        "nvidia-patch-trivial": "nvidia-patch-trivial",
-        "sops-nix-trivial": "sops-nix-trivial",
-        "zen-browser-trivial": "zen-browser-trivial"
+        "nvidia-patch": "nvidia-patch",
+        "sops-nix": "sops-nix",
+        "zen-browser": "zen-browser"
       }
     },
-    "sops-nix-trivial": {
+    "sops-nix": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs-unstable-small"
@@ -554,7 +554,7 @@
         "type": "github"
       }
     },
-    "zen-browser-trivial": {
+    "zen-browser": {
       "inputs": {
         "home-manager": [
           "home-manager"

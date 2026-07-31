@@ -21,14 +21,14 @@
         {
           home.stateVersion = "25.05";
           home.sessionVariables = {
-            DEFAULT_BROWSER = "${inputs.zen-browser-trivial.packages.x86_64-linux.default}/bin/zen";
+            DEFAULT_BROWSER = "${inputs.zen-browser.packages.x86_64-linux.default}/bin/zen";
             SHELL = "fish";
             TERM = "alacritty";
           };
         }
       ]
       ++ [
-        inputs.stylix-trivial.homeModules.stylix
+        inputs.stylix.homeModules.stylix
       ]
       ++ [
         {
@@ -65,12 +65,12 @@
         }
       ]
       ++ [
-        inputs.spicetify-nix-trivial.homeManagerModules.default
+        inputs.spicetify-nix.homeManagerModules.default
         {
           programs.spicetify.enable = true;
           programs.spicetify.enabledExtensions = builtins.attrValues {
             inherit
-              (inputs.spicetify-nix-trivial.legacyPackages.${pkgs.stdenvNoCC.hostPlatform.system}.extensions)
+              (inputs.spicetify-nix.legacyPackages.${pkgs.stdenvNoCC.hostPlatform.system}.extensions)
               adblock
               beautifulLyrics # Apple Music like Lyrics
               copyLyrics

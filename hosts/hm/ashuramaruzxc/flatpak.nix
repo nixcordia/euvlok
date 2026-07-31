@@ -7,7 +7,7 @@
   _class = "homeManager";
   _file = ./flatpak.nix;
   key = toString ./flatpak.nix;
-  imports = [ euvlokInputs.flatpak-declerative-trivial.homeModules.default ];
+  imports = [ euvlokInputs.flatpak-declerative.homeModules.default ];
 
   services.flatpak = {
     enable = true;

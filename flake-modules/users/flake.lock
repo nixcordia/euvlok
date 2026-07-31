@@ -202,7 +202,7 @@
         "type": "github"
       }
     },
-    "flatpak-declerative-trivial": {
+    "flatpak-declerative": {
       "locked": {
         "lastModified": 1782496883,
         "narHash": "sha256-f3JkHK5ZYgi1OhUVCCrKF10vOotxdg3mLkcZ71kNFLc=",
@@ -314,7 +314,7 @@
         "type": "github"
       }
     },
-    "homebrew-cask-trivial": {
+    "homebrew-cask-source": {
       "flake": false,
       "locked": {
         "lastModified": 1783935185,
@@ -330,7 +330,7 @@
         "type": "github"
       }
     },
-    "homebrew-core-trivial": {
+    "homebrew-core-source": {
       "flake": false,
       "locked": {
         "lastModified": 1783938510,
@@ -346,7 +346,7 @@
         "type": "github"
       }
     },
-    "homebrew-crc-trivial": {
+    "homebrew-crc-source": {
       "flake": false,
       "locked": {
         "lastModified": 1734343695,
@@ -402,7 +402,7 @@
         "type": "github"
       }
     },
-    "nix-homebrew-trivial": {
+    "nix-homebrew": {
       "inputs": {
         "brew-src": "brew-src"
       },
@@ -541,11 +541,11 @@
     "nur": {
       "inputs": {
         "flake-parts": [
-          "stylix-trivial",
+          "stylix",
           "flake-parts"
         ],
         "nixpkgs": [
-          "stylix-trivial",
+          "stylix",
           "nixpkgs"
         ]
       },
@@ -567,16 +567,16 @@
       "inputs": {
         "anime-cursors-source": "anime-cursors-source",
         "disko-rpi": "disko-rpi",
-        "flatpak-declerative-trivial": "flatpak-declerative-trivial",
+        "flatpak-declerative": "flatpak-declerative",
         "home-manager-rpi": "home-manager-rpi",
-        "homebrew-cask-trivial": "homebrew-cask-trivial",
-        "homebrew-core-trivial": "homebrew-core-trivial",
-        "homebrew-crc-trivial": "homebrew-crc-trivial",
-        "nix-homebrew-trivial": "nix-homebrew-trivial",
+        "homebrew-cask-source": "homebrew-cask-source",
+        "homebrew-core-source": "homebrew-core-source",
+        "homebrew-crc-source": "homebrew-crc-source",
+        "nix-homebrew": "nix-homebrew",
         "nixos-raspberrypi": "nixos-raspberrypi",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "spicetify-nix-trivial": "spicetify-nix-trivial",
-        "stylix-trivial": "stylix-trivial",
+        "spicetify-nix": "spicetify-nix",
+        "stylix": "stylix",
         "users-devenv": "users-devenv",
         "users-flake-parts": "users-flake-parts",
         "users-flake-utils": "users-flake-utils",
@@ -608,7 +608,7 @@
         "type": "github"
       }
     },
-    "spicetify-nix-trivial": {
+    "spicetify-nix": {
       "inputs": {
         "nixpkgs": [
           "users-nixpkgs-unstable-small"
@@ -632,7 +632,7 @@
         "type": "github"
       }
     },
-    "stylix-trivial": {
+    "stylix": {
       "inputs": {
         "base16": "base16",
         "base16-fish": "base16-fish",

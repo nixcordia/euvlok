@@ -10,7 +10,7 @@
   _file = ./default.nix;
   key = toString ./default.nix;
   imports = [
-    euvlokInputs.nixcord-trivial.homeModules.nixcord
+    euvlokInputs.nixcord.homeModules.nixcord
     ./base.nix
   ];
 

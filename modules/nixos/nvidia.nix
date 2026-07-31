@@ -70,7 +70,7 @@ in
         (map (browser: _: prev: {
           ${browser} = prev.${browser}.override { inherit commandLineArgs; };
         }) browsers)
-        ++ [ euvlokInputs.nvidia-patch-trivial.overlays.default ];
+        ++ [ euvlokInputs.nvidia-patch.overlays.default ];
     })
   ];
 }
