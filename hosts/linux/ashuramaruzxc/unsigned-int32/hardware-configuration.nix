@@ -205,6 +205,21 @@
     ];
     supportedFilesystems = config.boot.supportedFilesystems;
   };
+
+  # Safe transition path for the scripted-initrd removal. Enroll both devices
+  # with systemd-cryptenroll before selecting this boot entry.
+  specialisation.systemd-initrd.configuration = {
+    boot.initrd = {
+      systemd.enable = lib.modules.mkForce true;
+      luks = {
+        yubikeySupport = lib.modules.mkForce false;
+        devices = {
+          root.crypttabExtraOpts = [ "fido2-device=auto" ];
+          hddpool0.crypttabExtraOpts = [ "fido2-device=auto" ];
+        };
+      };
+    };
+  };
   ### ---------------/dev/sdc2-------------------- ###
   fileSystems."/" = {
     device = "/dev/mapper/root";
