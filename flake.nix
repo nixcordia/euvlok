@@ -32,7 +32,6 @@
     nix4vscode.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     nix4vscode.inputs.systems.follows = "flake-utils/systems";
     nix4vscode.url = "github:nix-community/nix4vscode";
-    nixcord.inputs.flake-compat.follows = "";
     nixcord.inputs.flake-parts.follows = "flake-parts";
     nixcord.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     nixcord.url = "github:FlameFlag/nixcord";
