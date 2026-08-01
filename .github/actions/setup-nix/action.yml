@@ -36,8 +36,8 @@ runs:
         github-token: ${{ inputs.github-token }}
         extra-conf: |
           accept-flake-config = true
-          extra-substituters = https://cache.flox.dev
-          extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs=
+          extra-substituters = https://cache.flox.dev https://cache.nixos-cuda.org
+          extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
           ${{ inputs.extra-nix-config }}
 
     - name: Configure Cachix
@@ -56,17 +56,17 @@ runs:
       run: |
         echo "::warning::Cachix setup failed. Continuing without pushing build results; rotate CACHIX_AUTH_TOKEN to restore pushes."
 
-    - name: Configure Flox binary cache
+    - name: Configure supplemental binary caches
       shell: bash
       run: | # zizmor: ignore[github-env] RUNNER_TEMP supplies the generated configuration path.
-        flox_nix_config="${RUNNER_TEMP}/flox-nix.conf"
+        supplemental_nix_config="${RUNNER_TEMP}/supplemental-nix.conf"
 
         {
-          echo "extra-substituters = https://cache.flox.dev"
-          echo "extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
-        } > "${flox_nix_config}"
+          echo "extra-substituters = https://cache.flox.dev https://cache.nixos-cuda.org"
+          echo "extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+        } > "${supplemental_nix_config}"
 
-        export NIX_USER_CONF_FILES="${flox_nix_config}:${NIX_USER_CONF_FILES}"
+        export NIX_USER_CONF_FILES="${supplemental_nix_config}:${NIX_USER_CONF_FILES}"
         echo "NIX_USER_CONF_FILES=${NIX_USER_CONF_FILES}" >> "${GITHUB_ENV}"
 
     - name: Show Nix cache configuration
