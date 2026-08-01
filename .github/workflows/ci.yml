@@ -90,7 +90,7 @@ jobs:
 
       - name: Evaluate all flake outputs and run checks
         if: matrix.system == 'x86_64-linux'
-        run: nix flake check --all-systems
+        run: nix --option eval-cores 1 flake check --all-systems
 
       - name: Run development checks
         run: nix run nixpkgs#devenv -- test
