@@ -2,7 +2,6 @@
 {
   config,
   lib,
-  osClass,
   ...
 }:
 {
@@ -11,8 +10,8 @@
   key = toString ./default.nix;
   imports = [
     euvlokInputs.catppuccin.homeModules.catppuccin
-  ]
-  ++ lib.lists.optionals (osClass == "nixos") [ ./firefox.nix ];
+    ./firefox.nix
+  ];
 
   catppuccin.vscode.profiles.default.enable = lib.modules.mkDefault false;
   catppuccin.autoEnable = lib.modules.mkDefault config.catppuccin.enable;

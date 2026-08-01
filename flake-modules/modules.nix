@@ -1,25 +1,9 @@
 { inputs }:
-{ config, lib, ... }:
+{ lib, ... }:
 let
-  # Public modules should carry euvlok's implementation dependencies with them
-  # Consumer `inputs` remain available separately for host-specific
-  # configuration and the Nix registry
-  mkEuvlokModule =
-    moduleClass: name: module:
-    let
-      moduleKey = "${toString ./modules.nix}#flake.modules.${moduleClass}.${name}";
-    in
-    {
-      _class = moduleClass;
-      _file = moduleKey;
-      key = moduleKey;
-
-      imports = [ module ];
-    };
-
-  mkEuvlokModules = moduleClass: lib.attrsets.mapAttrs (name: mkEuvlokModule moduleClass name);
-
-  applyEuvlokInputs = module: lib.modules.importApply module { euvlokInputs = inputs; };
+  applyEuvlokInputsWith =
+    module: args: lib.modules.importApply module ({ euvlokInputs = inputs; } // args);
+  applyEuvlokInputs = module: applyEuvlokInputsWith module { };
 
   mkDesktopModule = module: {
     imports = [
@@ -36,7 +20,7 @@ let
       inherit applyEuvlokInputs;
     };
     homeManager = import ./modules/home-manager.nix {
-      inherit applyEuvlokInputs;
+      inherit applyEuvlokInputs applyEuvlokInputsWith;
     };
   };
 in
@@ -45,15 +29,13 @@ in
   _file = ./modules.nix;
   key = toString ./modules.nix;
   config.flake = {
-    modules = {
-      nixos = mkEuvlokModules "nixos" moduleCatalogs.nixos;
-      darwin = mkEuvlokModules "darwin" moduleCatalogs.darwin;
-      homeManager = mkEuvlokModules "homeManager" moduleCatalogs.homeManager;
-    };
+    # Feed raw modules to each output. flake-parts, Home Manager, and the
+    # flake.modules extension add their own source/class wrapper where needed.
+    modules = moduleCatalogs;
 
     # Conventional aliases for external consumers and internal hosts/**/*.nix.
-    nixosModules = config.flake.modules.nixos;
-    darwinModules = config.flake.modules.darwin;
-    homeModules = config.flake.modules.homeManager;
+    nixosModules = moduleCatalogs.nixos;
+    darwinModules = moduleCatalogs.darwin;
+    homeModules = moduleCatalogs.homeManager;
   };
 }

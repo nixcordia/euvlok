@@ -1,6 +1,10 @@
-{ applyEuvlokInputs }:
 {
-  default = applyEuvlokInputs ../../modules/hm;
+  applyEuvlokInputs,
+  applyEuvlokInputsWith,
+}:
+{
+  default = applyEuvlokInputsWith ../../modules/hm/common.nix { includeNixpkgs = true; };
+  integrated = applyEuvlokInputsWith ../../modules/hm/common.nix { includeNixpkgs = false; };
   os = applyEuvlokInputs ../../modules/hm/os;
   nixpkgs = applyEuvlokInputs ../../modules/hm/nixpkgs.nix;
   catppuccin = {

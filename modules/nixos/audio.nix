@@ -3,11 +3,13 @@
   _class = "nixos";
   _file = ./audio.nix;
   key = toString ./audio.nix;
-  options.nixos.audio.enable = lib.options.mkEnableOption "the shared PipeWire audio stack" // {
-    default = true;
-  };
+  options.euvlok.nixos.audio.enable =
+    lib.options.mkEnableOption "the shared PipeWire audio stack"
+    // {
+      default = true;
+    };
 
-  config = lib.modules.mkIf config.nixos.audio.enable {
+  config = lib.modules.mkIf config.euvlok.nixos.audio.enable {
     services.pipewire = {
       enable = true;
       alsa.enable = true;

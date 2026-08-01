@@ -3,9 +3,9 @@
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
-  options.hm.hyprland.enable = lib.options.mkEnableOption "Hyprland";
+  options.euvlok.home.hyprland.enable = lib.options.mkEnableOption "Hyprland";
 
-  config = lib.modules.mkIf config.hm.hyprland.enable {
+  config = lib.modules.mkIf config.euvlok.home.hyprland.enable {
     wayland.windowManager.hyprland.enable = true;
     wayland.windowManager.hyprland.configType = "hyprlang";
     wayland.windowManager.hyprland.settings = {

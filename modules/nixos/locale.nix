@@ -1,12 +1,12 @@
 { lib, config, ... }:
 let
-  cfg = config.nixos.locale;
+  cfg = config.euvlok.nixos.locale;
 in
 {
   _class = "nixos";
   _file = ./locale.nix;
   key = toString ./locale.nix;
-  options.nixos.locale = {
+  options.euvlok.nixos.locale = {
     enable = lib.options.mkEnableOption "locale configuration";
     timeZone = lib.options.mkOption {
       type = lib.types.str;

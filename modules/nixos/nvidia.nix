@@ -13,10 +13,10 @@ in
   _class = "nixos";
   _file = ./nvidia.nix;
   key = toString ./nvidia.nix;
-  options.nixos.nvidia.enable = lib.options.mkEnableOption "NVIDIA Drivers & Env Variables";
+  options.euvlok.nixos.nvidia.enable = lib.options.mkEnableOption "NVIDIA Drivers & Env Variables";
 
   config = lib.modules.mkMerge [
-    (lib.modules.mkIf config.nixos.nvidia.enable {
+    (lib.modules.mkIf config.euvlok.nixos.nvidia.enable {
       nixpkgs.config.cudaSupport = true;
 
       services.xserver.videoDrivers = [ "nvidia" ];

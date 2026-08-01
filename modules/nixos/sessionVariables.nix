@@ -3,13 +3,13 @@
   _class = "nixos";
   _file = ./sessionVariables.nix;
   key = toString ./sessionVariables.nix;
-  options.nixos.gui.wlrootsWorkarounds =
+  options.euvlok.nixos.gui.wlrootsWorkarounds =
     lib.options.mkEnableOption "wlroots hardware cursor and atomic mode workarounds"
     // {
       default = true;
     };
 
-  config = lib.modules.mkIf config.nixos.gui.enable {
+  config = lib.modules.mkIf config.euvlok.nixos.gui.enable {
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";
 
@@ -34,7 +34,7 @@
         GLFW_IM_MODULE = "ibus";
       }
     )
-    // (lib.attrsets.optionalAttrs config.nixos.gui.wlrootsWorkarounds {
+    // (lib.attrsets.optionalAttrs config.euvlok.nixos.gui.wlrootsWorkarounds {
       # Hardware cursor and atomic mode escape hatches for wlroots compositors.
       WLR_NO_HARDWARE_CURSORS = "1";
       WLR_DRM_NO_ATOMIC = "1";

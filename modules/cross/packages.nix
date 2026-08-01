@@ -100,11 +100,19 @@ let
         yt-dlp-script
         ;
 
-      # Development Tools (enable `hm.languages.*`) for stuff like cmake, gnumake, cargo, etc.)
+      # Development Tools (enable `euvlok.home.languages.*`) for stuff like cmake, gnumake, cargo, etc.)
       inherit (pkgs.unstable) hyperfine tokei;
 
     }
   );
+  graphicalLinux =
+    config.nixpkgs.hostPlatform.isLinux
+    && lib.attrsets.attrByPath [
+      "euvlok"
+      "nixos"
+      "gui"
+      "enable"
+    ] false config;
   linuxOnlyPkgs = (
     builtins.attrValues {
       # Networking
@@ -133,7 +141,7 @@ let
       inherit (pkgs.unstable) sysstat;
     }
     # Pacakges only meant for Desktops
-    ++ optionals (config.nixos.amd.enable or config.nixos.nvidia.enable) (
+    ++ optionals graphicalLinux (
       builtins.attrValues {
         inherit (pkgs.unstable)
           networkmanagerapplet

@@ -8,7 +8,7 @@
   _class = "homeManager";
   _file = ./extensions.nix;
   key = toString ./extensions.nix;
-  config = lib.modules.mkIf config.hm.vscode.enable {
+  config = lib.modules.mkIf config.euvlok.home.vscode.enable {
     programs.vscode.profiles.default = {
       extensions = pkgs.nix4vscode.forVscodeVersion config.programs.vscode.package.version [
         "bbenoist.nix"

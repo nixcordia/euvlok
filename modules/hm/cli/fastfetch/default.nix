@@ -3,9 +3,9 @@
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
-  options.hm.fastfetch.enable = lib.options.mkEnableOption "Fastfetch";
+  options.euvlok.home.fastfetch.enable = lib.options.mkEnableOption "Fastfetch";
 
-  config = lib.modules.mkIf config.hm.fastfetch.enable {
+  config = lib.modules.mkIf config.euvlok.home.fastfetch.enable {
     programs.fastfetch.enable = true;
     programs.fastfetch.settings = builtins.fromJSON (builtins.readFile ./settings.json);
   };

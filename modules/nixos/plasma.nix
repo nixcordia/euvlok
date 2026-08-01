@@ -51,10 +51,10 @@ in
   _file = ./plasma.nix;
   key = toString ./plasma.nix;
 
-  options.nixos.plasma.enable = lib.options.mkEnableOption "KDE Plasma";
+  options.euvlok.nixos.plasma.enable = lib.options.mkEnableOption "KDE Plasma";
 
-  config = lib.modules.mkIf config.nixos.plasma.enable {
-    nixos.gui.enable = lib.modules.mkDefault true;
+  config = lib.modules.mkIf config.euvlok.nixos.plasma.enable {
+    euvlok.nixos.gui.enable = lib.modules.mkDefault true;
 
     nixpkgs.overlays = [
       (_: prev: {

@@ -10,9 +10,9 @@
   key = toString ./default.nix;
   imports = [ ./extensions.nix ];
 
-  options.hm.vscode.enable = lib.options.mkEnableOption "VSCode";
+  options.euvlok.home.vscode.enable = lib.options.mkEnableOption "VSCode";
 
-  config = lib.modules.mkIf config.hm.vscode.enable {
+  config = lib.modules.mkIf config.euvlok.home.vscode.enable {
     programs.vscode = {
       enable = true;
       package =

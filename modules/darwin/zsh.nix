@@ -42,7 +42,7 @@ let
       src = "${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
     }
   ]
-  ++ lib.lists.optionals hmConfig.hm.fzf.enable [
+  ++ lib.lists.optionals hmConfig.euvlok.home.fzf.enable [
     {
       name = "fzf-tab";
       src = "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh";
@@ -84,7 +84,7 @@ in
     ];
 
     promptInit = lib.modules.mkMerge [
-      (lib.strings.optionalString hmConfig.hm.ghostty.enable ''
+      (lib.strings.optionalString hmConfig.euvlok.home.ghostty.enable ''
         if [[ -r "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration ]]; then
           source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
         fi
@@ -94,7 +94,7 @@ in
           eval "$(starship init zsh)"
         fi
       '')
-      (lib.strings.optionalString hmConfig.hm.yazi.enable ''
+      (lib.strings.optionalString hmConfig.euvlok.home.yazi.enable ''
         function yy() {
           local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
           yazi "$@" --cwd-file="$tmp"
@@ -104,7 +104,7 @@ in
           rm -f -- "$tmp"
         }
       '')
-      (lib.strings.optionalString hmConfig.hm.zoxide.enable ''eval "$(zoxide init zsh)"'')
+      (lib.strings.optionalString hmConfig.euvlok.home.zoxide.enable ''eval "$(zoxide init zsh)"'')
     ];
   };
 

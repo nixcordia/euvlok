@@ -1,12 +1,12 @@
 { config, lib, ... }:
 let
-  cfg = config.nixos.networking;
+  cfg = config.euvlok.nixos.networking;
 in
 {
   _class = "nixos";
   _file = ./networking.nix;
   key = toString ./networking.nix;
-  options.nixos.networking = {
+  options.euvlok.nixos.networking = {
     enable = lib.options.mkEnableOption "NetworkManager" // {
       default = true;
     };
@@ -47,8 +47,8 @@ in
         {
           assertion = !cfg.ethernetBond.enable || (cfg.enable && cfg.ethernet.enable);
           message = ''
-            nixos.networking.ethernetBond.enable requires both
-            nixos.networking.enable and nixos.networking.ethernet.enable.
+            euvlok.nixos.networking.ethernetBond.enable requires both
+            euvlok.nixos.networking.enable and euvlok.nixos.networking.ethernet.enable.
           '';
         }
       ];

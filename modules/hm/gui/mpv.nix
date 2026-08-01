@@ -3,9 +3,9 @@
   _class = "homeManager";
   _file = ./mpv.nix;
   key = toString ./mpv.nix;
-  options.hm.mpv.enable = lib.options.mkEnableOption "MPV";
+  options.euvlok.home.mpv.enable = lib.options.mkEnableOption "MPV";
 
-  config = lib.modules.mkIf config.hm.mpv.enable {
+  config = lib.modules.mkIf config.euvlok.home.mpv.enable {
     programs.mpv.enable = true;
     programs.mpv.config = {
       screenshot-directory = "~/Pictures/mpv_screenshots";

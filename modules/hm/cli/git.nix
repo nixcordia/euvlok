@@ -9,12 +9,12 @@
   _class = "homeManager";
   _file = ./git.nix;
   key = toString ./git.nix;
-  options.hm.git.enable = lib.options.mkEnableOption "Git" // {
+  options.euvlok.home.git.enable = lib.options.mkEnableOption "Git" // {
     default = true;
   };
 
   config = lib.modules.mkMerge [
-    (lib.modules.mkIf config.hm.git.enable {
+    (lib.modules.mkIf config.euvlok.home.git.enable {
       programs = {
         gitui.enable = true;
         gh.enable = true;

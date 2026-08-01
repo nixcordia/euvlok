@@ -8,9 +8,9 @@
   _class = "homeManager";
   _file = ./zed.nix;
   key = toString ./zed.nix;
-  options.hm.zed-editor.enable = lib.options.mkEnableOption "Zed Editor";
+  options.euvlok.home.zed-editor.enable = lib.options.mkEnableOption "Zed Editor";
 
-  config = lib.modules.mkIf config.hm.zed-editor.enable {
+  config = lib.modules.mkIf config.euvlok.home.zed-editor.enable {
     programs.zed-editor.enable = true;
     programs.zed-editor.extraPackages = builtins.attrValues {
       inherit (pkgs.unstable)

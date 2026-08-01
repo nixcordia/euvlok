@@ -6,11 +6,11 @@ in
   _class = "homeManager";
   _file = ./bash.nix;
   key = toString ./bash.nix;
-  options.hm.bash.enable = lib.options.mkEnableOption "Bash" // {
+  options.euvlok.home.bash.enable = lib.options.mkEnableOption "Bash" // {
     default = true;
   };
 
-  config = lib.modules.mkIf config.hm.bash.enable {
+  config = lib.modules.mkIf config.euvlok.home.bash.enable {
     programs.bash = {
       enable = true;
       enableVteIntegration = true;

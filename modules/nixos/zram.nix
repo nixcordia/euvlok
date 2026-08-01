@@ -3,9 +3,9 @@
   _class = "nixos";
   _file = ./zram.nix;
   key = toString ./zram.nix;
-  options.nixos.zram.enable = lib.options.mkEnableOption "ZRAM Swap";
+  options.euvlok.nixos.zram.enable = lib.options.mkEnableOption "ZRAM Swap";
 
-  config = lib.modules.mkIf config.nixos.zram.enable {
+  config = lib.modules.mkIf config.euvlok.nixos.zram.enable {
     zramSwap.enable = true;
     boot.kernel.sysctl = {
       "vm.swappiness" = 180;

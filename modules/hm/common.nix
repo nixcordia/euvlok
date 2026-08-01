@@ -1,14 +1,21 @@
-{ euvlokInputs }:
+{
+  euvlokInputs,
+  includeNixpkgs,
+}:
 { lib, ... }:
 {
   _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
+  _file = ./common.nix;
+  key = toString ./common.nix;
   imports = [
     # Do not put nixpkgs' upstream Nix ahead of Determinate Nix on PATH.
     euvlokInputs.determinate.homeManagerModules.default
     (lib.modules.importApply ./os { inherit euvlokInputs; })
-    (lib.modules.importApply ./nixpkgs.nix { inherit euvlokInputs; })
+  ]
+  ++ lib.lists.optional includeNixpkgs (
+    lib.modules.importApply ./nixpkgs.nix { inherit euvlokInputs; }
+  )
+  ++ [
     (lib.modules.importApply ./catppuccin { inherit euvlokInputs; })
     (lib.modules.importApply ./sops.nix { inherit euvlokInputs; })
     ./cli
@@ -24,4 +31,5 @@
   # the same priority as Determinate's module sets null. Prefer the externally
   # managed Determinate installation explicitly.
   nix.package = lib.mkForce null;
+  manual.manpages.enable = lib.mkDefault false;
 }

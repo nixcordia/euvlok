@@ -7,11 +7,13 @@
   _class = "homeManager";
   _file = ./base.nix;
   key = toString ./base.nix;
-  options.hm.nixcord.basePlugins.enable = lib.options.mkEnableOption "shared Nixcord plugin set" // {
-    default = config.hm.nixcord.enable;
-  };
+  options.euvlok.home.nixcord.basePlugins.enable =
+    lib.options.mkEnableOption "shared Nixcord plugin set"
+    // {
+      default = config.euvlok.home.nixcord.enable;
+    };
 
-  config = lib.modules.mkIf config.hm.nixcord.basePlugins.enable {
+  config = lib.modules.mkIf config.euvlok.home.nixcord.basePlugins.enable {
     programs.nixcord.config.plugins = {
       alwaysExpandRoles.enable = true;
       betterGifPicker.enable = true;

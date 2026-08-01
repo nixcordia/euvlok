@@ -13,7 +13,7 @@
   ];
 
   config = lib.modules.mkIf (osConfig != null && osConfig ? nixos) {
-    nixpkgs.config.cudaSupport = lib.modules.mkDefault (osConfig.nixos.nvidia.enable or false);
-    nixpkgs.config.rocmSupport = lib.modules.mkDefault (osConfig.nixos.amd.enable or false);
+    nixpkgs.config.cudaSupport = lib.modules.mkDefault (osConfig.euvlok.nixos.nvidia.enable or false);
+    nixpkgs.config.rocmSupport = lib.modules.mkDefault (osConfig.euvlok.nixos.amd.enable or false);
   };
 }

@@ -16,9 +16,9 @@ in
     ./settings.nix
   ];
 
-  options.hm.yazi.enable = lib.options.mkEnableOption "Yazi";
+  options.euvlok.home.yazi.enable = lib.options.mkEnableOption "Yazi";
 
-  config = lib.modules.mkIf config.hm.yazi.enable {
+  config = lib.modules.mkIf config.euvlok.home.yazi.enable {
     home.packages =
       (builtins.attrValues { inherit (pkgs) mediainfo exiftool; })
       ++ lib.lists.optionals isLinux [

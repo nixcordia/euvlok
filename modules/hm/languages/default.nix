@@ -17,7 +17,7 @@ in
     ./zed.nix
   ];
 
-  options.hm.languages = lib.attrsets.mapAttrs (
+  options.euvlok.home.languages = lib.attrsets.mapAttrs (
     name: def:
     lib.options.mkOption {
       default = { };
@@ -75,13 +75,13 @@ in
   config =
     let
       enabledLanguages = lib.attrsets.filterAttrs (
-        name: _: config.hm.languages.${name}.enable or false
+        name: _: config.euvlok.home.languages.${name}.enable or false
       ) languageDefinitions;
 
       enabledLanguagePackageLists = lib.attrsets.mapAttrsToList (
         name: def:
         let
-          langCfg = config.hm.languages.${name};
+          langCfg = config.euvlok.home.languages.${name};
           basePackages = def.packages or [ ];
           versionedPackage = if (def ? versionMap) then [ def.versionMap.${langCfg.version} ] else [ ];
           extraPkgs = langCfg.extraPackages;
@@ -92,7 +92,7 @@ in
     {
       # assertions = [
       #   {
-      #     assertion = (config.hm.languages.haskell.enable && isLinux);
+      #     assertion = (config.euvlok.home.languages.haskell.enable && isLinux);
       #     message = "Haskell is currently not supported on macOS (Darwin)";
       #   }
       # ];

@@ -13,9 +13,9 @@
     ./settings.nix
   ];
 
-  options.hm.helix.enable = lib.options.mkEnableOption "Helix";
+  options.euvlok.home.helix.enable = lib.options.mkEnableOption "Helix";
 
-  config = lib.modules.mkIf config.hm.helix.enable {
+  config = lib.modules.mkIf config.euvlok.home.helix.enable {
     programs.helix = {
       enable = true;
       extraPackages = [ pkgs.unstable.rumdl ];

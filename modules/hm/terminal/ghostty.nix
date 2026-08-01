@@ -62,9 +62,9 @@ in
   _class = "homeManager";
   _file = ./ghostty.nix;
   key = toString ./ghostty.nix;
-  options.hm.ghostty.enable = lib.options.mkEnableOption "Ghostty";
+  options.euvlok.home.ghostty.enable = lib.options.mkEnableOption "Ghostty";
 
-  config = lib.modules.mkIf config.hm.ghostty.enable {
+  config = lib.modules.mkIf config.euvlok.home.ghostty.enable {
     programs.ghostty = {
       enable = true;
       package = if isDarwin then pkgs.unstable.ghostty-bin else pkgs.ghostty;

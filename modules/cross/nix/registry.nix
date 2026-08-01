@@ -1,43 +1,63 @@
-{ isDarwin }:
 {
-  inputs,
+  euvlokInputs,
+  isDarwin,
+}:
+{
+  config,
   lib,
   ...
 }:
 let
   inherit (lib)
-    filterAttrs
-    isType
     mapAttrs
-    mapAttrsToList
-    mkForce
+    mkDefault
+    mkOption
+    types
     ;
 
-  flakeInputs = filterAttrs (_: isType "flake") inputs;
-  nixPathEntries = mapAttrsToList (name: _: "${name}=flake:${name}") flakeInputs;
-  registry = mapAttrs (_: flake: mkForce { inherit flake; }) flakeInputs;
+  registry = mapAttrs (_: flake: mkDefault { inherit flake; }) config.euvlok.nix.registryInputs;
+  nixPathEntries = [ "nixpkgs=flake:nixpkgs" ];
 in
 {
   _class = null;
   _file = ./registry.nix;
   key = toString ./registry.nix;
 
-  config =
-    if isDarwin then
-      {
-        determinateNix = {
-          inherit registry;
-          customSettings.nix-path = nixPathEntries;
-        };
-      }
-    else
-      {
-        nix = {
-          # Force only the locked input names, not the whole registry. This
-          # preserves deterministic lookups while allowing unrelated host entries.
-          inherit registry;
-          settings.nix-path = nixPathEntries;
-          nixPath = nixPathEntries;
-        };
-      };
+  options.euvlok.nix.registryInputs = mkOption {
+    type = types.attrsOf (types.addCheck types.raw (lib.isType "flake"));
+    default = {
+      nixpkgs = euvlokInputs.nixpkgs;
+    };
+    description = "Locked flake inputs exposed through the system Nix registry.";
+  };
+
+  config = lib.modules.mkMerge [
+    {
+      assertions = [
+        {
+          assertion = config.euvlok.nix.registryInputs ? nixpkgs;
+          message = "euvlok.nix.registryInputs must contain nixpkgs for NIX_PATH.";
+        }
+      ];
+    }
+    (
+      if isDarwin then
+        {
+          determinateNix = {
+            inherit registry;
+            customSettings.nix-path = nixPathEntries;
+          };
+        }
+      else
+        {
+          nix = {
+            # Lock only the explicitly selected inputs while preserving
+            # unrelated host registry entries.
+            inherit registry;
+            settings.nix-path = nixPathEntries;
+            nixPath = nixPathEntries;
+          };
+        }
+    )
+  ];
 }

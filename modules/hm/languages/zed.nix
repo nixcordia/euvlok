@@ -7,12 +7,12 @@
 let
   languageDefinitions = import ./catalog { inherit pkgs lib; };
   enabledLanguages = lib.attrsets.filterAttrs (
-    name: _: config.hm.languages.${name}.enable or false
+    name: _: config.euvlok.home.languages.${name}.enable or false
   ) languageDefinitions;
   collectPackageLists = lib.attrsets.mapAttrsToList (
     name: def:
     let
-      langCfg = config.hm.languages.${name};
+      langCfg = config.euvlok.home.languages.${name};
       versionedPackage = if (def ? versionMap) then [ def.versionMap.${langCfg.version} ] else [ ];
     in
     (def.packages or [ ]) ++ versionedPackage ++ langCfg.extraPackages
@@ -27,7 +27,7 @@ in
   _class = "homeManager";
   _file = ./zed.nix;
   key = toString ./zed.nix;
-  config = lib.modules.mkIf config.hm.zed-editor.enable {
+  config = lib.modules.mkIf config.euvlok.home.zed-editor.enable {
     programs.zed-editor.extensions =
       lib.lists.optionals config.programs.fish.enable [ "fish" ]
       ++ collectLists (def: def.zed.extensions or [ ]);

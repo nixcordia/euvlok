@@ -6,7 +6,7 @@
   ...
 }:
 let
-  cfg = config.hm.chromium;
+  cfg = config.euvlok.home.chromium;
 
   chromiumFeatures = [
     "ForceEnableWebGpuInterop"
@@ -78,7 +78,7 @@ in
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
-  options.hm.chromium = {
+  options.euvlok.home.chromium = {
     enable = lib.options.mkEnableOption "Chromium-based browsers";
 
     browser = lib.options.mkOption {
@@ -116,7 +116,7 @@ in
     assertions = [
       {
         assertion = pkgs.stdenvNoCC.isLinux;
-        message = "hm.chromium is only available on Linux";
+        message = "euvlok.home.chromium is only available on Linux";
       }
     ];
     programs.chromium = {

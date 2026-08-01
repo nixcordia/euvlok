@@ -14,9 +14,9 @@
     ./base.nix
   ];
 
-  options.hm.nixcord.enable = lib.options.mkEnableOption "Nixcord";
+  options.euvlok.home.nixcord.enable = lib.options.mkEnableOption "Nixcord";
 
-  config = lib.modules.mkIf config.hm.nixcord.enable {
+  config = lib.modules.mkIf config.euvlok.home.nixcord.enable {
     assertions = [
       {
         assertion = pkgs.stdenvNoCC.isx86_64 || pkgs.stdenvNoCC.isDarwin;

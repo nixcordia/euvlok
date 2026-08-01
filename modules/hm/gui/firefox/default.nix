@@ -19,8 +19,8 @@ let
     extensions.force = true;
     search = {
       force = true;
-      default = config.hm.firefox.defaultSearchEngine;
-      privateDefault = config.hm.firefox.defaultSearchEngine;
+      default = config.euvlok.home.firefox.defaultSearchEngine;
+      privateDefault = config.euvlok.home.firefox.defaultSearchEngine;
       order = [
         "google"
         "kagi"
@@ -183,8 +183,9 @@ let
       "browser.urlbar.suggest.calculator" = true;
       "browser.urlbar.update2.engineAliasRefresh" = true;
     }
-    // lib.attrsets.optionalAttrs (config.hm.firefox.acceptedLanguages != [ ]) {
-      "intl.accept_languages" = lib.strings.concatStringsSep "," config.hm.firefox.acceptedLanguages;
+    // lib.attrsets.optionalAttrs (config.euvlok.home.firefox.acceptedLanguages != [ ]) {
+      "intl.accept_languages" =
+        lib.strings.concatStringsSep "," config.euvlok.home.firefox.acceptedLanguages;
     };
   };
   policies = {
@@ -206,7 +207,7 @@ in
   key = toString ./default.nix;
   imports = [ euvlokInputs.zen-browser.homeModules.twilight ];
 
-  options.hm.firefox = {
+  options.euvlok.home.firefox = {
     enable = lib.options.mkEnableOption "declarative Firefox-based browsers";
     firefox.enable = lib.options.mkEnableOption "declarative Firefox" // {
       default = true;
@@ -237,38 +238,38 @@ in
   };
 
   config = lib.modules.mkMerge [
-    (lib.modules.mkIf config.hm.firefox.enable {
+    (lib.modules.mkIf config.euvlok.home.firefox.enable {
       programs.firefox = {
         enable = true;
         package = pkgs.firefox;
         profiles.default = default;
-        inherit (config.hm.firefox) languagePacks;
+        inherit (config.euvlok.home.firefox) languagePacks;
         inherit policies;
       };
     })
-    (lib.modules.mkIf config.hm.firefox.floorp.enable {
+    (lib.modules.mkIf config.euvlok.home.firefox.floorp.enable {
       programs.floorp = {
         enable = true;
         package = pkgs.unstable.floorp-bin;
         profiles.default = default;
-        inherit (config.hm.firefox) languagePacks;
+        inherit (config.euvlok.home.firefox) languagePacks;
         inherit policies;
       };
     })
-    (lib.modules.mkIf config.hm.firefox.librewolf.enable {
+    (lib.modules.mkIf config.euvlok.home.firefox.librewolf.enable {
       programs.librewolf = {
         enable = true;
         package = pkgs.librewolf;
         profiles.default = default;
-        inherit (config.hm.firefox) languagePacks;
+        inherit (config.euvlok.home.firefox) languagePacks;
         inherit policies;
       };
     })
-    (lib.modules.mkIf config.hm.firefox.zen-browser.enable {
+    (lib.modules.mkIf config.euvlok.home.firefox.zen-browser.enable {
       programs.zen-browser = {
         enable = true;
         profiles.default = default;
-        inherit (config.hm.firefox) languagePacks;
+        inherit (config.euvlok.home.firefox) languagePacks;
         inherit policies;
       };
     })

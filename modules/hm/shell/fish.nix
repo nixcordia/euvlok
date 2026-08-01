@@ -8,9 +8,9 @@
   _class = "homeManager";
   _file = ./fish.nix;
   key = toString ./fish.nix;
-  options.hm.fish.enable = lib.options.mkEnableOption "Fish";
+  options.euvlok.home.fish.enable = lib.options.mkEnableOption "Fish";
 
-  config = lib.modules.mkIf config.hm.fish.enable {
+  config = lib.modules.mkIf config.euvlok.home.fish.enable {
     programs.fish.enable = true;
     programs.fish.plugins = [
       {

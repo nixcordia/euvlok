@@ -21,10 +21,10 @@ in
   _file = ./gnome.nix;
   key = toString ./gnome.nix;
 
-  options.nixos.gnome.enable = lib.options.mkEnableOption "GNOME";
+  options.euvlok.nixos.gnome.enable = lib.options.mkEnableOption "GNOME";
 
-  config = lib.modules.mkIf config.nixos.gnome.enable {
-    nixos.gui.enable = lib.modules.mkDefault true;
+  config = lib.modules.mkIf config.euvlok.nixos.gnome.enable {
+    euvlok.nixos.gui.enable = lib.modules.mkDefault true;
 
     services = {
       displayManager.gdm.enable = true;

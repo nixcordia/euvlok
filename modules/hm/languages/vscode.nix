@@ -7,7 +7,7 @@
 let
   languageDefinitions = import ./catalog { inherit pkgs lib; };
   enabledLanguages = lib.attrsets.filterAttrs (
-    name: _: config.hm.languages.${name}.enable or false
+    name: _: config.euvlok.home.languages.${name}.enable or false
   ) languageDefinitions;
   collectLists =
     selector: lib.lists.flatten (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
@@ -16,8 +16,10 @@ let
     lib.attrsets.mergeAttrsList (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
   extensionStrings = lib.lists.unique (
     lib.lists.optionals
-      (config.hm.languages.cpp.enable or config.hm.languages.rust.enable
-        or config.hm.languages.swift.enable
+      (
+        config.euvlok.home.languages.cpp.enable
+        || config.euvlok.home.languages.rust.enable
+        || config.euvlok.home.languages.swift.enable
       )
       [
         "vadimcn.vscode-lldb"
@@ -29,7 +31,7 @@ in
   _class = "homeManager";
   _file = ./vscode.nix;
   key = toString ./vscode.nix;
-  config = lib.modules.mkIf config.hm.vscode.enable {
+  config = lib.modules.mkIf config.euvlok.home.vscode.enable {
     programs.vscode.profiles.default.extensions =
       pkgs.nix4vscode.forVscodeVersion config.programs.vscode.package.version extensionStrings;
 

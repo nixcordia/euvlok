@@ -8,10 +8,10 @@
   _file = ./cosmic.nix;
   key = toString ./cosmic.nix;
 
-  options.nixos.cosmic.enable = lib.options.mkEnableOption "COSMIC";
+  options.euvlok.nixos.cosmic.enable = lib.options.mkEnableOption "COSMIC";
 
-  config = lib.modules.mkIf config.nixos.cosmic.enable {
-    nixos.gui.enable = lib.modules.mkDefault true;
+  config = lib.modules.mkIf config.euvlok.nixos.cosmic.enable {
+    euvlok.nixos.gui.enable = lib.modules.mkDefault true;
 
     services = {
       displayManager.cosmic-greeter.enable = true;

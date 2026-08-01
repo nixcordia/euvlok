@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.nixos.boot;
+  cfg = config.euvlok.nixos.boot;
   bootCountingSupported = lib.attrsets.hasAttrByPath [
     "boot"
     "loader"
@@ -18,9 +18,11 @@ in
   _class = "nixos";
   _file = ./boot.nix;
   key = toString ./boot.nix;
-  options.nixos.boot.systemd-boot.enable = lib.options.mkEnableOption "systemd-boot with EFI" // {
-    default = false;
-  };
+  options.euvlok.nixos.boot.systemd-boot.enable =
+    lib.options.mkEnableOption "systemd-boot with EFI"
+    // {
+      default = false;
+    };
 
   config = lib.modules.mkIf cfg.systemd-boot.enable {
     boot.loader = {

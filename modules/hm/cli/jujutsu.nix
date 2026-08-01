@@ -8,9 +8,9 @@
   _class = "homeManager";
   _file = ./jujutsu.nix;
   key = toString ./jujutsu.nix;
-  options.hm.jujutsu.enable = lib.options.mkEnableOption "Jujutsu";
+  options.euvlok.home.jujutsu.enable = lib.options.mkEnableOption "Jujutsu";
 
-  config = lib.modules.mkIf config.hm.jujutsu.enable {
+  config = lib.modules.mkIf config.euvlok.home.jujutsu.enable {
     home.packages = builtins.attrValues { inherit (pkgs.unstable) watchman; };
     programs.jujutsu = {
       enable = true;

@@ -11,9 +11,9 @@ in
   _class = "homeManager";
   _file = ./zsh.nix;
   key = toString ./zsh.nix;
-  options.hm.zsh.enable = lib.options.mkEnableOption "declarative Zsh";
+  options.euvlok.home.zsh.enable = lib.options.mkEnableOption "declarative Zsh";
 
-  config = lib.modules.mkIf config.hm.zsh.enable {
+  config = lib.modules.mkIf config.euvlok.home.zsh.enable {
     assertions = [
       {
         message = "You cannot use Home-Manager Zsh on Darwin";

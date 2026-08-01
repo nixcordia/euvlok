@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.hm.codex;
+  cfg = config.euvlok.home.codex;
   inherit (pkgs.stdenvNoCC) isDarwin;
 
   codexConfigDir =
@@ -57,7 +57,7 @@ in
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
-  options.hm.codex.enable = lib.options.mkEnableOption "Codex";
+  options.euvlok.home.codex.enable = lib.options.mkEnableOption "Codex";
 
   config = lib.modules.mkIf cfg.enable {
     home.packages = [
