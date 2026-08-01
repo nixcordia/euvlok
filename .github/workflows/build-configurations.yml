@@ -32,8 +32,41 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
-  build-linux:
-    name: Linux / ${{ matrix.owner }} / ${{ matrix.name }}
+  matrix:
+    name: Host Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.hosts.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: ./.github/actions/setup-nix
+        with:
+          github-token: ${{ github.token }}
+          cachix-skip-push: true
+
+      - name: Generate matrix from host inventory
+        id: hosts
+        shell: bash
+        run: |
+          matrix="$(
+            nix eval --json .#hostMetadata |
+              jq --compact-output '{
+                include: [
+                  to_entries[] |
+                  .value + { name: .key }
+                ]
+              }'
+          )"
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
+
+  build:
+    name: ${{ matrix.class }} / ${{ matrix.owner }} / ${{ matrix.name }}
+    needs: matrix
     runs-on: ${{ matrix.runner }}
     permissions:
       actions: write
@@ -43,25 +76,8 @@ jobs:
       CACHIX_CACHE: euvlok
     strategy:
       fail-fast: false
-      max-parallel: 1
-      matrix:
-        # This matrix intentionally contains the existing CI build set,
-        # grouped by owner. Each runner must match the host system.
-        include:
-          # ashuramaruzxc
-          - owner: ashuramaruzxc
-            name: unsigned-int16
-            runner: ubuntu-24.04-arm
-          - owner: ashuramaruzxc
-            name: unsigned-int32
-            runner: ubuntu-latest
-          - owner: ashuramaruzxc
-            name: unsigned-int64
-            runner: ubuntu-latest
-          # lay-by
-          - owner: lay-by
-            name: blind-faith
-            runner: ubuntu-latest
+      max-parallel: 2
+      matrix: ${{ fromJSON(needs.matrix.outputs.hosts) }}
     steps:
       - name: Check retry target
         id: retry-target
@@ -69,194 +85,7 @@ jobs:
         env:
           RETRY_KIND: ${{ inputs['retry-kind'] }}
           RETRY_NAME: ${{ inputs['retry-name'] }}
-          MATRIX_KIND: nixos
-          MATRIX_NAME: ${{ matrix.name }}
-        run: |
-          should_build=true
-
-          if [ -n "${RETRY_KIND}" ] || [ -n "${RETRY_NAME}" ]; then
-            should_build=false
-
-            if [ "${RETRY_KIND}" = "${MATRIX_KIND}" ] && [ "${RETRY_NAME}" = "${MATRIX_NAME}" ]; then
-              should_build=true
-            fi
-          fi
-
-          echo "should-build=${should_build}" >> "${GITHUB_OUTPUT}"
-
-      - name: Record build start
-        id: build-start
-        if: steps.retry-target.outputs.should-build == 'true'
-        shell: bash
-        run: echo "epoch=$(date +%s)" >> "${GITHUB_OUTPUT}"
-
-      - name: Checkout repository
-        if: steps.retry-target.outputs.should-build == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Reclaim maximum Nix store space
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          (matrix.name == 'blind-faith' || startsWith(matrix.name, 'unsigned-'))
-        uses: ./.github/actions/nothing-but-nix
-        with:
-          hatchet-protocol: rampage
-          witness-carnage: true
-
-      # GitHub only loads workflows directly from .github/workflows, so the
-      # reusable Nix/Cachix setup lives in a local composite action instead.
-      - name: Build and cache configuration
-        id: build
-        if: steps.retry-target.outputs.should-build == 'true'
-        continue-on-error: true
-        uses: ./.github/actions/build-nix-flake-target
-        with:
-          configuration-kind: nixos
-          configuration-name: ${{ matrix.name }}
-          cachix-cache: ${{ env.CACHIX_CACHE }}
-          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          cachix-skip-push: ${{ secrets.CACHIX_AUTH_TOKEN == '' }}
-          github-token: ${{ github.token }}
-          build-started-at-epoch: ${{ steps.build-start.outputs.epoch }}
-
-      - name: Dispatch retry after soft timeout
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          steps.build.outputs.timed-out == 'true' &&
-          steps.build.outputs.timeout-drv != '' &&
-          fromJSON(inputs['retry-attempt'] || '0') < 3 &&
-          steps.build.outputs.timeout-drv != inputs['last-timeout-drv']
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RETRY_KIND: nixos
-          RETRY_NAME: ${{ matrix.name }}
-          RETRY_ATTEMPT: ${{ inputs['retry-attempt'] || '0' }}
-          TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
-        run: |
-          next_attempt=$((RETRY_ATTEMPT + 1))
-
-          dispatch_payload="$(
-            jq --null-input \
-              --arg ref "${GITHUB_REF_NAME}" \
-              --arg retry_kind "${RETRY_KIND}" \
-              --arg retry_name "${RETRY_NAME}" \
-              --arg retry_attempt "${next_attempt}" \
-              --arg last_timeout_drv "${TIMEOUT_DRV}" \
-              '{
-                ref: $ref,
-                return_run_details: true,
-                inputs: {
-                  "retry-kind": $retry_kind,
-                  "retry-name": $retry_name,
-                  "retry-attempt": $retry_attempt,
-                  "last-timeout-drv": $last_timeout_drv
-                }
-              }'
-          )"
-
-          dispatch_response="$(
-            gh api \
-              --method POST \
-              "repos/${GITHUB_REPOSITORY}/actions/workflows/build-configurations.yml/dispatches" \
-              --input - <<< "${dispatch_payload}"
-          )"
-          retry_run_url="$(jq --raw-output '.html_url // empty' <<< "${dispatch_response}")"
-
-          {
-            echo "### Soft timeout retry dispatched"
-            echo
-            echo "- Configuration: \`${RETRY_KIND} / ${RETRY_NAME}\`"
-            echo "- Retry attempt: \`${next_attempt}\`"
-            echo "- Timed-out derivation: \`${TIMEOUT_DRV}\`"
-            if [ -n "${retry_run_url}" ]; then
-              echo "- Retry run: ${retry_run_url}"
-            fi
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-      - name: Stop retrying repeated timeout
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          steps.build.outputs.timed-out == 'true' &&
-          steps.build.outputs.timeout-drv != '' &&
-          steps.build.outputs.timeout-drv == inputs['last-timeout-drv']
-        shell: bash
-        env:
-          TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
-        run: |
-          {
-            echo "### Stopping retries"
-            echo
-            echo "The runner timed out twice while building the same derivation:"
-            echo
-            echo "\`${TIMEOUT_DRV}\`"
-            echo
-            echo "No further retry was dispatched because the build appears stuck on one derivation that cannot finish on this runner."
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-      - name: Stop retrying after attempt limit
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          steps.build.outputs.timed-out == 'true' &&
-          steps.build.outputs.timeout-drv != '' &&
-          fromJSON(inputs['retry-attempt'] || '0') >= 3 &&
-          steps.build.outputs.timeout-drv != inputs['last-timeout-drv']
-        shell: bash
-        env:
-          RETRY_ATTEMPT: ${{ inputs['retry-attempt'] || '0' }}
-          TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
-        run: |
-          {
-            echo "### Stopping retries"
-            echo
-            echo "Retry attempt \`${RETRY_ATTEMPT}\` reached the configured attempt limit."
-            echo
-            echo "Last timed-out derivation: \`${TIMEOUT_DRV}\`"
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-      - name: Fail failed build
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          (steps.build.outcome == 'failure' || steps.build.outputs.exit-code != '0')
-        shell: bash
-        env:
-          EXIT_CODE: ${{ steps.build.outputs.exit-code || '1' }}
-        run: |
-          echo "::error::Build failed with exit code ${EXIT_CODE}."
-          exit "${EXIT_CODE}"
-
-  build-darwin:
-    name: Darwin / ${{ matrix.owner }} / ${{ matrix.name }}
-    runs-on: macos-latest
-    permissions:
-      actions: write
-      contents: read
-      id-token: write
-    env:
-      CACHIX_CACHE: euvlok
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        # This matrix intentionally contains the existing CI build set,
-        # grouped by owner. Each runner must match the host system.
-        include:
-          # ashuramaruzxc
-          - owner: ashuramaruzxc
-            name: unsigned-int8
-          # bigshaq9999
-          - owner: bigshaq9999
-            name: faputa
-    steps:
-      - name: Check retry target
-        id: retry-target
-        shell: bash
-        env:
-          RETRY_KIND: ${{ inputs['retry-kind'] }}
-          RETRY_NAME: ${{ inputs['retry-name'] }}
-          MATRIX_KIND: darwin
+          MATRIX_KIND: ${{ matrix.class }}
           MATRIX_NAME: ${{ matrix.name }}
         run: |
           should_build=true
@@ -290,15 +119,13 @@ jobs:
           hatchet-protocol: rampage
           witness-carnage: true
 
-      # GitHub only loads workflows directly from .github/workflows, so the
-      # reusable Nix/Cachix setup lives in a local composite action instead.
       - name: Build and cache configuration
         id: build
         if: steps.retry-target.outputs.should-build == 'true'
         continue-on-error: true
         uses: ./.github/actions/build-nix-flake-target
         with:
-          configuration-kind: darwin
+          configuration-kind: ${{ matrix.class }}
           configuration-name: ${{ matrix.name }}
           cachix-cache: ${{ env.CACHIX_CACHE }}
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -316,7 +143,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          RETRY_KIND: darwin
+          RETRY_KIND: ${{ matrix.class }}
           RETRY_NAME: ${{ matrix.name }}
           RETRY_ATTEMPT: ${{ inputs['retry-attempt'] || '0' }}
           TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
