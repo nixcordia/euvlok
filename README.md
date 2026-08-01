@@ -6,8 +6,7 @@
   <a href="https://github.com/euvlok/euvlok"><img alt="License" src="https://img.shields.io/github/license/euvlok/euvlok?style=for-the-badge&colorA=303446&colorB=8caaee"></a>
 </p>
 
-Shared NixOS, nix-darwin, and Home Manager configurations for a few friends'
-machines.
+Shared NixOS, nix-darwin, and Home Manager configurations for a few friends' machines
 
 > [!IMPORTANT]
 > This is a live configuration, not a starter template. It includes personal
@@ -30,7 +29,6 @@ Format and check:
 ```sh
 devenv tasks run devenv:treefmt:run
 devenv test
-nix flake check --all-systems
 ```
 
 Build a configuration:
@@ -42,27 +40,27 @@ nix build .#darwinConfigurations.faputa.system
 
 ## Hosts
 
-| Output           | Owner           | Platform   |
-| ---------------- | --------------- | ---------- |
-| `blind-faith`    | `lay-by`        | NixOS      |
-| `unsigned-int16` | `ashuramaruzxc` | NixOS      |
-| `unsigned-int32` | `ashuramaruzxc` | NixOS      |
-| `unsigned-int64` | `ashuramaruzxc` | NixOS      |
-| `faputa`         | `bigshaq9999`   | nix-darwin |
-| `unsigned-int8`  | `ashuramaruzxc` | nix-darwin |
+| Output           | Owner           | Platform         | CI runner          |
+| ---------------- | --------------- | ---------------- | ------------------ |
+| `blind-faith`    | `lay-by`        | `x86_64-linux`   | `ubuntu-latest`    |
+| `unsigned-int16` | `ashuramaruzxc` | `aarch64-linux`  | `ubuntu-24.04-arm` |
+| `unsigned-int32` | `ashuramaruzxc` | `x86_64-linux`   | `ubuntu-latest`    |
+| `unsigned-int64` | `ashuramaruzxc` | `x86_64-linux`   | `ubuntu-latest`    |
+| `faputa`         | `bigshaq9999`   | `aarch64-darwin` | `macos-latest`     |
+| `unsigned-int8`  | `ashuramaruzxc` | `aarch64-darwin` | `macos-latest`     |
 
-Home Manager modules are exposed for `ashuramaruzxc`, `bigshaq9999`, and
-`lay-by`.
+This table is represented in the typed `hostMetadata` output. The build workflow derives
+its matrix from that output rather than duplicating the list
 
 ## Layout
 
-| Path                                | Purpose                                   |
-| ----------------------------------- | ----------------------------------------- |
-| [`flake-modules/`](./flake-modules) | Hosts and public flake outputs.           |
-| [`hosts/`](./hosts)                 | Per-machine and per-user configuration.   |
-| [`modules/`](./modules)             | Shared NixOS, nix-darwin, and HM modules. |
-| [`lib/`](./lib)                     | Helpers and overlays.                     |
-| [`secrets/`](./secrets)             | SOPS-encrypted secrets.                   |
+| Path                                | Purpose                                      |
+| ----------------------------------- | ---------------------------------------------|
+| [`flake-modules/`](./flake-modules) | Public outputs and the typed host inventory. |
+| [`hosts/`](./hosts)                 | Internal machine and personal profiles.      |
+| [`modules/`](./modules)             | Shared NixOS, nix-darwin, and HM modules.    |
+| [`lib/`](./lib)                     | Helpers and overlays.                        |
+| [`secrets/`](./secrets)             | SOPS-encrypted secrets.                      |
 
 ## Public Outputs
 
@@ -70,14 +68,26 @@ Home Manager modules are exposed for `ashuramaruzxc`, `bigshaq9999`, and
 inputs.euvlok.nixosModules.default
 inputs.euvlok.darwinModules.default
 inputs.euvlok.homeModules.default
+inputs.euvlok.homeModules.integrated
 inputs.euvlok.overlays.default
 inputs.euvlok.flakeModules.default
 inputs.euvlok.lib.supportedSystems
+inputs.euvlok.hostMetadata
+inputs.euvlok.hostChecks
 ```
 
 Named modules such as `nixosModules.nvidia`, `darwinModules.system`, and
-`homeModules.wm` can be imported independently. Run `nix flake show` for the
-full output list.
+`homeModules.wm` can be imported independently. Run `nix flake show` for the full output
+list
+
+`homeModules.default` is self-contained for standalone Home Manager
+
+`homeModules.integrated` is for `home-manager.users` under NixOS or nix-darwin with
+`home-manager.useGlobalPkgs = true`
+
+Personal profiles are intentionally internal and are not part of the public module API
+
+Custom options live below `euvlok.nixos.*` and `euvlok.home.*`
 
 ## Determinate Nix
 
@@ -94,5 +104,6 @@ sudo nixos-rebuild switch \
   --flake .#HOST
 ```
 
-After that, rebuild normally. Install Determinate separately on macOS before
-activating the nix-darwin configuration.
+After that, rebuild normally
+
+Install Determinate separately on macOS before activating the nix-darwin configuration
