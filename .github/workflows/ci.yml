@@ -21,7 +21,7 @@ jobs:
     if: >-
       github.event_name != 'pull_request' ||
       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
-      github.event.pull_request.user.login == 'github-actions[bot]'
+      contains(fromJSON('[41898282, 29139614]'), github.event.pull_request.user.id)
     runs-on: ubuntu-latest
     outputs:
       skip-push: ${{ steps.auth.outputs.skip-push }}
@@ -42,7 +42,7 @@ jobs:
     if: >-
       github.event_name != 'pull_request' ||
       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
-      github.event.pull_request.user.login == 'github-actions[bot]'
+      contains(fromJSON('[41898282, 29139614]'), github.event.pull_request.user.id)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -61,7 +61,7 @@ jobs:
     if: >-
       github.event_name != 'pull_request' ||
       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
-      github.event.pull_request.user.login == 'github-actions[bot]'
+      contains(fromJSON('[41898282, 29139614]'), github.event.pull_request.user.id)
     runs-on: ${{ matrix.runner }}
     needs: cachix
     permissions:
