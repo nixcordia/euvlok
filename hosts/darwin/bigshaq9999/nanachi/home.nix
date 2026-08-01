@@ -22,7 +22,7 @@ in
     { ... }:
     {
       imports = [
-        { home.stateVersion = "25.11"; }
+        { home.stateVersion = "26.05"; }
       ]
       ++ [
         ../../../hm/bigshaq9999/starship.nix
@@ -118,37 +118,37 @@ in
       ]
       ++ [
         {
-          home.packages =
-            builtins.attrValues {
-              inherit (pkgs.unstable)
-                # Make macos useful
-                alt-tab-macos
-                ice-bar
-                iina
-                iterm2
-                raycast
-                stats
-                shottr
-                ;
+          home.packages = builtins.attrValues {
+            inherit (pkgs.unstable)
+              # Make macos useful
+              alt-tab-macos
+              ice-bar
+              iina
+              iterm2
+              raycast
+              stats
+              shottr
+              ;
 
-              # SNS
-              inherit (pkgs) signal-desktop;
+            # SNS
+            inherit (pkgs) signal-desktop;
 
-              # Utilities
-              inherit (pkgs)
-                qbittorrent
-                anki-bin # Japenis
-                audacity
-                # gimp # Image editing
-                inkscape # Vector graphics
-                yubikey-manager # OTP
-                notion-app # Productivity
-                # mullvad-vpn
-                ;
-            }
-            ++ lib.lists.optionals isLinux [
-              pkgs.prismlauncher
-            ];
+            # Utilities
+            inherit (pkgs)
+              qbittorrent
+              anki-bin # Japenis
+              audacity
+              # gimp # Image editing
+              inkscape # Vector graphics
+              yubikey-manager # OTP
+              notion-app # Productivity
+              ;
+
+            inherit (pkgs.eupkgs) helium-browser codex opencode;
+
+            # Gaming
+            inherit (pkgs) prismlauncher;
+          };
         }
       ]
       ++ [

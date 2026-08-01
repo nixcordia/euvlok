@@ -1,4 +1,3 @@
-{ ... }:
 {
   _class = "darwin";
   _file = ./system.nix;

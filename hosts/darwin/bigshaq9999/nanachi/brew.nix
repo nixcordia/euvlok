@@ -12,7 +12,6 @@
     };
     caskArgs = {
       appdir = "${config.users.users.faputa.home}/Applications";
-      no_quarantine = true;
       require_sha = false;
     };
     taps = [
@@ -36,8 +35,6 @@
       "forklift"
       "nextcloud-vfs"
       "qspace-pro"
-      ### --- Utilities --- ###
-      "mullvad-vpn"
     ];
   };
 }
