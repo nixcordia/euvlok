@@ -1,22 +1,22 @@
-inputs:
-let
-  inherit (inputs.nixos-raspberrypi.nixosModules) raspberry-pi-5 usb-gadget-ethernet;
-in
-inputs.nixos-raspberrypi.lib.nixosSystem {
-  specialArgs = {
-    inherit inputs;
-    nixos-raspberrypi = inputs.nixos-raspberrypi;
-  };
-  modules = [
-    inputs.self.nixosModules.default
+{
+  diskoModule,
+  flatpakModule,
+  homeModule,
+  raspberryPiModules,
+  sharedModule,
+}:
+_: {
+  _class = "nixos";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  imports = [
+    sharedModule
     ./configuration.nix
-    ./home.nix
-    inputs.disko-rpi.nixosModules.disko
-    usb-gadget-ethernet
-    raspberry-pi-5.base
-    raspberry-pi-5.bluetooth
-    raspberry-pi-5.display-vc4
-    raspberry-pi-5.page-size-16k
+    homeModule
+    diskoModule
+  ]
+  ++ raspberryPiModules
+  ++ [
     { sops.defaultSopsFile = ../../../../secrets/ashuramaruzxc_unsigned-int16.yaml; }
     {
       catppuccin = {
@@ -25,7 +25,7 @@ inputs.nixos-raspberrypi.lib.nixosSystem {
         accent = "flamingo";
       };
     }
-    inputs.flatpak-declerative.nixosModules.default
+    flatpakModule
     {
       services.flatpak = {
         enable = true;
@@ -35,8 +35,6 @@ inputs.nixos-raspberrypi.lib.nixosSystem {
         };
       };
     }
-    {
-      nixos.plasma.enable = true;
-    }
+    { euvlok.nixos.plasma.enable = true; }
   ];
 }

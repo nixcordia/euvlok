@@ -1,21 +1,26 @@
 {
-  inputs,
+  homeManagerModule,
+  personalModule,
+  sharedModule,
+}:
+{
   pkgs,
   lib,
   ...
 }:
-let
-  inherit (pkgs.stdenvNoCC) isLinux;
-in
 {
   _class = "darwin";
   _file = ./home.nix;
   key = toString ./home.nix;
-  imports = [ inputs.home-manager.darwinModules.home-manager ];
+  imports = [ homeManagerModule ];
 
   home-manager = {
     useUserPackages = true;
-    extraSpecialArgs = { inherit inputs; };
+    useGlobalPkgs = true;
+    sharedModules = [
+      sharedModule
+      personalModule
+    ];
   };
 
   home-manager.users.faputa =
@@ -23,13 +28,6 @@ in
     {
       imports = [
         { home.stateVersion = "26.05"; }
-      ]
-      ++ [
-        ../../../hm/bigshaq9999/starship.nix
-        ../../../hm/bigshaq9999/git.nix
-        ../../../hm/bigshaq9999/helix.nix
-        ../../../hm/bigshaq9999/ghostty.nix
-        ../../../hm/bigshaq9999/ssh.nix
       ]
       ++ [
         {
@@ -41,10 +39,6 @@ in
         }
       ]
       ++ [
-        ../../../hm/ashuramaruzxc/nixcord.nix
-      ]
-      ++ [
-        ../../../hm/ashuramaruzxc/vscode.nix
         {
           programs.vscode = {
             profiles.default = {
@@ -63,10 +57,8 @@ in
         { sops.defaultSopsFile = ../../../../secrets/bigshaq9999.yaml; }
       ]
       ++ [
-        inputs.self.homeModules.default
-        inputs.self.homeModules.bigshaq9999
         {
-          hm = {
+          euvlok.home = {
             fastfetch.enable = true;
             firefox = {
               enable = true;

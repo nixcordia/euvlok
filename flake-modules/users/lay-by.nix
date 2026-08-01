@@ -1,9 +1,40 @@
 {
+  config,
+  inputs,
+  lib,
+  ...
+}:
+let
+  zenBrowserPackage = inputs.zen-browser.packages.x86_64-linux.default;
+in
+{
   _class = "flake";
   _file = ./lay-by.nix;
   key = toString ./lay-by.nix;
-  euvlok.users.lay-by = {
-    nixosHosts.blind-faith.path = ../../hosts/linux/lay-by/hushh;
-    homeModules.lay-by = ../../hosts/hm/lay-by;
+
+  euvlok.hosts.blind-faith = {
+    owner = "lay-by";
+    class = "nixos";
+    system = "x86_64-linux";
+    runner = "ubuntu-latest";
+    modules = [
+      (lib.modules.importApply ../../hosts/linux/lay-by/blind-faith {
+        sharedModule = config.flake.nixosModules.default;
+        stylixModule = inputs.stylix.nixosModules.stylix;
+        unstableSource = inputs.nixpkgs-unstable;
+        configurationModule =
+          lib.modules.importApply ../../hosts/linux/lay-by/blind-faith/configuration.nix
+            {
+              inherit zenBrowserPackage;
+            };
+        homeModule = lib.modules.importApply ../../hosts/linux/lay-by/blind-faith/home.nix {
+          inherit zenBrowserPackage;
+          homeManagerModule = inputs.home-manager.nixosModules.home-manager;
+          personalModule = ../../hosts/hm/lay-by;
+          sharedModule = config.flake.homeModules.integrated;
+          spicetify = inputs.spicetify-nix;
+        };
+      })
+    ];
   };
 }

@@ -1,5 +1,11 @@
 {
-  inputs,
+  animeCursorsSource,
+  catppuccinModule,
+  homeManagerModule,
+  personalModule,
+  sharedModule,
+}:
+{
   pkgs,
   ...
 }:
@@ -7,19 +13,16 @@ let
   homePackages = import ../shared/home/packages.nix { inherit pkgs; };
   cursorModule = import ../shared/home/cursor.nix {
     cursorName = "touhou-reimu";
-    cursorPackage = inputs.anime-cursors-source.packages.${pkgs.stdenvNoCC.hostPlatform.system}.cursors;
+    cursorPackage = animeCursorsSource.packages.${pkgs.stdenvNoCC.hostPlatform.system}.cursors;
     iconPackage = pkgs.unstable.kdePackages.breeze-icons;
   };
 
   baseImports = [
     { home.stateVersion = "26.05"; }
-    ../../../hm/ashuramaruzxc/catppuccin.nix
+    catppuccinModule
   ];
 
   ashuramaruHmConfig = [
-    inputs.self.homeModules.default
-    inputs.self.homeModules.ashuramaruzxc
-    ../../../hm/ashuramaruzxc/chromium
     ../../../hm/ashuramaruzxc/workstation.nix
   ];
 
@@ -36,12 +39,16 @@ in
   _class = "nixos";
   _file = ./home.nix;
   key = toString ./home.nix;
-  imports = [ inputs.home-manager-rpi.nixosModules.home-manager ];
+  imports = [ homeManagerModule ];
 
   home-manager = {
     useUserPackages = true;
+    useGlobalPkgs = true;
     backupFileExtension = "bak";
-    extraSpecialArgs = { inherit inputs; };
+    sharedModules = [
+      sharedModule
+      personalModule
+    ];
   };
 
   home-manager.users.ashuramaru = {

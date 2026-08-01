@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  homeManagerModule,
+  personalModule,
+  sharedModule,
+}:
+{ pkgs, ... }:
 let
   commonImports = [
     { home.stateVersion = "26.05"; }
@@ -18,10 +23,8 @@ let
   };
 
   hmModuleConfig = [
-    inputs.self.homeModules.default
-    inputs.self.homeModules.ashuramaruzxc
     {
-      hm = {
+      euvlok.home = {
         codex.enable = true;
         fastfetch.enable = true;
         firefox = {
@@ -177,12 +180,16 @@ in
   _class = "darwin";
   _file = ./home.nix;
   key = toString ./home.nix;
-  imports = [ inputs.home-manager.darwinModules.home-manager ];
+  imports = [ homeManagerModule ];
 
   home-manager = {
     useUserPackages = true;
+    useGlobalPkgs = true;
     backupFileExtension = "bak";
-    extraSpecialArgs = { inherit inputs; };
+    sharedModules = [
+      sharedModule
+      personalModule
+    ];
     users.ashuramaru.imports = ashuramaru;
   };
 }

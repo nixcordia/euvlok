@@ -1,13 +1,10 @@
-{
-  inputs,
-  osConfig,
-  ...
-}:
+{ catppuccinGtkModule }:
+{ osConfig, ... }:
 {
   _class = "homeManager";
   _file = ./catppuccin.nix;
   key = toString ./catppuccin.nix;
-  imports = [ inputs.self.homeModules.catppuccin-gtk ];
+  imports = [ catppuccinGtkModule ];
 
   catppuccin = {
     inherit (osConfig.catppuccin) enable accent flavor;

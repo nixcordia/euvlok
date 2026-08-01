@@ -1,4 +1,5 @@
-{ pkgs, inputs, ... }:
+{ zenBrowserPackage }:
+{ pkgs, ... }:
 {
   _class = "nixos";
   _file = ./packages.nix;
@@ -53,6 +54,6 @@
       breeze-icons
       ;
     inherit (pkgs) seahorse;
-    inherit (inputs.zen-browser.packages.x86_64-linux) default;
+    zen-browser = zenBrowserPackage;
   };
 }

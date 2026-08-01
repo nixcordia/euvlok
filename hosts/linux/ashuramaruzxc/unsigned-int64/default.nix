@@ -1,10 +1,15 @@
-inputs:
-inputs.nixpkgs.lib.nixosSystem {
-  specialArgs = { inherit inputs; };
-  modules = [
-    inputs.self.nixosModules.default
+{
+  homeModule,
+  sharedModule,
+}:
+_: {
+  _class = "nixos";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  imports = [
+    sharedModule
     ./configuration.nix
-    ./home.nix
+    homeModule
     { sops.defaultSopsFile = ../../../../secrets/ashuramaruzxc_unsigned-int64.yaml; }
     {
       catppuccin = {
@@ -14,7 +19,7 @@ inputs.nixpkgs.lib.nixosSystem {
       };
     }
     {
-      nixos = {
+      euvlok.nixos = {
         gnome.enable = true;
         amd.enable = true;
       };

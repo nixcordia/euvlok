@@ -53,7 +53,7 @@
 
   environment.shells = builtins.attrValues { inherit (pkgs) zsh bash fish; };
 
-  nixos.locale = {
+  euvlok.nixos.locale = {
     enable = true;
     timeZone = "Europe/Berlin";
   };

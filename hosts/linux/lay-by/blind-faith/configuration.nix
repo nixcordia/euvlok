@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{ zenBrowserPackage }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 {
   _class = "nixos";
   _file = ./configuration.nix;
@@ -6,13 +11,13 @@
   imports = [
     ./fonts.nix
     ./hardware-configuration.nix
-    ./packages.nix
+    (lib.modules.importApply ./packages.nix { inherit zenBrowserPackage; })
     ./programs.nix
     ./services.nix
     ./slsk.nix
   ];
 
-  nixos.boot.systemd-boot.enable = true;
+  euvlok.nixos.boot.systemd-boot.enable = true;
   boot.loader.systemd-boot.memtest86.enable = true;
   boot.kernel.sysctl = {
     "vm.swappiness" = 20;
@@ -21,7 +26,7 @@
 
   networking.hostName = "blind-faith";
 
-  nixos.locale = {
+  euvlok.nixos.locale = {
     enable = true;
     timeZone = "America/Chicago";
   };

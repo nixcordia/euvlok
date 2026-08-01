@@ -1,10 +1,16 @@
-inputs:
-inputs.nixpkgs.lib.nixosSystem {
-  specialArgs = { inherit inputs; };
-  modules = [
-    inputs.self.nixosModules.default
+{
+  flatpakModule,
+  homeModule,
+  sharedModule,
+}:
+_: {
+  _class = "nixos";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  imports = [
+    sharedModule
     ./configuration.nix
-    ./home.nix
+    homeModule
     { sops.defaultSopsFile = ../../../../secrets/ashuramaruzxc_unsigned-int32.yaml; }
     {
       catppuccin = {
@@ -13,7 +19,7 @@ inputs.nixpkgs.lib.nixosSystem {
         accent = "flamingo";
       };
     }
-    inputs.flatpak-declerative.nixosModules.default
+    flatpakModule
     {
       services.flatpak = {
         enable = true;
@@ -28,7 +34,7 @@ inputs.nixpkgs.lib.nixosSystem {
       };
     }
     {
-      nixos = {
+      euvlok.nixos = {
         cosmic.enable = true;
         gnome.enable = true;
         nvidia.enable = true;

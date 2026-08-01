@@ -3,7 +3,7 @@ _: {
   _file = ./workstation.nix;
   key = toString ./workstation.nix;
 
-  hm = {
+  euvlok.home = {
     fastfetch.enable = true;
     firefox = {
       zen-browser.enable = true;

@@ -1,23 +1,24 @@
-inputs:
-inputs.nix-darwin.lib.darwinSystem {
-  specialArgs = { inherit inputs; };
-  modules = [
-    inputs.self.darwinModules.default
-    inputs.self.darwinModules.zsh
+{
+  homeModule,
+  homebrewModule,
+  homebrewTaps,
+  sharedModules,
+}:
+_: {
+  _class = "darwin";
+  _file = ./default.nix;
+  key = toString ./default.nix;
+  imports = sharedModules ++ [
     ./brew.nix
     ./configuration.nix
-    ./home.nix
+    homeModule
     ./system.nix
-    inputs.nix-homebrew.darwinModules.nix-homebrew
+    homebrewModule
     {
       nix-homebrew = {
         enable = true;
         user = "ashuramaru";
-        taps = {
-          "homebrew/homebrew-core" = inputs.homebrew-core-source;
-          "homebrew/homebrew-cask" = inputs.homebrew-cask-source;
-          "cfergeau/homebrew-crc" = inputs.homebrew-crc-source;
-        };
+        taps = homebrewTaps;
         autoMigrate = true;
       };
     }

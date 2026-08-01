@@ -121,7 +121,7 @@ in
   _file = ./default.nix;
   key = toString ./default.nix;
 
-  hm.firefox = {
+  euvlok.home.firefox = {
     acceptedLanguages = [
       "en-US"
       "en"

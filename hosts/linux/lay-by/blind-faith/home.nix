@@ -1,5 +1,11 @@
 {
-  inputs,
+  homeManagerModule,
+  personalModule,
+  sharedModule,
+  spicetify,
+  zenBrowserPackage,
+}:
+{
   pkgs,
   ...
 }:
@@ -7,11 +13,15 @@
   _class = "nixos";
   _file = ./home.nix;
   key = toString ./home.nix;
-  imports = [ inputs.home-manager.nixosModules.home-manager ];
+  imports = [ homeManagerModule ];
 
   home-manager = {
     useUserPackages = true;
-    extraSpecialArgs = { inherit inputs; };
+    useGlobalPkgs = true;
+    sharedModules = [
+      sharedModule
+      personalModule
+    ];
   };
 
   home-manager.users.hushh =
@@ -21,14 +31,11 @@
         {
           home.stateVersion = "25.05";
           home.sessionVariables = {
-            DEFAULT_BROWSER = "${inputs.zen-browser.packages.x86_64-linux.default}/bin/zen";
+            DEFAULT_BROWSER = "${zenBrowserPackage}/bin/zen";
             SHELL = "fish";
             TERM = "alacritty";
           };
         }
-      ]
-      ++ [
-        inputs.stylix.homeModules.stylix
       ]
       ++ [
         {
@@ -44,13 +51,10 @@
       ]
       ++ [
         ./home-packages.nix
-        inputs.self.homeModules.default
-        inputs.self.homeModules.lay-by
         {
-          euvlok.nixpkgs.unstableSource = inputs.nixpkgs-unstable;
           home.shell.enableShellIntegration = true;
           programs.codex.settings = lib.modules.mkForce { };
-          hm = {
+          euvlok.home = {
             codex.enable = true;
             fastfetch.enable = true;
             firefox.zen-browser.enable = true;
@@ -65,11 +69,11 @@
         }
       ]
       ++ [
-        inputs.spicetify-nix.homeManagerModules.default
+        spicetify.homeManagerModules.default
         {
           programs.spicetify.enable = true;
           programs.spicetify.enabledExtensions = builtins.attrValues {
-            inherit (inputs.spicetify-nix.legacyPackages.${pkgs.stdenvNoCC.hostPlatform.system}.extensions)
+            inherit (spicetify.legacyPackages.${pkgs.stdenvNoCC.hostPlatform.system}.extensions)
               adblock
               beautifulLyrics # Apple Music like Lyrics
               copyLyrics

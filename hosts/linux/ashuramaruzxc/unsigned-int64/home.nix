@@ -1,15 +1,18 @@
 {
-  inputs,
-  ...
+  catppuccinModule,
+  homeManagerModule,
+  personalModule,
+  sharedModule,
 }:
+_:
 let
   baseImports = [
     { home.stateVersion = "26.05"; }
-    ../../../hm/ashuramaruzxc/catppuccin.nix
+    catppuccinModule
   ];
 
   rootHmConfig = {
-    hm = {
+    euvlok.home = {
       bash.enable = true;
       direnv.enable = true;
       fzf.enable = true;
@@ -20,10 +23,8 @@ let
   };
 
   commonHmConfig = [
-    inputs.self.homeModules.default
-    inputs.self.homeModules.ashuramaruzxc
     {
-      hm = {
+      euvlok.home = {
         fastfetch.enable = true;
         ghostty.enable = true;
         helix.enable = true;
@@ -43,12 +44,16 @@ in
   _class = "nixos";
   _file = ./home.nix;
   key = toString ./home.nix;
-  imports = [ inputs.home-manager.nixosModules.home-manager ];
+  imports = [ homeManagerModule ];
 
   home-manager = {
     useUserPackages = true;
+    useGlobalPkgs = true;
     backupFileExtension = "bak";
-    extraSpecialArgs = { inherit inputs; };
+    sharedModules = [
+      sharedModule
+      personalModule
+    ];
   };
 
   home-manager.users.root = {

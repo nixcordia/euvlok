@@ -7,7 +7,6 @@
   _file = ./configuration.nix;
   key = toString ./configuration.nix;
   # imports = [
-  # inputs.sops-nix.darwinModules.sops
   # {
   # sops = {
   # age.keyFile = "/var/lib/sops/age/keys.txt";

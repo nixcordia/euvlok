@@ -18,6 +18,13 @@ let
   modulesModule = flake-parts-lib.importApply ./modules.nix {
     inherit inputs;
   };
+  hostsModule = flake-parts-lib.importApply ./hosts.nix {
+    providerInputs = inputs;
+    inherit supportedSystems;
+  };
+  testsModule = flake-parts-lib.importApply ./tests.nix {
+    providerInputs = inputs;
+  };
   # Keep the project module importable as `flakeModules.default` as well as
   # using it to build this flake. Its own flake-parts extensions are included
   # so consumers do not have to rediscover those implementation details. Use
@@ -32,9 +39,10 @@ let
       inputs.flake-parts.flakeModules.modules
       inputs.home-manager.flakeModules.default
       inputs.nix-darwin.flakeModules.default
-      ./hosts.nix
+      hostsModule
       modulesModule
       overlaysModule
+      testsModule
     ];
   };
 in
@@ -60,9 +68,9 @@ in
   # Keep contributor-owned inputs out of the main entry path. Host outputs
   # and their evaluation checks opt into those inputs.
   partitionedAttrs = {
-    checks = "users";
     darwinConfigurations = "users";
-    homeModules = "users";
+    hostChecks = "users";
+    hostMetadata = "users";
     nixosConfigurations = "users";
   };
 

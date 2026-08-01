@@ -15,7 +15,7 @@
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   networking = {
-    computerName = "Marie's boyfriend's Mac Mini M4 Pro nanachi";
+    computerName = "Marie's boyfriend's Mac Mini M4 Pro faputa";
     hostName = "faputas-Mac-mini.local";
     localHostName = "faputa";
     knownNetworkServices = [

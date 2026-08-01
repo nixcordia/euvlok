@@ -9,10 +9,10 @@ _: {
     ./firefox
     ./git.nix
     ./helix.nix
-    ./nixcord.nix
+    ../shared/nixcord.nix
     ./ssh.nix
     ./starship.nix
-    ./vscode.nix
+    ../shared/vscode.nix
     ./zed.nix
   ];
 }

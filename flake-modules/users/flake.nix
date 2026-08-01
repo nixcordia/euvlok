@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "users-nixpkgs";
       url = "github:nvmd/disko/gpt-attrs";
     };
-    flatpak-declerative.url = "github:in-a-dil-emma/declarative-flatpak";
+    flatpak-declarative.url = "github:in-a-dil-emma/declarative-flatpak";
     home-manager-rpi = {
       inputs.nixpkgs.follows = "users-nixpkgs";
       url = "github:nix-community/home-manager/release-26.05";

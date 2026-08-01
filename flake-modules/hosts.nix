@@ -1,151 +1,127 @@
 {
+  providerInputs,
+  supportedSystems,
+}:
+{
   config,
   lib,
-  inputs,
   ...
 }:
 let
   inherit (lib)
-    concatStringsSep
-    foldlAttrs
-    intersectAttrs
+    filterAttrs
     mapAttrs
-    mapAttrs'
     mkDefault
     mkOption
-    nameValuePair
-    optionalAttrs
     types
     ;
 
-  hostSpec = types.submodule {
-    options = {
-      path = mkOption {
-        type = types.nullOr types.path;
-        default = null;
-        description = "Path to a Nix expression that returns this host configuration.";
-      };
-
-      output = mkOption {
-        type = types.nullOr types.nonEmptyStr;
-        default = null;
-        description = "Attribute to select from the imported path. Defaults to the host name.";
-      };
-
-      configuration = mkOption {
-        type = types.nullOr (
-          types.unique {
-            message = "A host may only define one pre-built configuration.";
-          } (types.addCheck types.raw builtins.isAttrs)
-        );
-        default = null;
-        description = "Pre-built configuration value. Useful for nested flakes or unusual inputs.";
-      };
-    };
-  };
-
-  userType = types.submodule {
-    options = {
-      nixosHosts = mkOption {
-        type = types.attrsOf hostSpec;
-        default = { };
-        description = "NixOS hosts owned by this contributor.";
-      };
-
-      darwinHosts = mkOption {
-        type = types.attrsOf hostSpec;
-        default = { };
-        description = "nix-darwin hosts owned by this contributor.";
-      };
-
-      homeModules = mkOption {
-        type = types.lazyAttrsOf types.deferredModule;
-        default = { };
-        description = "Home Manager modules owned by this contributor.";
-      };
-    };
-  };
-
-  mergeUsers =
-    attr:
-    foldlAttrs (
-      result: userName: user:
-      let
-        entries = user.${attr};
-        duplicateNames = builtins.attrNames (intersectAttrs result entries);
-      in
-      if duplicateNames == [ ] then
-        result // entries
-      else
-        throw "euvlok contributor ${userName} duplicates ${attr}: ${concatStringsSep ", " duplicateNames}"
-    ) { } config.euvlok.users;
-
-  mkHost =
-    name: spec:
-    if spec.configuration != null && spec.path != null then
-      throw "euvlok host ${name} defines both `configuration` and `path`; choose one."
-    else if spec.configuration != null then
-      spec.configuration
-    else if spec.path == null then
-      throw "euvlok host ${name} must define either `configuration` or `path`."
-    else
-      let
-        imported = import spec.path inputs;
-      in
-      if spec.output == null then imported else imported.${spec.output};
-
-  nixosConfigurations = mapAttrs mkHost (mergeUsers "nixosHosts");
-  darwinConfigurations = mapAttrs mkHost (mergeUsers "darwinHosts");
-  homeModules = mapAttrs (
-    name: module:
-    let
-      moduleKey = "${toString ./hosts.nix}#homeModules.${name}";
-    in
+  hostType = types.submodule (
+    { name, ... }:
     {
-      _class = "homeManager";
-      _file = moduleKey;
-      key = moduleKey;
+      options = {
+        owner = mkOption {
+          type = types.nonEmptyStr;
+          description = "Contributor responsible for ${name}.";
+        };
 
-      _module.args.euvlokInputs = mkDefault inputs;
-      imports = [ module ];
+        class = mkOption {
+          type = types.enum [
+            "nixos"
+            "darwin"
+          ];
+          description = "Module class and configuration output used by ${name}.";
+        };
+
+        system = mkOption {
+          type = types.enum supportedSystems;
+          description = "Nix platform evaluated for ${name}.";
+        };
+
+        runner = mkOption {
+          type = types.nonEmptyStr;
+          description = "Native GitHub Actions runner used to build ${name}.";
+        };
+
+        modules = mkOption {
+          type = types.listOf types.deferredModule;
+          description = "Complete module graph for ${name}.";
+        };
+
+        builder = mkOption {
+          type = types.nullOr (types.functionTo types.raw);
+          default = null;
+          description = "Optional replacement for nixosSystem/darwinSystem.";
+        };
+      };
     }
-  ) (mergeUsers "homeModules");
+  );
 
+  hostSpecs = config.euvlok.hosts;
+  nixosSpecs = filterAttrs (_: host: host.class == "nixos") hostSpecs;
+  darwinSpecs = filterAttrs (_: host: host.class == "darwin") hostSpecs;
+
+  mkConfiguration =
+    name: host:
+    let
+      builder =
+        if host.builder != null then
+          host.builder
+        else if host.class == "nixos" then
+          providerInputs.nixpkgs.lib.nixosSystem
+        else
+          providerInputs.nix-darwin.lib.darwinSystem;
+
+      configuration = builder {
+        modules = host.modules ++ [
+          {
+            _file = "${toString ./hosts.nix}#euvlok.hosts.${name}.system";
+            nixpkgs.hostPlatform = mkDefault host.system;
+          }
+        ];
+      };
+
+      actualSystem = configuration.pkgs.stdenv.hostPlatform.system;
+    in
+    if actualSystem == host.system then
+      configuration
+    else
+      throw "euvlok host ${name} declares ${host.system} but evaluates with ${actualSystem}";
+
+  nixosConfigurations = mapAttrs mkConfiguration nixosSpecs;
+  darwinConfigurations = mapAttrs mkConfiguration darwinSpecs;
+
+  hostMetadata = mapAttrs (name: host: {
+    inherit name;
+    inherit (host)
+      class
+      owner
+      runner
+      system
+      ;
+  }) hostSpecs;
+
+  hostChecks =
+    mapAttrs (_: host: host.config.system.build.toplevel.drvPath) nixosConfigurations
+    // mapAttrs (_: host: host.system.drvPath) darwinConfigurations;
 in
 {
   _class = "flake";
   _file = ./hosts.nix;
   key = toString ./hosts.nix;
-  options.euvlok.users = mkOption {
-    type = types.attrsOf userType;
+
+  options.euvlok.hosts = mkOption {
+    type = types.attrsOf hostType;
     default = { };
-    description = "Contributor-owned host and home configuration registry.";
+    description = "Typed inventory of all NixOS and nix-darwin machines.";
   };
 
-  config = {
-    flake = {
-      inherit nixosConfigurations darwinConfigurations homeModules;
-    };
-
-    perSystem =
-      { pkgs, system, ... }:
-      let
-        mkEvalCheck =
-          kind: name: value:
-          nameValuePair "eval-${kind}-${name}" (
-            pkgs.runCommand "eval-${kind}-${name}" { } ''
-              mkdir "$out"
-              printf '%s\n' ${lib.strings.escapeShellArg (builtins.unsafeDiscardStringContext (toString value))} > "$out/drv-path"
-            ''
-          );
-      in
-      {
-        checks = optionalAttrs (system == "x86_64-linux") (
-          mapAttrs' (
-            name: value: mkEvalCheck "nixos" name value.config.system.build.toplevel.drvPath
-          ) nixosConfigurations
-          // mapAttrs' (name: value: mkEvalCheck "darwin" name value.system.drvPath) darwinConfigurations
-        );
-      };
+  config.flake = {
+    inherit
+      darwinConfigurations
+      hostChecks
+      hostMetadata
+      nixosConfigurations
+      ;
   };
 }

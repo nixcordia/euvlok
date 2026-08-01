@@ -201,7 +201,7 @@
         "type": "github"
       }
     },
-    "flatpak-declerative": {
+    "flatpak-declarative": {
       "locked": {
         "lastModified": 1782496883,
         "narHash": "sha256-f3JkHK5ZYgi1OhUVCCrKF10vOotxdg3mLkcZ71kNFLc=",
@@ -550,7 +550,7 @@
       "inputs": {
         "anime-cursors-source": "anime-cursors-source",
         "disko-rpi": "disko-rpi",
-        "flatpak-declerative": "flatpak-declerative",
+        "flatpak-declarative": "flatpak-declarative",
         "home-manager-rpi": "home-manager-rpi",
         "homebrew-cask-source": "homebrew-cask-source",
         "homebrew-core-source": "homebrew-core-source",

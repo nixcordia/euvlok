@@ -14,7 +14,7 @@
     XDG_DATA_DIRS = [ "\${HOME}/.local/share/.icons" ];
   };
 
-  nixos.locale = {
+  euvlok.nixos.locale = {
     enable = true;
     timeZone = "Europe/Warsaw";
     extraLocaleSettings = {
