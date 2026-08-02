@@ -45,7 +45,6 @@
       nimlsp
       nimlangserver
       nil
-      devenv
       nodejs
       ;
     inherit (pkgs.unstable)
