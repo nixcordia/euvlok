@@ -24,7 +24,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Keep retries for different matrix entries from evicting each other while a
+  # full push build is still running. Retries for the same entry remain
+  # serialized, and a newer push still supersedes an older full push build.
+  group: >-
+    ${{ github.workflow }}-${{ github.ref }}-${{ inputs['retry-kind'] || 'all' }}-${{ inputs['retry-name'] || 'all' }}
   cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
