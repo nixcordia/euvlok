@@ -19,10 +19,6 @@ on:
         required: false
         default: "0"
         type: string
-      last-timeout-drv:
-        description: Store derivation that timed out on the previous attempt.
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -137,9 +133,7 @@ jobs:
         if: >-
           steps.retry-target.outputs.should-build == 'true' &&
           steps.build.outputs.timed-out == 'true' &&
-          steps.build.outputs.timeout-drv != '' &&
-          fromJSON(inputs['retry-attempt'] || '0') < 3 &&
-          steps.build.outputs.timeout-drv != inputs['last-timeout-drv']
+          fromJSON(inputs['retry-attempt'] || '0') < 3
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -156,15 +150,13 @@ jobs:
               --arg retry_kind "${RETRY_KIND}" \
               --arg retry_name "${RETRY_NAME}" \
               --arg retry_attempt "${next_attempt}" \
-              --arg last_timeout_drv "${TIMEOUT_DRV}" \
               '{
                 ref: $ref,
                 return_run_details: true,
                 inputs: {
                   "retry-kind": $retry_kind,
                   "retry-name": $retry_name,
-                  "retry-attempt": $retry_attempt,
-                  "last-timeout-drv": $last_timeout_drv
+                  "retry-attempt": $retry_attempt
                 }
               }'
           )"
@@ -182,39 +174,19 @@ jobs:
             echo
             echo "- Configuration: \`${RETRY_KIND} / ${RETRY_NAME}\`"
             echo "- Retry attempt: \`${next_attempt}\`"
-            echo "- Timed-out derivation: \`${TIMEOUT_DRV}\`"
+            if [ -n "${TIMEOUT_DRV}" ]; then
+              echo "- Last derivation shown in the build log: \`${TIMEOUT_DRV}\`"
+            fi
             if [ -n "${retry_run_url}" ]; then
               echo "- Retry run: ${retry_run_url}"
             fi
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-      - name: Stop retrying repeated timeout
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          steps.build.outputs.timed-out == 'true' &&
-          steps.build.outputs.timeout-drv != '' &&
-          steps.build.outputs.timeout-drv == inputs['last-timeout-drv']
-        shell: bash
-        env:
-          TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
-        run: |
-          {
-            echo "### Stopping retries"
-            echo
-            echo "The runner timed out twice while building the same derivation:"
-            echo
-            echo "\`${TIMEOUT_DRV}\`"
-            echo
-            echo "No further retry was dispatched because the build appears stuck on one derivation that cannot finish on this runner."
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Stop retrying after attempt limit
         if: >-
           steps.retry-target.outputs.should-build == 'true' &&
           steps.build.outputs.timed-out == 'true' &&
-          steps.build.outputs.timeout-drv != '' &&
-          fromJSON(inputs['retry-attempt'] || '0') >= 3 &&
-          steps.build.outputs.timeout-drv != inputs['last-timeout-drv']
+          fromJSON(inputs['retry-attempt'] || '0') >= 3
         shell: bash
         env:
           RETRY_ATTEMPT: ${{ inputs['retry-attempt'] || '0' }}
@@ -224,8 +196,10 @@ jobs:
             echo "### Stopping retries"
             echo
             echo "Retry attempt \`${RETRY_ATTEMPT}\` reached the configured attempt limit."
-            echo
-            echo "Last timed-out derivation: \`${TIMEOUT_DRV}\`"
+            if [ -n "${TIMEOUT_DRV}" ]; then
+              echo
+              echo "Last derivation shown in the build log: \`${TIMEOUT_DRV}\`"
+            fi
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Fail failed build
