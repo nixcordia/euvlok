@@ -53,6 +53,15 @@
     "electron-39.8.10"
   ];
 
+  nixpkgs.overlays = [
+    (_: previous: {
+      mullvad-vpn = previous.mullvad-vpn.overrideAttrs {
+        versionCheckProgram = "${builtins.placeholder "out"}/bin/mullvad";
+        versionCheckProgramArg = "--version";
+      };
+    })
+  ];
+
   programs = {
     gnupg.dirmngr.enable = true;
     gnupg.agent = {
