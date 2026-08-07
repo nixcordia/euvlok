@@ -4,12 +4,15 @@ let
   settings = {
     # Flakes and the modern CLI are stable in Determinate Nix, so they do not
     # belong in experimental-features. These are Determinate-only settings.
+    accept-flake-config = true;
     eval-cores = 0;
     lazy-trees = true;
+    warn-dirty = false;
 
     # Let remote builders use the same binary caches as the coordinator.
     builders-use-substitutes = true;
     substituters = [
+      "https://catppuccin.cachix.org"
       "https://devenv.cachix.org"
       "https://euvlok.cachix.org"
       "https://eupkgs.cachix.org"
@@ -20,6 +23,7 @@ let
       "https://cache.flox.dev"
     ];
     trusted-public-keys = [
+      "catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "euvlok.cachix.org-1:cmFWCSs7rxPiyE1qfaJn8TY7QaRoGOrzKuNvtGw2gcU="
       "eupkgs.cachix.org-1:V9Y0HdASNNSU9U6EkXhR1j85bZGRtNgW7wSyTiQrwGU="
