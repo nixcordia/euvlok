@@ -129,7 +129,9 @@ jobs:
           configuration-name: ${{ matrix.name }}
           cachix-cache: ${{ env.CACHIX_CACHE }}
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          cachix-skip-push: ${{ secrets.CACHIX_AUTH_TOKEN == '' }}
+          # Configuration builds exist to warm the binary cache. Never spend
+          # runner time building if Cachix cannot accept the outputs.
+          cachix-skip-push: false
           github-token: ${{ github.token }}
           build-started-at-epoch: ${{ steps.build-start.outputs.epoch }}
 

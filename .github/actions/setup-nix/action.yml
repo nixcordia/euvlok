@@ -42,19 +42,26 @@ runs:
 
     - name: Configure Cachix
       id: cachix
-      continue-on-error: true
+      # Read-only consumers may fall back to building locally, but builders
+      # that promise to populate Cachix must stop if upload setup fails.
+      continue-on-error: ${{ inputs.cachix-skip-push == 'true' }}
       uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71  # v17
       with:
         name: ${{ inputs.cachix-cache }}
         extraPullNames: ${{ inputs.extra-cachix-caches }}
         authToken: ${{ inputs.cachix-auth-token }}
         skipPush: ${{ inputs.cachix-skip-push }}
+        # Push completed store paths immediately so soft timeouts retain all
+        # progress made by the runner.
+        useDaemon: true
 
-    - name: Report Cachix configuration failure
-      if: steps.cachix.outcome == 'failure'
+    - name: Report optional Cachix configuration failure
+      if: >-
+        steps.cachix.outcome == 'failure' &&
+        inputs.cachix-skip-push == 'true'
       shell: bash
       run: |
-        echo "::warning::Cachix setup failed. Continuing without pushing build results; rotate CACHIX_AUTH_TOKEN to restore pushes."
+        echo "::warning::Cachix setup failed. Continuing because this job is configured for read-only cache access."
 
     - name: Configure supplemental binary caches
       shell: bash
