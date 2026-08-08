@@ -23,6 +23,7 @@ in
     programs.zsh = {
       enable = true;
       autosuggestion.enable = true;
+      fastSyntaxHighlighting.enable = true;
       autocd = true;
       historySubstringSearch.enable = true;
       oh-my-zsh = {
@@ -39,10 +40,6 @@ in
         ];
       };
       plugins = [
-        {
-          name = "fast-syntax-highlighting";
-          src = pkgs.zsh-fast-syntax-highlighting;
-        }
         {
           name = "nix-shell";
           src = pkgs.zsh-nix-shell;
