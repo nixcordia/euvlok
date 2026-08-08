@@ -13,11 +13,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785420300,
-        "narHash": "sha256-flaIJuG2xknNOLilbsfAaMdqu0qL5/3U8xXoaWn34xg=",
+        "lastModified": 1786187400,
+        "narHash": "sha256-9sNu1xXw/a1+8412Gt8crp03dE7GVrFlxkYdgZUiPeo=",
         "owner": "4evy",
         "repo": "browser",
-        "rev": "b4f39de39c1d2cf516e78cc2a52803777f6fb02c",
+        "rev": "7924dd573344465e9e1cea7583c78416698b4c88",
         "type": "github"
       },
       "original": {

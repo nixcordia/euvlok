@@ -165,7 +165,9 @@ in
           };
         };
 
-        extensions = managedExtensions;
+        extensions = managedExtensions // {
+          chrome_store_update_url = "https://clients2.google.com/service/update2/crx";
+        };
       };
     };
 

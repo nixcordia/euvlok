@@ -53,7 +53,7 @@ in
 
   crx = [
     {
-      id = "kpaaapnegfaaoimjpagopchdbmenfngl";
+      id = "bolggfoncklhniejomgplkjcllmnonbh";
       name = "TWP - Translate Web Pages";
       version = "10.1.1.0";
       url = "https://github.com/FilipePS/Traduzir-paginas-web/releases/download/v10.1.1.0/TWP_10.1.1.0_Chromium.crx";
