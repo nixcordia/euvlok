@@ -104,7 +104,7 @@
       pinentry_mac
       ;
 
-    inherit (pkgs.unstable) soundsource;
+    inherit (pkgs.eupkgs) soundsource;
   };
   # sops.secrets.gh_token = { };
   # sops.secrets.netrc_creds = { };

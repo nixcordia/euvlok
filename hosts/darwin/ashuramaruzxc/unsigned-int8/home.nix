@@ -68,7 +68,6 @@ let
 
   macosPackages = builtins.attrValues {
     inherit (pkgs.unstable)
-      aldente
       alt-tab-macos
       betterdisplay
       ice-bar
@@ -79,6 +78,7 @@ let
       stats
       the-unarchiver
       ;
+    inherit (pkgs.eupkgs) aldente;
   };
 
   socialPackages = builtins.attrValues {
