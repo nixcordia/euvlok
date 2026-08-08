@@ -16,6 +16,11 @@ let
   eupkgsOverlay = final: _prev: {
     eupkgs = final.unstable.extend inputs.eupkgs.overlays.default;
   };
+
+  localPackagesOverlay = final: _prev: {
+    linux-rt-upscaler = final.callPackage ./packages/linux-rt-upscaler.nix { };
+    lsfg-vk = final.callPackage ./packages/lsfg-vk.nix { };
+  };
 in
 inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   # Establish the independent package sets before overlays that inspect or
@@ -23,5 +28,6 @@ inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   # custom platform bootstraps such as nixos-raspberrypi.
   unstableOverlay
   eupkgsOverlay
+  localPackagesOverlay
   inputs.nix4vscode.overlays.default
 ]

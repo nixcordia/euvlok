@@ -9,11 +9,17 @@
         flake-parts.follows = "users-flake-parts";
         mk-shell-bin.follows = "";
         nix2container.follows = "";
-        nixpkgs.follows = "users-nixpkgs-unstable-small";
         nixpkgs-python.inputs.flake-compat.follows = "";
         pre-commit-hooks.follows = "users-devenv/git-hooks";
       };
       url = "github:ashuramaruzxc/anime-cursors";
+    };
+    codex-desktop-linux = {
+      inputs = {
+        flake-utils.follows = "users-flake-utils";
+        nixpkgs.follows = "users-nixpkgs-unstable-small";
+      };
+      url = "github:ilysenko/codex-desktop-linux";
     };
     disko-rpi = {
       inputs.nixpkgs.follows = "users-nixpkgs";

@@ -1,10 +1,12 @@
-_: {
+{ euvlokInputs }:
+{ lib, ... }:
+{
   _class = "homeManager";
   _file = ./default.nix;
   key = toString ./default.nix;
   imports = [
     ./codex
-    ./devenv.nix
+    (lib.modules.importApply ./devenv.nix { inherit euvlokInputs; })
     ./direnv.nix
     ./fastfetch
     ./fzf.nix

@@ -1,4 +1,6 @@
 inputs:
+  determinate:
+    url: https://flakehub.com/f/DeterminateSystems/determinate/3
   git-hooks:
     url: github:cachix/git-hooks.nix
     inputs:

@@ -19,7 +19,7 @@
     };
     # Photoshop but worse
     gimp = pkgs.gimp3-with-plugins.override {
-      plugins = builtins.attrValues { inherit (pkgs.gimp3Plugins) gmic; };
+      plugins = builtins.attrValues { inherit (pkgs.gimp3Plugins) ; };
     };
   };
   # Streaming and recording

@@ -13,16 +13,19 @@ let
   };
 
   mkHomeModule =
-    path: homeManagerModule:
-    lib.modules.importApply path {
-      inherit
-        catppuccinModule
-        homeManagerModule
-        personalModule
-        ;
-      animeCursorsSource = inputs.anime-cursors-source;
-      sharedModule = sharedHomeModule;
-    };
+    path: homeManagerModule: extraArgs:
+    lib.modules.importApply path (
+      {
+        inherit
+          catppuccinModule
+          homeManagerModule
+          personalModule
+          ;
+        animeCursorsSource = inputs.anime-cursors-source;
+        sharedModule = sharedHomeModule;
+      }
+      // extraArgs
+    );
 in
 {
   _class = "flake";
@@ -39,7 +42,10 @@ in
       modules = [
         (lib.modules.importApply ../../hosts/linux/ashuramaruzxc/unsigned-int16 {
           sharedModule = sharedNixosModule;
-          homeModule = mkHomeModule ../../hosts/linux/ashuramaruzxc/unsigned-int16/home.nix inputs.home-manager-rpi.nixosModules.home-manager;
+          homeModule =
+            mkHomeModule ../../hosts/linux/ashuramaruzxc/unsigned-int16/home.nix
+              inputs.home-manager-rpi.nixosModules.home-manager
+              { };
           diskoModule = inputs.disko-rpi.nixosModules.disko;
           flatpakModule = inputs.flatpak-declarative.nixosModules.default;
           raspberryPiModules = [
@@ -61,7 +67,12 @@ in
       modules = [
         (lib.modules.importApply ../../hosts/linux/ashuramaruzxc/unsigned-int32 {
           sharedModule = sharedNixosModule;
-          homeModule = mkHomeModule ../../hosts/linux/ashuramaruzxc/unsigned-int32/home.nix inputs.home-manager.nixosModules.home-manager;
+          homeModule =
+            mkHomeModule ../../hosts/linux/ashuramaruzxc/unsigned-int32/home.nix
+              inputs.home-manager.nixosModules.home-manager
+              {
+                codexDesktopModule = inputs.codex-desktop-linux.homeManagerModules.default;
+              };
           flatpakModule = inputs.flatpak-declarative.nixosModules.default;
         })
       ];

@@ -141,7 +141,7 @@
       trace = false;
       packageNames = [
         "ansel"
-        "gmic"
+        # "gmic"
         "libreoffice"
         "mlt"
         "obs-studio"
@@ -165,6 +165,9 @@
     appimage = {
       enable = true;
       binfmt = true;
+      package = pkgs.appimage-run.override {
+        extraPkgs = pkgs: [ pkgs.zstd ];
+      };
     };
     gphoto2.enable = true;
   };

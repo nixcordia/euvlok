@@ -22,7 +22,7 @@ let
         flycast
         gogdl
         goverlay
-        # heroic
+        heroic
         mangohud
         mgba
         pcsx2
@@ -55,7 +55,7 @@ let
     multimedia = builtins.attrValues {
       inherit (pkgs)
         nicotine-plus
-        # pear-desktop
+        pear-desktop
         qbittorrent
         quodlibet-full
         tenacity

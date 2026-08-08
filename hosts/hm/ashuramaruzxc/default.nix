@@ -5,6 +5,7 @@ _: {
   imports = [
     ./aliases.nix
     ./chromium
+    ./codex.nix
     ./dconf.nix
     ./firefox
     ./git.nix

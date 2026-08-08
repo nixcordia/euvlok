@@ -1,6 +1,7 @@
 {
   animeCursorsSource,
   catppuccinModule,
+  codexDesktopModule,
   homeManagerModule,
   personalModule,
   sharedModule,
@@ -23,6 +24,7 @@ let
   ];
 
   ashuramaruHmConfig = [
+    codexDesktopModule
     ../../../hm/ashuramaruzxc/graphics.nix
     ../../../hm/ashuramaruzxc/workstation.nix
     {
@@ -31,6 +33,27 @@ let
         firefox.floorp.enable = true;
         nixcord.enable = true;
         vscode.enable = true;
+      };
+
+      programs.codexDesktopLinux = {
+        enable = true;
+        cliPackage = pkgs.unstable.codex;
+        computerUseUi.enable = true;
+        remoteMobileControl.enable = true;
+        linuxFeatures = [
+          "appshots"
+          "directory-only-working-tree-watch"
+          "mcp-helper-reaper"
+          "node-repl-reaper"
+          "open-target-discovery"
+          "persistent-status-panel"
+          "remote-control-ui"
+          "ui-tweaks"
+        ];
+        remoteControl = {
+          enable = true;
+          package = pkgs.unstable.codex;
+        };
       };
     }
   ];

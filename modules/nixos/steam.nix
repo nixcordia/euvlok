@@ -34,6 +34,8 @@
           inherit (pkgs)
             curl
             desktop-file-utils
+            gamemode
+            gamescope
             libkrb5
             libpng
             libpulseaudio
