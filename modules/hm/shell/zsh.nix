@@ -23,7 +23,6 @@ in
     programs.zsh = {
       enable = true;
       autosuggestion.enable = true;
-      fastSyntaxHighlighting.enable = true;
       autocd = true;
       historySubstringSearch.enable = true;
       oh-my-zsh = {
@@ -48,6 +47,7 @@ in
       initContent = ''
         ${paths.hm.shell.binPaths.zsh}
         source "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh"
+        source "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
       '';
     };
   };
