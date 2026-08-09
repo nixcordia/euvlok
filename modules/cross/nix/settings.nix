@@ -12,6 +12,7 @@ let
     # Let remote builders use the same binary caches as the coordinator.
     builders-use-substitutes = true;
     substituters = [
+      "https://cache.nixos.org"
       "https://catppuccin.cachix.org"
       "https://devenv.cachix.org"
       "https://euvlok.cachix.org"
@@ -23,6 +24,7 @@ let
       "https://cache.flox.dev"
     ];
     trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "euvlok.cachix.org-1:cmFWCSs7rxPiyE1qfaJn8TY7QaRoGOrzKuNvtGw2gcU="
