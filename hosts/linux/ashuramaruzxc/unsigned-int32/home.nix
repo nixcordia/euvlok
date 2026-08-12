@@ -37,7 +37,6 @@ let
 
       programs.codexDesktopLinux = {
         enable = true;
-        cliPackage = pkgs.unstable.codex;
         computerUseUi.enable = true;
         remoteMobileControl.enable = true;
         linuxFeatures = [
@@ -45,7 +44,6 @@ let
           "directory-only-working-tree-watch"
           "mcp-helper-reaper"
           "node-repl-reaper"
-          "open-target-discovery"
           "persistent-status-panel"
           "remote-control-ui"
           "ui-tweaks"
