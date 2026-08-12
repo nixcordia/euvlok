@@ -64,10 +64,11 @@ runs:
           exit 1
         fi
 
-    - name: Prepare shared ccache directory
+    - name: Create shared ccache path
       if: inputs.configuration-kind == 'nixos'
       shell: bash
-      run: sudo install -d -m 0770 -o root -g nixbld /var/cache/ccache
+      # The nixbld group does not exist until Nix has been installed.
+      run: sudo install -d -m 0755 -o root -g root /var/cache/ccache
 
     - name: Install Nix
       uses: ./.github/actions/setup-nix
@@ -79,6 +80,11 @@ runs:
         extra-nix-config: |
           ${{ inputs.configuration-kind == 'nixos' && 'build-dir = /nix/build' || '' }}
           ${{ inputs.configuration-kind == 'nixos' && 'extra-sandbox-paths = /var/cache/ccache' || '' }}
+
+    - name: Secure shared ccache directory
+      if: inputs.configuration-kind == 'nixos'
+      shell: bash
+      run: sudo install -d -m 0770 -o root -g nixbld /var/cache/ccache
 
     - name: Build flake target
       id: build
