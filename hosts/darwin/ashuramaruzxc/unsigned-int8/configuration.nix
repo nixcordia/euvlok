@@ -109,8 +109,11 @@
   # sops.secrets.gh_token = { };
   # sops.secrets.netrc_creds = { };
 
-  # nix.settings.access-tokens = config.sops.secrets.gh_token.path;
-  # nix.settings.netrc-file = config.sops.secrets.netrc_creds.path;
+  # Determinate owns netrc-file. Additional credentials must be outside the
+  # Nix store and registered with Determinate Nixd instead:
+  # determinateNix.determinateNixd.authentication.additionalNetrcSources = [
+  #   config.sops.secrets.netrc_creds.path
+  # ];
 
   # Use Determinate's native macOS Virtualization.framework Linux builder
   # instead of nix-darwin's NixOS VM builder.

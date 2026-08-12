@@ -6,10 +6,13 @@
 }:
 let
   cfg = config.euvlok.nix.buildParallelism;
-  settings = {
-    cores = lib.modules.mkDefault cfg.cores;
-    max-jobs = lib.modules.mkDefault cfg.maxJobs;
-  };
+  settings =
+    lib.attrsets.optionalAttrs (cfg.cores != 0) {
+      cores = lib.modules.mkDefault cfg.cores;
+    }
+    // lib.attrsets.optionalAttrs (cfg.maxJobs != "auto") {
+      max-jobs = lib.modules.mkDefault cfg.maxJobs;
+    };
 in
 {
   _class = null;
@@ -20,13 +23,13 @@ in
     maxJobs = lib.options.mkOption {
       type = lib.types.either lib.types.ints.positive (lib.types.enum [ "auto" ]);
       default = "auto";
-      description = "Maximum number of builds Nix may execute concurrently.";
+      description = "Maximum number of builds Nix may execute concurrently; auto preserves Determinate's managed default.";
     };
 
     cores = lib.options.mkOption {
       type = lib.types.ints.unsigned;
       default = 0;
-      description = "CPU cores available to each build; zero lets Nix use all cores.";
+      description = "CPU cores available to each build; zero leaves Nix's all-cores default unchanged.";
     };
   };
 

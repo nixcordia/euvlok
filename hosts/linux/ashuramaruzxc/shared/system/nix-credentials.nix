@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 {
   _class = "nixos";
   _file = ./nix-credentials.nix;
@@ -15,7 +15,9 @@
   # nix.extraOptions = ''
   #   !include ${config.sops.secrets.gh_token.path}
   # '';
-  #  nix.settings.netrc-file = config.sops.secrets.netrc_creds.path;
+  # environment.etc."determinate/config.json".text = builtins.toJSON {
+  #   authentication.additionalNetrcSources = [ config.sops.secrets.netrc_creds.path ];
+  # };
 
   # Determinate Nixd owns automatic garbage collection. Keeping a second
   # nix-gc timer would race its free-space-aware collector.

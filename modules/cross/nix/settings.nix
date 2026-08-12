@@ -2,17 +2,17 @@
 { ... }:
 let
   settings = {
-    # Flakes and the modern CLI are stable in Determinate Nix, so they do not
-    # belong in experimental-features. These are Determinate-only settings.
-    accept-flake-config = true;
-    eval-cores = 0;
-    lazy-trees = true;
+    # Determinate owns its performance defaults (including eval-cores and
+    # lazy-trees). Keep only deliberate overrides in nix.custom.conf.
     warn-dirty = false;
 
+    # Preserve Determinate Nix's managed caches. nix.custom.conf is included
+    # from its generated nix.conf, so bare list settings would replace the
+    # managed values instead of extending them.
+    #
     # Let remote builders use the same binary caches as the coordinator.
     builders-use-substitutes = true;
-    substituters = [
-      "https://cache.nixos.org"
+    extra-substituters = [
       "https://catppuccin.cachix.org"
       "https://devenv.cachix.org"
       "https://euvlok.cachix.org"
@@ -23,8 +23,7 @@ let
       "https://cache.nixos-cuda.org"
       "https://cache.flox.dev"
     ];
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    extra-trusted-public-keys = [
       "catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "euvlok.cachix.org-1:cmFWCSs7rxPiyE1qfaJn8TY7QaRoGOrzKuNvtGw2gcU="
