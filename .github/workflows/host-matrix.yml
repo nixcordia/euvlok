@@ -1,0 +1,158 @@
+name: Select Native Host Changes
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: Native runner used to evaluate this host platform.
+        required: true
+        type: string
+      system:
+        description: Nix system whose host derivations are evaluated.
+        required: true
+        type: string
+      event-name:
+        description: Event that invoked the calling workflow.
+        required: true
+        type: string
+      before-revision:
+        description: Commit preceding a push, when available.
+        required: false
+        default: ""
+        type: string
+      retry-kind:
+        description: Configuration class selected by a retry dispatch.
+        required: false
+        default: ""
+        type: string
+      retry-name:
+        description: Configuration name selected by a retry dispatch.
+        required: false
+        default: ""
+        type: string
+    outputs:
+      matrix:
+        description: Changed hosts for this native platform.
+        value: ${{ jobs.select.outputs.matrix }}
+
+permissions:
+  contents: read
+
+jobs:
+  select:
+    name: ${{ inputs.system }}
+    runs-on: ${{ inputs.runner }}
+    outputs:
+      matrix: ${{ steps.hosts.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Checkout comparison revision
+        if: inputs.event-name == 'push'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+          path: .host-base
+          ref: >-
+            ${{ inputs.before-revision != '0000000000000000000000000000000000000000'
+              && inputs.before-revision || github.sha }}
+
+      - name: Prepare comparison revision
+        id: comparison
+        if: inputs.event-name == 'push'
+        shell: bash
+        env:
+          BEFORE_REVISION: ${{ inputs.before-revision }}
+        run: |
+          has_base=true
+
+          if [ "${BEFORE_REVISION}" = "0000000000000000000000000000000000000000" ]; then
+            if git -C .host-base rev-parse --verify HEAD^ >/dev/null; then
+              git -C .host-base checkout --detach HEAD^
+            else
+              has_base=false
+            fi
+          fi
+
+          echo "has_base=${has_base}" >> "${GITHUB_OUTPUT}"
+
+      - name: Install Nix
+        uses: ./.github/actions/setup-nix
+        with:
+          github-token: ${{ github.token }}
+          cachix-skip-push: true
+
+      - name: Generate matrix from native host derivations
+        id: hosts
+        shell: bash
+        env:
+          BASE_AVAILABLE: ${{ steps.comparison.outputs.has_base }}
+          EVENT_NAME: ${{ inputs.event-name }}
+          HOST_SYSTEM: ${{ inputs.system }}
+          RETRY_KIND: ${{ inputs.retry-kind }}
+          RETRY_NAME: ${{ inputs.retry-name }}
+        run: |
+          metadata="$(
+            nix eval --json .#hostMetadata |
+              jq --arg system "${HOST_SYSTEM}" 'with_entries(select(.value.system == $system))'
+          )"
+
+          if [ "${EVENT_NAME}" = "push" ] && [ "${BASE_AVAILABLE}" = "true" ]; then
+            # Force only derivations native to this runner. Some host modules
+            # use import-from-derivation and cannot be evaluated cross-platform.
+            current_checks="$(nix eval --json ".#hostChecksBySystem.${HOST_SYSTEM}")"
+
+            # The base of the first rollout does not expose the partitioned
+            # output. Treat its native hosts as changed instead of forcing the
+            # old cross-platform hostChecks output.
+            if previous_checks="$(
+              nix eval --json "./.host-base#hostChecksBySystem.${HOST_SYSTEM}" 2>/dev/null
+            )"; then
+              :
+            else
+              previous_checks='{}'
+            fi
+
+            matrix="$(
+              jq --compact-output --null-input \
+                --argjson metadata "${metadata}" \
+                --argjson current "${current_checks}" \
+                --argjson previous "${previous_checks}" \
+                '{
+                  include: [
+                    $metadata |
+                    to_entries[] |
+                    select(($previous[.key] // null) != $current[.key]) |
+                    .value + { name: .key }
+                  ]
+                }'
+            )"
+          elif [ -n "${RETRY_KIND}" ] || [ -n "${RETRY_NAME}" ]; then
+            matrix="$(
+              jq --compact-output \
+                --arg kind "${RETRY_KIND}" \
+                --arg name "${RETRY_NAME}" \
+                '{
+                  include: [
+                    to_entries[] |
+                    select(.value.class == $kind and .key == $name) |
+                    .value + { name: .key }
+                  ]
+                }' <<< "${metadata}"
+            )"
+          else
+            matrix="$(
+              jq --compact-output '{
+                include: [
+                  to_entries[] |
+                  .value + { name: .key }
+                ]
+              }' <<< "${metadata}"
+            )"
+          fi
+
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"

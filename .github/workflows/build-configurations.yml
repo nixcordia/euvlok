@@ -32,108 +32,71 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
+  matrix-x86-64-linux:
+    name: Host Matrix (x86_64-linux)
+    uses: ./.github/workflows/host-matrix.yml
+    with:
+      runner: ubuntu-latest
+      system: x86_64-linux
+      event-name: ${{ github.event_name }}
+      before-revision: ${{ github.event.before || '' }}
+      retry-kind: ${{ inputs['retry-kind'] || '' }}
+      retry-name: ${{ inputs['retry-name'] || '' }}
+
+  matrix-aarch64-linux:
+    name: Host Matrix (aarch64-linux)
+    uses: ./.github/workflows/host-matrix.yml
+    with:
+      runner: ubuntu-24.04-arm
+      system: aarch64-linux
+      event-name: ${{ github.event_name }}
+      before-revision: ${{ github.event.before || '' }}
+      retry-kind: ${{ inputs['retry-kind'] || '' }}
+      retry-name: ${{ inputs['retry-name'] || '' }}
+
+  matrix-aarch64-darwin:
+    name: Host Matrix (aarch64-darwin)
+    uses: ./.github/workflows/host-matrix.yml
+    with:
+      runner: macos-latest
+      system: aarch64-darwin
+      event-name: ${{ github.event_name }}
+      before-revision: ${{ github.event.before || '' }}
+      retry-kind: ${{ inputs['retry-kind'] || '' }}
+      retry-name: ${{ inputs['retry-name'] || '' }}
+
   matrix:
     name: Host Matrix
+    needs:
+      - matrix-x86-64-linux
+      - matrix-aarch64-linux
+      - matrix-aarch64-darwin
     runs-on: ubuntu-latest
     outputs:
       has_hosts: ${{ steps.hosts.outputs.has_hosts }}
       hosts: ${{ steps.hosts.outputs.matrix }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Checkout comparison revision
-        if: github.event_name == 'push'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          fetch-depth: 2
-          persist-credentials: false
-          path: .host-base
-          ref: >-
-            ${{ github.event.before != '0000000000000000000000000000000000000000'
-              && github.event.before || github.sha }}
-
-      - name: Prepare comparison revision
-        id: comparison
-        if: github.event_name == 'push'
-        shell: bash
-        env:
-          BEFORE_REVISION: ${{ github.event.before }}
-        run: |
-          has_base=true
-
-          if [ "${BEFORE_REVISION}" = "0000000000000000000000000000000000000000" ]; then
-            if git -C .host-base rev-parse --verify HEAD^ >/dev/null; then
-              git -C .host-base checkout --detach HEAD^
-            else
-              has_base=false
-            fi
-          fi
-
-          echo "has_base=${has_base}" >> "${GITHUB_OUTPUT}"
-
-      - name: Install Nix
-        uses: ./.github/actions/setup-nix
-        with:
-          github-token: ${{ github.token }}
-          cachix-skip-push: true
-
-      - name: Generate matrix from changed host derivations
+      - name: Combine native host matrices
         id: hosts
         shell: bash
         env:
-          BASE_AVAILABLE: ${{ steps.comparison.outputs.has_base }}
-          EVENT_NAME: ${{ github.event_name }}
-          RETRY_KIND: ${{ inputs['retry-kind'] }}
-          RETRY_NAME: ${{ inputs['retry-name'] }}
+          X86_64_LINUX: ${{ needs.matrix-x86-64-linux.outputs.matrix }}
+          AARCH64_LINUX: ${{ needs.matrix-aarch64-linux.outputs.matrix }}
+          AARCH64_DARWIN: ${{ needs.matrix-aarch64-darwin.outputs.matrix }}
         run: |
-          metadata="$(nix eval --json .#hostMetadata)"
-
-          if [ "${EVENT_NAME}" = "push" ] && [ "${BASE_AVAILABLE}" = "true" ]; then
-            # Formatting-only Nix edits preserve a host's derivation path. A
-            # changed path means the evaluated configuration actually changed.
-            current_checks="$(nix eval --json .#hostChecks)"
-            previous_checks="$(nix eval --json ./.host-base#hostChecks)"
-
-            matrix="$(
-              jq --compact-output --null-input \
-                --argjson metadata "${metadata}" \
-                --argjson current "${current_checks}" \
-                --argjson previous "${previous_checks}" \
-                '{
-                  include: [
-                    $metadata |
-                    to_entries[] |
-                    select(($previous[.key] // null) != $current[.key]) |
-                    .value + { name: .key }
-                  ]
-                }'
-            )"
-          elif [ -n "${RETRY_KIND}" ] || [ -n "${RETRY_NAME}" ]; then
-            matrix="$(
-              jq --compact-output \
-                --arg kind "${RETRY_KIND}" \
-                --arg name "${RETRY_NAME}" \
-                '{
-                  include: [
-                    to_entries[] |
-                    select(.value.class == $kind and .key == $name) |
-                    .value + { name: .key }
-                  ]
-                }' <<< "${metadata}"
-            )"
-          else
-            matrix="$(
-              jq --compact-output '{
-                include: [
-                  to_entries[] |
-                  .value + { name: .key }
-                ]
-              }' <<< "${metadata}"
-            )"
-          fi
+          matrix="$(
+            jq --compact-output --null-input \
+              --argjson x86_64_linux "${X86_64_LINUX}" \
+              --argjson aarch64_linux "${AARCH64_LINUX}" \
+              --argjson aarch64_darwin "${AARCH64_DARWIN}" \
+              '{
+                include: (
+                  $x86_64_linux.include
+                  + $aarch64_linux.include
+                  + $aarch64_darwin.include
+                )
+              }'
+          )"
 
           host_count="$(jq '.include | length' <<< "${matrix}")"
 
@@ -146,7 +109,7 @@ jobs:
             echo "### Selected configuration builds"
             echo
             if [ "${host_count}" -eq 0 ]; then
-              echo "No host derivation changed; no configurations will be built."
+              echo "No native host derivation changed; no configurations will be built."
             else
               jq --raw-output '.include[] | "- `\(.class) / \(.owner) / \(.name)`"' <<< "${matrix}"
             fi

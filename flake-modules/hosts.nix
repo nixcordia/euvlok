@@ -10,6 +10,7 @@
 let
   inherit (lib)
     filterAttrs
+    genAttrs
     mapAttrs
     mkDefault
     mkOption
@@ -104,6 +105,10 @@ let
   hostChecks =
     mapAttrs (_: host: host.config.system.build.toplevel.drvPath) nixosConfigurations
     // mapAttrs (_: host: host.system.drvPath) darwinConfigurations;
+
+  hostChecksBySystem = genAttrs supportedSystems (
+    system: filterAttrs (name: _: hostSpecs.${name}.system == system) hostChecks
+  );
 in
 {
   _class = "flake";
@@ -120,6 +125,7 @@ in
     inherit
       darwinConfigurations
       hostChecks
+      hostChecksBySystem
       hostMetadata
       nixosConfigurations
       ;

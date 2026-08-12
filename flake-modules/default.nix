@@ -70,6 +70,7 @@ in
   partitionedAttrs = {
     darwinConfigurations = "users";
     hostChecks = "users";
+    hostChecksBySystem = "users";
     hostMetadata = "users";
     nixosConfigurations = "users";
   };

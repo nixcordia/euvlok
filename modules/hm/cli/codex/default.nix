@@ -38,7 +38,7 @@ let
     };
 
     tui = {
-      notification_condition = "always";
+      notification_condition = lib.modules.mkDefault "always";
       show_tooltips = false;
       terminal_resize_reflow_max_rows = 0;
       keymap.global = {
@@ -49,7 +49,7 @@ let
       };
     }
     // lib.attrsets.optionalAttrs config.catppuccin.enable {
-      theme = "catppuccin-frappe-pink";
+      theme = lib.modules.mkDefault "catppuccin-frappe-pink";
     };
   };
 in
