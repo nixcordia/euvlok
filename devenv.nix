@@ -12,7 +12,6 @@
       git
       jujutsu
       nix-index
-      nix-prefetch-scripts
       ;
     nix-prefetch-github = pkgs.nix-prefetch-github.override {
       nix = inputs.determinate.packages.${pkgs.stdenv.hostPlatform.system}.default;
