@@ -107,7 +107,6 @@ runs:
         exit_code=0
 
         nix build --print-build-logs \
-          --option allow-import-from-derivation false \
           --option max-jobs "${BUILD_MAX_JOBS}" \
           --option cores "${BUILD_CORES}" \
           "${target}" > >(tee "${build_log}") 2>&1 &
