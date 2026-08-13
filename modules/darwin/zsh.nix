@@ -6,7 +6,6 @@
 }:
 let
   hmConfig = config.home-manager.users.${config.system.primaryUser};
-  paths = import ../hm/shell/paths.nix { inherit lib; };
 
   # Home Manager has already merged the shared and user-specific aliases.
   # Consume that module result instead of reaching back into hosts/ by name.
@@ -61,8 +60,8 @@ in
     enableFastSyntaxHighlighting = true;
 
     interactiveShellInit = lib.strings.concatStringsSep "\n" [
-      "# PATH"
-      paths.hm.shell.binPaths.zsh
+      "# Home Manager session environment"
+      ". ${hmConfig.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh"
 
       "# Oh My Zsh"
       omzPluginsStr
@@ -105,13 +104,19 @@ in
     ];
   };
 
-  launchd.user.agents."symlink-zsh-config" = {
-    script = ''
-      ln -sfn "/etc/zprofile" "/Users/${config.system.primaryUser}/.zprofile"
-      ln -sfn "/etc/zshenv" "/Users/${config.system.primaryUser}/.zshenv"
-      ln -sfn "/etc/zshrc" "/Users/${config.system.primaryUser}/.zshrc"
-    '';
-    serviceConfig.RunAtLoad = true;
-    serviceConfig.StartInterval = 0;
-  };
+  home-manager.users.${config.system.primaryUser} =
+    { config, lib, ... }:
+    {
+      home.file =
+        lib.genAttrs
+          [
+            ".zprofile"
+            ".zshenv"
+            ".zshrc"
+          ]
+          (name: {
+            force = true;
+            source = config.lib.file.mkOutOfStoreSymlink "/etc/${lib.removePrefix "." name}";
+          });
+    };
 }

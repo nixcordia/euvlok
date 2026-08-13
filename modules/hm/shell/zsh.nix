@@ -4,9 +4,6 @@
   config,
   ...
 }:
-let
-  paths = import ./paths.nix { inherit lib; };
-in
 {
   options.euvlok.home.zsh.enable = lib.options.mkEnableOption "declarative Zsh";
 
@@ -42,7 +39,6 @@ in
         }
       ];
       initContent = ''
-        ${paths.hm.shell.binPaths.zsh}
         source "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh"
         source "${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
       '';
