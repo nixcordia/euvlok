@@ -6,9 +6,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./sops.nix;
-  key = toString ./sops.nix;
   imports = [ euvlokInputs.sops-nix.homeManagerModules.sops ];
   sops.age.keyFile = lib.modules.mkDefault (
     if pkgs.stdenvNoCC.isDarwin then

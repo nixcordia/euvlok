@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./fish.nix;
-  key = toString ./fish.nix;
   options.euvlok.home.fish.enable = lib.options.mkEnableOption "Fish";
 
   config = lib.modules.mkIf config.euvlok.home.fish.enable {

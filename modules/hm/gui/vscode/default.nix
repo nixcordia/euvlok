@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [ ./extensions.nix ];
 
   options.euvlok.home.vscode.enable = lib.options.mkEnableOption "VSCode";

@@ -157,9 +157,6 @@ let
   );
 in
 {
-  _class = null;
-  _file = ./packages.nix;
-  key = toString ./packages.nix;
   options.euvlok.packages.enable = mkEnableOption "euvlok's shared system package profile" // {
     default = true;
   };

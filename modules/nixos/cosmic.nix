@@ -4,9 +4,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./cosmic.nix;
-  key = toString ./cosmic.nix;
 
   options.euvlok.nixos.cosmic.enable = lib.options.mkEnableOption "COSMIC";
 

@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "flake";
-  _file = ./bigshaq9999.nix;
-  key = toString ./bigshaq9999.nix;
 
   euvlok.hosts.faputa = {
     owner = "bigshaq9999";

@@ -1,8 +1,5 @@
 { lib, ... }:
 {
-  _class = "nixos";
-  _file = ./networking.nix;
-  key = toString ./networking.nix;
   sops.secrets.tailscale_auth = { };
   networking = {
     hostName = "unsigned-int32";

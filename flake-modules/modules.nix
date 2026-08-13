@@ -25,9 +25,6 @@ let
   };
 in
 {
-  _class = "flake";
-  _file = ./modules.nix;
-  key = toString ./modules.nix;
   config.flake = {
     # Feed raw modules to each output. flake-parts, Home Manager, and the
     # flake.modules extension add their own source/class wrapper where needed.

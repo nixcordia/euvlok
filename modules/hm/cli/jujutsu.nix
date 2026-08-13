@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./jujutsu.nix;
-  key = toString ./jujutsu.nix;
   options.euvlok.home.jujutsu.enable = lib.options.mkEnableOption "Jujutsu";
 
   config = lib.modules.mkIf config.euvlok.home.jujutsu.enable {

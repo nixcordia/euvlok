@@ -17,9 +17,6 @@ let
   limineSource = fetchCatppuccinSource "limine";
 in
 {
-  _class = "nixos";
-  _file = ./catppuccin.nix;
-  key = toString ./catppuccin.nix;
 
   # Both upstream integrations read generated package outputs during module
   # evaluation. Their repositories already contain the same data, so keep the

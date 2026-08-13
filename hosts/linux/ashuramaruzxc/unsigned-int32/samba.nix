@@ -1,8 +1,5 @@
 { pkgs, ... }:
 {
-  _class = "nixos";
-  _file = ./samba.nix;
-  key = toString ./samba.nix;
   services = {
     samba-wsdd = {
       enable = true;

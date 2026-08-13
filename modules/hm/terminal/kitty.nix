@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./kitty.nix;
-  key = toString ./kitty.nix;
   options.euvlok.home.kitty.enable = lib.options.mkEnableOption "Kitty";
 
   config = lib.modules.mkIf config.euvlok.home.kitty.enable {

@@ -1,8 +1,5 @@
 { lib, ... }:
 {
-  _class = "flake";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = lib.trivial.pipe (builtins.readDir ./.) [
     (lib.attrsets.filterAttrs (
       name: type:

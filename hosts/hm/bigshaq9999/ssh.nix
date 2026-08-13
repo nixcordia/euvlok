@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./ssh.nix;
-  key = toString ./ssh.nix;
   programs.ssh.extraConfig = ''
     Host ictlab-frontend
     	Hostname ictlab.usth.edu.vn

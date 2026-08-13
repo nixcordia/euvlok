@@ -1,7 +1,4 @@
 _: {
-  _class = "nixos";
-  _file = ./pam-security.nix;
-  key = toString ./pam-security.nix;
   security = {
     polkit.adminIdentities = [ "unix-group:wheel" ];
     pam = {

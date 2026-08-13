@@ -15,9 +15,6 @@ let
   };
 in
 {
-  _class = "homeManager";
-  _file = ./helix-vim-keys.nix;
-  key = toString ./helix-vim-keys.nix;
   programs.helix.defaultEditor = true;
   programs.helix.settings = {
     keys.normal = repeatedBinds;

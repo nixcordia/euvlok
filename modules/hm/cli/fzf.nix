@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./fzf.nix;
-  key = toString ./fzf.nix;
   options.euvlok.home.fzf.enable = lib.options.mkEnableOption "FZF" // {
     default = true;
   };

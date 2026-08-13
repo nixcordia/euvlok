@@ -1,9 +1,6 @@
 { catppuccinGtkModule }:
 { osConfig, ... }:
 {
-  _class = "homeManager";
-  _file = ./catppuccin.nix;
-  key = toString ./catppuccin.nix;
   imports = [ catppuccinGtkModule ];
 
   catppuccin = {

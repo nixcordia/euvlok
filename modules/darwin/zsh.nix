@@ -56,9 +56,6 @@ let
   omzPluginsStr = "plugins=(${lib.strings.concatStringsSep " " omzPlugins})";
 in
 {
-  _class = "darwin";
-  _file = ./zsh.nix;
-  key = toString ./zsh.nix;
   programs.zsh = {
     enableAutosuggestions = true;
     enableFastSyntaxHighlighting = true;

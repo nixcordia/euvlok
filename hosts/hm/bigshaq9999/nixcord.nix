@@ -1,8 +1,5 @@
 { config, lib, ... }:
 {
-  _class = "homeManager";
-  _file = ./nixcord.nix;
-  key = toString ./nixcord.nix;
   programs.nixcord.quickCss = lib.modules.mkForce ''
     /* ----- CATPPUCCIN THEME ----- */
     @import url("https://catppuccin.github.io/discord/dist/${config.catppuccin.flavor}-${config.catppuccin.accent}.css")

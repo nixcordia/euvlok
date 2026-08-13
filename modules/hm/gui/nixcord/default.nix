@@ -6,9 +6,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [
     euvlokInputs.nixcord.homeModules.nixcord
     ./base.nix

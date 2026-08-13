@@ -11,9 +11,6 @@ let
   ) config;
 in
 {
-  _class = null;
-  _file = ./nixpkgs.nix;
-  key = toString ./nixpkgs.nix;
   options.euvlok.nixpkgs.unstableSource = lib.options.mkOption {
     type = lib.types.path;
     default = euvlokInputs.nixpkgs-unstable-small;

@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./hyperv.nix;
-  key = toString ./hyperv.nix;
   imports = [ ./kvmfr.nix ];
   boot.extraModprobeConfig = "options kvm_intel kvm_amd nested=1";
   virtualisation.libvirtd = {

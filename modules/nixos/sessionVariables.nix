@@ -1,8 +1,5 @@
 { lib, config, ... }:
 {
-  _class = "nixos";
-  _file = ./sessionVariables.nix;
-  key = toString ./sessionVariables.nix;
   options.euvlok.nixos.gui.wlrootsWorkarounds =
     lib.options.mkEnableOption "wlroots hardware cursor and atomic mode workarounds"
     // {

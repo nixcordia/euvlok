@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./mpv.nix;
-  key = toString ./mpv.nix;
   programs.mpv.bindings = {
     # Playback Control
     "SPACE" = "cycle pause";

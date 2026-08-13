@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./workstation.nix;
-  key = toString ./workstation.nix;
 
   euvlok.home = {
     fastfetch.enable = true;

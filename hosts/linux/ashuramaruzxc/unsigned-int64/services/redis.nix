@@ -1,8 +1,5 @@
 { config, ... }:
 {
-  _class = "nixos";
-  _file = ./redis.nix;
-  key = toString ./redis.nix;
   sops.secrets.ecoflow_exporter = {
     mode = "0640";
     owner = config.users.users.redis-ecoflow_exporter.name;

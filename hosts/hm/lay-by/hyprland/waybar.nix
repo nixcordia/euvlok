@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./waybar.nix;
-  key = toString ./waybar.nix;
   programs.waybar.enable = true;
   programs.waybar.settings = [
     {

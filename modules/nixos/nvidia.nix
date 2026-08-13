@@ -10,9 +10,6 @@ let
   nvidiaDriver = config.boot.kernelPackages.nvidiaPackages.mkDriver nvidiaDriverConfig;
 in
 {
-  _class = "nixos";
-  _file = ./nvidia.nix;
-  key = toString ./nvidia.nix;
   options.euvlok.nixos.nvidia.enable = lib.options.mkEnableOption "NVIDIA Drivers & Env Variables";
 
   config = lib.modules.mkMerge [

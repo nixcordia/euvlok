@@ -1,8 +1,5 @@
 { lib, config, ... }:
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   options.euvlok.home.hyprland.enable = lib.options.mkEnableOption "Hyprland";
 
   config = lib.modules.mkIf config.euvlok.home.hyprland.enable {

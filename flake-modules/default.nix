@@ -31,10 +31,6 @@ let
   # importApply for modules that need provider-owned inputs; otherwise an
   # importing flake would have to duplicate euvlok's private input names.
   euvlokModule = {
-    _class = "flake";
-    _file = "${toString ./default.nix}#flakeModules.default";
-    key = "${toString ./default.nix}#flakeModules.default";
-
     imports = [
       inputs.flake-parts.flakeModules.modules
       inputs.home-manager.flakeModules.default
@@ -47,9 +43,6 @@ let
   };
 in
 {
-  _class = "flake";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [
     inputs.flake-parts.flakeModules.flakeModules
     inputs.flake-parts.flakeModules.partitions

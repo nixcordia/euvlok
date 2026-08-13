@@ -74,8 +74,5 @@ let
   ];
 in
 {
-  _class = "homeManager";
-  _file = ./languages.nix;
-  key = toString ./languages.nix;
   programs.helix.languages = { inherit language-server language; };
 }

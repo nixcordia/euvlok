@@ -1,7 +1,4 @@
 _: {
-  _class = "nixos";
-  _file = ./nix.nix;
-  key = toString ./nix.nix;
 
   # Determinate's module redirects the NixOS-generated configuration to the
   # supported /etc/nix/nix.custom.conf include.

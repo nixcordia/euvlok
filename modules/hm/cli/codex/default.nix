@@ -54,9 +54,6 @@ let
   };
 in
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   options.euvlok.home.codex.enable = lib.options.mkEnableOption "Codex";
 
   config = lib.modules.mkIf cfg.enable {

@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./configuration.nix;
-  key = toString ./configuration.nix;
   imports = [
     ./fonts.nix
     ./hardware-configuration.nix

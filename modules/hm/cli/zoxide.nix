@@ -1,8 +1,5 @@
 { lib, config, ... }:
 {
-  _class = "homeManager";
-  _file = ./zoxide.nix;
-  key = toString ./zoxide.nix;
   options.euvlok.home.zoxide.enable = lib.options.mkEnableOption "Zoxide" // {
     default = true;
   };

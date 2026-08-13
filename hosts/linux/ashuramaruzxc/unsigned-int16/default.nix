@@ -6,9 +6,6 @@
   sharedModule,
 }:
 _: {
-  _class = "nixos";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [
     sharedModule
     ./configuration.nix

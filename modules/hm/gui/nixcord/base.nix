@@ -4,9 +4,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./base.nix;
-  key = toString ./base.nix;
   options.euvlok.home.nixcord.basePlugins.enable =
     lib.options.mkEnableOption "shared Nixcord plugin set"
     // {

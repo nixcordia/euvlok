@@ -1,7 +1,4 @@
 _: {
-  _class = "nixos";
-  _file = ./fail2ban.nix;
-  key = toString ./fail2ban.nix;
   services.fail2ban = {
     enable = true;
     maxretry = 5;

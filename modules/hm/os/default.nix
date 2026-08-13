@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [
     euvlokInputs.catppuccin.homeModules.catppuccin
     ./firefox.nix

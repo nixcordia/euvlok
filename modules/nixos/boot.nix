@@ -15,9 +15,6 @@ let
   ] options;
 in
 {
-  _class = "nixos";
-  _file = ./boot.nix;
-  key = toString ./boot.nix;
   options.euvlok.nixos.boot.systemd-boot.enable =
     lib.options.mkEnableOption "systemd-boot with EFI"
     // {

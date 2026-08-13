@@ -1,9 +1,6 @@
 { zenBrowserPackage }:
 { pkgs, ... }:
 {
-  _class = "nixos";
-  _file = ./packages.nix;
-  key = toString ./packages.nix;
   environment.systemPackages = builtins.attrValues {
     inherit (pkgs)
       # Base System

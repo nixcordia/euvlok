@@ -4,9 +4,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./vaultwarden.nix;
-  key = toString ./vaultwarden.nix;
   sops.secrets.vaultwarden-env = {
     mode = "770";
     owner = config.users.users.vaultwarden.name;

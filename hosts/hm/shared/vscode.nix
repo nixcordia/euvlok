@@ -73,9 +73,6 @@ let
   ];
 in
 {
-  _class = "homeManager";
-  _file = ./vscode.nix;
-  key = toString ./vscode.nix;
   programs.vscode = {
     profiles.default = {
       userSettings = {

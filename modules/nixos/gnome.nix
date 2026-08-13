@@ -17,9 +17,6 @@ let
     };
 in
 {
-  _class = "nixos";
-  _file = ./gnome.nix;
-  key = toString ./gnome.nix;
 
   options.euvlok.nixos.gnome.enable = lib.options.mkEnableOption "GNOME";
 

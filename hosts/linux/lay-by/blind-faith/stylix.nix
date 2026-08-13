@@ -6,9 +6,6 @@ let
   };
 in
 {
-  _class = "nixos";
-  _file = ./stylix.nix;
-  key = toString ./stylix.nix;
 
   stylix = {
     enable = true;

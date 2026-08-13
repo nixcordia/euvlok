@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./starship.nix;
-  key = toString ./starship.nix;
 
   home.sessionVariables.VIRTUAL_ENV_DISABLE_PROMPT = "1";
 

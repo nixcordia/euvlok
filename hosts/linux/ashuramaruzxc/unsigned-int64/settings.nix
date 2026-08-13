@@ -1,7 +1,4 @@
 _: {
-  _class = "nixos";
-  _file = ./settings.nix;
-  key = toString ./settings.nix;
   networking = {
     hostName = "unsigned-int64";
     interfaces = {

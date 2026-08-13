@@ -10,9 +10,6 @@ let
   hasDevenvModule = lib.attrsets.hasAttrByPath [ "programs" "devenv" ] options;
 in
 {
-  _class = "homeManager";
-  _file = ./devenv.nix;
-  key = toString ./devenv.nix;
   options.euvlok.home.devenv.enable = lib.options.mkEnableOption "devenv" // {
     default = true;
   };

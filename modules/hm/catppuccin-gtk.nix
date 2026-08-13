@@ -22,9 +22,6 @@ let
   enable = cfg.enable && config.gtk.enable;
 in
 {
-  _class = "homeManager";
-  _file = ./catppuccin-gtk.nix;
-  key = toString ./catppuccin-gtk.nix;
   options.catppuccin.${renamedGtkOption} =
     (catppuccinLib.mkCatppuccinOption {
       name = "gtk";

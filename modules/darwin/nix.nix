@@ -1,7 +1,4 @@
 _: {
-  _class = "darwin";
-  _file = ./nix.nix;
-  key = toString ./nix.nix;
 
   # Let Determinate own nix.conf and nix-daemon instead of having nix-darwin
   # generate a competing installation. Custom Nix settings are routed to

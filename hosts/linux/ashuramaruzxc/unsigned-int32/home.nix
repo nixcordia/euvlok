@@ -101,9 +101,6 @@ let
     ];
 in
 {
-  _class = "nixos";
-  _file = ./home.nix;
-  key = toString ./home.nix;
   imports = [ homeManagerModule ];
 
   home-manager = {

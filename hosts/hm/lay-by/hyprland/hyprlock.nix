@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./hyprlock.nix;
-  key = toString ./hyprlock.nix;
   programs.hyprlock = {
     enable = true;
     settings = {

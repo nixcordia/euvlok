@@ -1,8 +1,5 @@
 { lib, pkgs, ... }:
 {
-  _class = "nixos";
-  _file = ./slsk.nix;
-  key = toString ./slsk.nix;
   systemd.services.slskdl = {
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];

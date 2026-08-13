@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./nixpkgs.nix;
-  key = toString ./nixpkgs.nix;
   imports = [
     (lib.modules.importApply ../cross/nixpkgs.nix { inherit euvlokInputs; })
   ];

@@ -1,8 +1,5 @@
 { config, ... }:
 {
-  _class = "nixos";
-  _file = ./anki.nix;
-  key = toString ./anki.nix;
   sops.secrets.anki_kunny = { };
   sops.secrets.anki_tenjin = { };
 

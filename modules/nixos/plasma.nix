@@ -47,9 +47,6 @@ let
   ];
 in
 {
-  _class = "nixos";
-  _file = ./plasma.nix;
-  key = toString ./plasma.nix;
 
   options.euvlok.nixos.plasma.enable = lib.options.mkEnableOption "KDE Plasma";
 

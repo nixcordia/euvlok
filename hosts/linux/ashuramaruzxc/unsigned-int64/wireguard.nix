@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./wireguard.nix;
-  key = toString ./wireguard.nix;
   sops.secrets.wireguard-server = { };
   sops.secrets.wireguard-shared = { };
   sops.secrets.wireguard-shared_fumono = { };

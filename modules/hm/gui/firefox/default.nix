@@ -202,9 +202,6 @@ let
   };
 in
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [ euvlokInputs.zen-browser.homeModules.twilight ];
 
   options.euvlok.home.firefox = {

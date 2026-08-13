@@ -5,9 +5,6 @@ let
   genKeyBind = desc: on: run: { inherit desc on run; };
 in
 {
-  _class = "homeManager";
-  _file = ./keybindings.nix;
-  key = toString ./keybindings.nix;
 
   programs.yazi.keymap.mgr.prepend_keymap = [
     (genKeyBind "Diff the selected with the hovered file" "d" "plugin diff")

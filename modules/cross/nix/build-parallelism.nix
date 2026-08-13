@@ -15,9 +15,6 @@ let
     };
 in
 {
-  _class = null;
-  _file = ./build-parallelism.nix;
-  key = toString ./build-parallelism.nix;
 
   options.euvlok.nix.buildParallelism = {
     maxJobs = lib.options.mkOption {

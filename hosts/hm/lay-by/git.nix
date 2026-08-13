@@ -11,9 +11,6 @@ let
   format = "ssh";
 in
 {
-  _class = "homeManager";
-  _file = ./git.nix;
-  key = toString ./git.nix;
   programs.gh.settings.git_protocol = format;
   programs.git.settings = {
     user = { inherit email name; };

@@ -1,9 +1,6 @@
 { pkgs, lib, ... }:
 {
   # Shared by NixOS and nix-darwin hosts.
-  _class = null;
-  _file = ./fonts.nix;
-  key = toString ./fonts.nix;
   fonts.packages = builtins.attrValues {
     inherit (pkgs)
       anonymousPro

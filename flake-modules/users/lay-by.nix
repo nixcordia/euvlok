@@ -8,9 +8,6 @@ let
   zenBrowserPackage = inputs.zen-browser.packages.x86_64-linux.default;
 in
 {
-  _class = "flake";
-  _file = ./lay-by.nix;
-  key = toString ./lay-by.nix;
 
   euvlok.hosts.blind-faith = {
     owner = "lay-by";

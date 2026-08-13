@@ -37,9 +37,6 @@ let
       ];
 in
 {
-  _class = "homeManager";
-  _file = ./zed.nix;
-  key = toString ./zed.nix;
 
   config = lib.modules.mkMerge [
     {

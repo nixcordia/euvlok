@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./hyprland.nix;
-  key = toString ./hyprland.nix;
   wayland.windowManager.hyprland.settings = {
     monitor = [
       ",preferred,auto,auto, vrr, 1"

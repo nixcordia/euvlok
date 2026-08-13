@@ -8,9 +8,6 @@ let
   toSentenceCase = lib.strings.toSentenceCase;
 in
 {
-  _class = "homeManager";
-  _file = ./zen-browser.nix;
-  key = toString ./zen-browser.nix;
 
   config = lib.modules.mkIf config.catppuccin.enable {
     programs.zen-browser.profiles.default = {

@@ -8,9 +8,6 @@ let
   paths = import ./paths.nix { inherit lib; };
 in
 {
-  _class = "homeManager";
-  _file = ./zsh.nix;
-  key = toString ./zsh.nix;
   options.euvlok.home.zsh.enable = lib.options.mkEnableOption "declarative Zsh";
 
   config = lib.modules.mkIf config.euvlok.home.zsh.enable {

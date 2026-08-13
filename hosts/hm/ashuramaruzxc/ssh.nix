@@ -3,9 +3,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./ssh.nix;
-  key = toString ./ssh.nix;
   programs.ssh = {
     enableDefaultConfig = false;
     settings = {

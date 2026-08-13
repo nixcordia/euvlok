@@ -3,9 +3,6 @@
   ...
 }:
 {
-  _class = "darwin";
-  _file = ./configuration.nix;
-  key = toString ./configuration.nix;
   # imports = [
   # {
   # sops = {

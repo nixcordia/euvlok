@@ -26,9 +26,6 @@ let
     );
 in
 {
-  _class = "homeManager";
-  _file = ./dconf.nix;
-  key = toString ./dconf.nix;
   config = lib.modules.mkIf pkgs.stdenvNoCC.isLinux {
     dconf.settings = {
       # App Switcher Configuration

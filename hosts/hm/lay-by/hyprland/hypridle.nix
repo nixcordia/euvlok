@@ -1,7 +1,4 @@
 _: {
-  _class = "homeManager";
-  _file = ./hypridle.nix;
-  key = toString ./hypridle.nix;
   services.hypridle = {
     enable = true;
     settings = {

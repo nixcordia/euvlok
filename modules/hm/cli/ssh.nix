@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./ssh.nix;
-  key = toString ./ssh.nix;
   options.euvlok.home.ssh.enable = lib.options.mkEnableOption "SSH" // {
     default = true;
   };

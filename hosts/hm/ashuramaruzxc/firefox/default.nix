@@ -117,9 +117,6 @@ let
   );
 in
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
 
   euvlok.home.firefox = {
     acceptedLanguages = [

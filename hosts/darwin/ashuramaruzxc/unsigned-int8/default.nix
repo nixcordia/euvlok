@@ -5,9 +5,6 @@
   sharedModules,
 }:
 _: {
-  _class = "darwin";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = sharedModules ++ [
     ./brew.nix
     ./configuration.nix

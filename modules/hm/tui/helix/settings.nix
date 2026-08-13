@@ -64,9 +64,6 @@ let
   };
 in
 {
-  _class = "homeManager";
-  _file = ./settings.nix;
-  key = toString ./settings.nix;
   programs.helix.settings = {
     inherit editor;
     keys = {

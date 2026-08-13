@@ -1,8 +1,5 @@
 { config, lib, ... }:
 {
-  _class = "nixos";
-  _file = ./audio.nix;
-  key = toString ./audio.nix;
   options.euvlok.nixos.audio.enable =
     lib.options.mkEnableOption "the shared PipeWire audio stack"
     // {

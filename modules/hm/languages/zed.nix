@@ -24,9 +24,6 @@ let
     lib.attrsets.mergeAttrsList (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
 in
 {
-  _class = "homeManager";
-  _file = ./zed.nix;
-  key = toString ./zed.nix;
   config = lib.modules.mkIf config.euvlok.home.zed-editor.enable {
     programs.zed-editor.extensions =
       lib.lists.optionals config.programs.fish.enable [ "fish" ]

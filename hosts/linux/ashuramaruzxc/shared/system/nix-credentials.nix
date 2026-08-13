@@ -1,8 +1,5 @@
 { config, ... }:
 {
-  _class = "nixos";
-  _file = ./nix-credentials.nix;
-  key = toString ./nix-credentials.nix;
   # sops.secrets.gh_token = {
   #   mode = "0440";
   #   group = "users";

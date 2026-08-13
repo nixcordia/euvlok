@@ -3,9 +3,6 @@ let
   cfg = config.euvlok.nixos.locale;
 in
 {
-  _class = "nixos";
-  _file = ./locale.nix;
-  key = toString ./locale.nix;
   options.euvlok.nixos.locale = {
     enable = lib.options.mkEnableOption "locale configuration";
     timeZone = lib.options.mkOption {

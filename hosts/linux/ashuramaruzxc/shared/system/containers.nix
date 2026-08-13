@@ -10,9 +10,6 @@ let
   ];
 in
 {
-  _class = "nixos";
-  _file = ./containers.nix;
-  key = toString ./containers.nix;
   virtualisation.docker = {
     enable = true;
     enableOnBoot = true;

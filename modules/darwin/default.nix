@@ -1,9 +1,6 @@
 { euvlokInputs }:
 { lib, ... }:
 {
-  _class = "darwin";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [
     euvlokInputs.determinate.darwinModules.default
     (lib.modules.importApply ../cross {

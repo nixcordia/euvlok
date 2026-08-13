@@ -19,9 +19,6 @@ let
   starshipSource = fetchCatppuccinSource "starship";
 in
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
 
   imports = [
     (lib.modules.importApply ./firefox.nix { inherit paletteSource; })

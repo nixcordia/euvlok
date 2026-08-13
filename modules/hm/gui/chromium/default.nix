@@ -75,9 +75,6 @@ let
   ) extensionCatalog;
 in
 {
-  _class = "homeManager";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   options.euvlok.home.chromium = {
     enable = lib.options.mkEnableOption "Chromium-based browsers";
 

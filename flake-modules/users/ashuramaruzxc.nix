@@ -28,9 +28,6 @@ let
     );
 in
 {
-  _class = "flake";
-  _file = ./ashuramaruzxc.nix;
-  key = toString ./ashuramaruzxc.nix;
 
   euvlok.hosts = {
     unsigned-int16 = {

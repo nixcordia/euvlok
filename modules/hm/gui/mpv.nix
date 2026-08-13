@@ -1,8 +1,5 @@
 { lib, config, ... }:
 {
-  _class = "homeManager";
-  _file = ./mpv.nix;
-  key = toString ./mpv.nix;
   options.euvlok.home.mpv.enable = lib.options.mkEnableOption "MPV";
 
   config = lib.modules.mkIf config.euvlok.home.mpv.enable {

@@ -111,9 +111,6 @@ let
   );
 in
 {
-  _class = "flake";
-  _file = ./hosts.nix;
-  key = toString ./hosts.nix;
 
   options.euvlok.hosts = mkOption {
     type = types.attrsOf hostType;

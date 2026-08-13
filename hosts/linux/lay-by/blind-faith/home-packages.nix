@@ -1,8 +1,5 @@
 { pkgs, ... }:
 {
-  _class = "homeManager";
-  _file = ./home-packages.nix;
-  key = toString ./home-packages.nix;
 
   home.packages = builtins.attrValues {
     inherit (pkgs.unstable)

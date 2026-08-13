@@ -26,9 +26,6 @@ let
   };
 in
 {
-  _class = "homeManager";
-  _file = ./firefox.nix;
-  key = toString ./firefox.nix;
 
   config = lib.modules.mkIf config.catppuccin.enable {
     # catppuccin/nix imports generated themes.json during evaluation. Keep its

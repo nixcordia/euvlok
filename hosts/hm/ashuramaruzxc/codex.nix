@@ -29,9 +29,6 @@ let
   };
 in
 {
-  _class = "homeManager";
-  _file = ./codex.nix;
-  key = toString ./codex.nix;
 
   config = lib.modules.mkIf cfg.enable {
     programs.ghostty.settings.font-family = terminalFont;

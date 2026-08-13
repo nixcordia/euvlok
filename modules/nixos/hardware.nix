@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./hardware.nix;
-  key = toString ./hardware.nix;
   config = lib.modules.mkMerge [
     (lib.modules.mkIf config.nixpkgs.hostPlatform.isx86_64 {
       hardware.graphics.enable32Bit = true;

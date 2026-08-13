@@ -16,9 +16,6 @@ let
   ++ cfg.extraArgs;
 in
 {
-  _class = "nixos";
-  _file = ./fh.nix;
-  key = toString ./fh.nix;
   sops.secrets.foldingathome_passkey = { };
   sops.secrets.foldingathome_token = { };
 

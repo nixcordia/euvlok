@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "homeManager";
-  _file = ./zed.nix;
-  key = toString ./zed.nix;
   options.euvlok.home.zed-editor.enable = lib.options.mkEnableOption "Zed Editor";
 
   config = lib.modules.mkIf config.euvlok.home.zed-editor.enable {

@@ -5,9 +5,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./default.nix;
-  key = toString ./default.nix;
   imports = [
     euvlokInputs.catppuccin.nixosModules.catppuccin
     (lib.modules.importApply ./catppuccin.nix { inherit euvlokInputs; })

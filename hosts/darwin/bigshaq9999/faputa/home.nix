@@ -9,9 +9,6 @@
   ...
 }:
 {
-  _class = "darwin";
-  _file = ./home.nix;
-  key = toString ./home.nix;
   imports = [ homeManagerModule ];
 
   home-manager = {

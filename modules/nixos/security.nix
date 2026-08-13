@@ -1,8 +1,5 @@
 { config, lib, ... }:
 {
-  _class = "nixos";
-  _file = ./security.nix;
-  key = toString ./security.nix;
   options.euvlok.nixos.security.enable = lib.options.mkEnableOption "the shared security policy" // {
     default = true;
   };

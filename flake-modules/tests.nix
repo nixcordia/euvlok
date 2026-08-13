@@ -124,9 +124,6 @@ let
     };
 in
 {
-  _class = "flake";
-  _file = ./tests.nix;
-  key = toString ./tests.nix;
 
   perSystem =
     { system, ... }:

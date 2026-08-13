@@ -19,9 +19,6 @@ let
   nixPathEntries = [ "nixpkgs=flake:nixpkgs" ];
 in
 {
-  _class = null;
-  _file = ./registry.nix;
-  key = toString ./registry.nix;
 
   options.euvlok.nix.registryInputs = mkOption {
     type = types.attrsOf (types.addCheck types.raw (lib.isType "flake"));

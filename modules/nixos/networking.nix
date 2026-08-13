@@ -3,9 +3,6 @@ let
   cfg = config.euvlok.nixos.networking;
 in
 {
-  _class = "nixos";
-  _file = ./networking.nix;
-  key = toString ./networking.nix;
   options.euvlok.nixos.networking = {
     enable = lib.options.mkEnableOption "NetworkManager" // {
       default = true;

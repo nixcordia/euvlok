@@ -177,9 +177,6 @@ let
   ashuramaru = commonImports ++ [ catppuccinConfig ] ++ sopsConfig ++ hmModuleConfig ++ userExtras;
 in
 {
-  _class = "darwin";
-  _file = ./home.nix;
-  key = toString ./home.nix;
   imports = [ homeManagerModule ];
 
   home-manager = {

@@ -4,9 +4,6 @@
 }:
 { lib, ... }:
 {
-  _class = "homeManager";
-  _file = ./common.nix;
-  key = toString ./common.nix;
   imports = [
     # Do not put nixpkgs' upstream Nix ahead of Determinate Nix on PATH.
     euvlokInputs.determinate.homeManagerModules.default

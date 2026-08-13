@@ -3,9 +3,6 @@
   ...
 }:
 {
-  _class = "nixos";
-  _file = ./workstation.nix;
-  key = toString ./workstation.nix;
   environment.localBinInPath = true;
   environment.sessionVariables = {
     XDG_DATA_HOME = "\${HOME}/.local/share";

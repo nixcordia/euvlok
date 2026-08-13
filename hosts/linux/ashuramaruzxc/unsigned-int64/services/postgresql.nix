@@ -1,8 +1,5 @@
 { lib, ... }:
 {
-  _class = "nixos";
-  _file = ./postgresql.nix;
-  key = toString ./postgresql.nix;
   services.postgresql = {
     enable = true;
     enableJIT = true;

@@ -1,8 +1,5 @@
 { lib, config, ... }:
 {
-  _class = "nixos";
-  _file = ./zram.nix;
-  key = toString ./zram.nix;
   options.euvlok.nixos.zram.enable = lib.options.mkEnableOption "ZRAM Swap";
 
   config = lib.modules.mkIf config.euvlok.nixos.zram.enable {

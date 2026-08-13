@@ -37,9 +37,6 @@ let
   };
 in
 {
-  _class = null;
-  _file = ./settings.nix;
-  key = toString ./settings.nix;
 
   config =
     if isDarwin then

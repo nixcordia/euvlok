@@ -6,9 +6,6 @@
 }:
 
 {
-  _class = "homeManager";
-  _file = ./git.nix;
-  key = toString ./git.nix;
   options.euvlok.home.git.enable = lib.options.mkEnableOption "Git" // {
     default = true;
   };

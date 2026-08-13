@@ -1,8 +1,5 @@
 { lib, config, ... }:
 {
-  _class = "homeManager";
-  _file = ./direnv.nix;
-  key = toString ./direnv.nix;
   options.euvlok.home.direnv.enable = lib.options.mkEnableOption "Direnv" // {
     default = true;
   };
