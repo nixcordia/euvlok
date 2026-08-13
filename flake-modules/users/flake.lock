@@ -313,27 +313,6 @@
         "type": "gitlab"
       }
     },
-    "home-manager-rpi": {
-      "inputs": {
-        "nixpkgs": [
-          "users-nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1784350909,
-        "narHash": "sha256-ZWyzLbS1yKUTeFJLmdVuWNnHttL333/ldJbEE+KzCrM=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "4ce190229c73d44536caa7072f6308fb2d8feeb3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "ref": "release-26.05",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "homebrew-cask-source": {
       "flake": false,
       "locked": {
@@ -589,7 +568,6 @@
         "codex-desktop-linux": "codex-desktop-linux",
         "disko-rpi": "disko-rpi",
         "flatpak-declarative": "flatpak-declarative",
-        "home-manager-rpi": "home-manager-rpi",
         "homebrew-cask-source": "homebrew-cask-source",
         "homebrew-core-source": "homebrew-core-source",
         "homebrew-crc-source": "homebrew-crc-source",
@@ -836,16 +814,16 @@
     },
     "users-nixpkgs": {
       "locked": {
-        "lastModified": 1783703440,
-        "narHash": "sha256-O3/YajjWo001VUIgD8BwaRdSNLUFe7nZ1qV5TwhRBcw=",
+        "lastModified": 1786514691,
+        "narHash": "sha256-9dkt1i5JNbEfPb+EjLcSDNs8zqEHQ/1JlSaKgj0SBAg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "8f0500b9660505dc3cb647775fe9a978a74b5283",
+        "rev": "867dcbc30bafe3c862ef88620f2e7a109d7d3be5",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-26.05",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }

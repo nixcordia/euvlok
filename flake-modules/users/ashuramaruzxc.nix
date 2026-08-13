@@ -41,7 +41,7 @@ in
           sharedModule = sharedNixosModule;
           homeModule =
             mkHomeModule ../../hosts/linux/ashuramaruzxc/unsigned-int16/home.nix
-              inputs.home-manager-rpi.nixosModules.home-manager
+              inputs.home-manager.nixosModules.home-manager
               { };
           diskoModule = inputs.disko-rpi.nixosModules.disko;
           flatpakModule = inputs.flatpak-declarative.nixosModules.default;

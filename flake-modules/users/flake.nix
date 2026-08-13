@@ -26,10 +26,6 @@
       url = "github:nvmd/disko/gpt-attrs";
     };
     flatpak-declarative.url = "github:in-a-dil-emma/declarative-flatpak";
-    home-manager-rpi = {
-      inputs.nixpkgs.follows = "users-nixpkgs";
-      url = "github:nix-community/home-manager/release-26.05";
-    };
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     nixos-raspberrypi = {
       inputs = {
@@ -83,7 +79,7 @@
     };
     users-flake-parts.url = "github:hercules-ci/flake-parts";
     users-flake-utils.url = "github:numtide/flake-utils";
-    users-nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    users-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     users-nixpkgs-unstable-small.url = "github:NixOS/nixpkgs/nixos-unstable-small";
   };
 
