@@ -1,5 +1,9 @@
 { inputs }:
-{ lib, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 let
   applyEuvlokInputsWith =
     module: args: lib.modules.importApply module ({ euvlokInputs = inputs; } // args);
@@ -32,7 +36,10 @@ in
 
     # Conventional aliases for external consumers and internal hosts/**/*.nix.
     nixosModules = moduleCatalogs.nixos;
-    darwinModules = moduleCatalogs.darwin;
+    # nix-darwin does not declare a typed `darwinModules` flake-parts option.
+    # Reuse the class/location wrapper from `flake.modules` for this conventional
+    # alias instead of publishing the raw catalog.
+    darwinModules = config.flake.modules.darwin;
     homeModules = moduleCatalogs.homeManager;
   };
 }

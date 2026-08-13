@@ -8,6 +8,7 @@
   sharedModule,
 }:
 {
+  lib,
   pkgs,
   ...
 }:
@@ -43,7 +44,7 @@ let
           hash = "sha256-CQPJ7sbr4SfLOq57zpLds3XCFQPvVDihMsKKGVF+RMM=";
         };
       });
-  cursorModule = import ../shared/home/cursor.nix {
+  cursorModule = lib.modules.importApply ../shared/home/cursor.nix {
     cursorName = "touhou-reimu";
     cursorPackage = animeCursorsSource.packages.${pkgs.stdenvNoCC.hostPlatform.system}.cursors;
     iconPackage = pkgs.unstable.kdePackages.breeze-icons;
