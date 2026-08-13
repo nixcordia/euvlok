@@ -17,7 +17,11 @@ let
     eupkgs = final.unstable.extend inputs.eupkgs.overlays.default;
   };
 
-  localPackagesOverlay = final: _prev: {
+  localPackagesOverlay = final: prev: {
+    # Backport facebook/folly@ac1bb81 until the pinned Nixpkgs package includes it.
+    folly = prev.folly.overrideAttrs (oldAttrs: {
+      patches = (oldAttrs.patches or [ ]) ++ [ ./packages/folly-missing-cstring.patch ];
+    });
     linux-rt-upscaler = final.callPackage ./packages/linux-rt-upscaler.nix { };
     lsfg-vk = final.callPackage ./packages/lsfg-vk.nix { };
   };
