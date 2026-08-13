@@ -12,12 +12,7 @@
     programs.fish.plugins = [
       {
         name = "fzf.fish";
-        src = pkgs.fetchFromGitHub {
-          owner = "PatrickF1";
-          repo = "fzf.fish";
-          rev = "8920367cf85eee5218cc25a11e209d46e2591e7a";
-          hash = "sha256-T8KYLA/r/gOKvAivKRoeqIwE2pINlxFQtZJHpOy9GMM=";
-        };
+        src = pkgs.fishPlugins.fzf-fish;
       }
       {
         name = "replay.fish";
@@ -30,12 +25,7 @@
       }
       {
         name = "sponge";
-        src = pkgs.fetchFromGitHub {
-          owner = "meaningful-ooo";
-          repo = "sponge";
-          rev = "384299545104d5256648cee9d8b117aaa9a6d7be";
-          hash = "sha256-MdcZUDRtNJdiyo2l9o5ma7nAX84xEJbGFhAVhK+Zm1w=";
-        };
+        src = pkgs.fishPlugins.sponge;
       }
     ];
     programs.fish.shellAliases = {
