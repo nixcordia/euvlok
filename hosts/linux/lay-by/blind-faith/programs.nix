@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   programs = {
     thunar = {
@@ -11,6 +11,7 @@
     };
     steam = {
       enable = true;
+      extest.enable = lib.mkForce false;
     };
 
     hyprland.enable = true;
