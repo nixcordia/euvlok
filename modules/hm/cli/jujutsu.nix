@@ -8,7 +8,7 @@
   options.euvlok.home.jujutsu.enable = lib.options.mkEnableOption "Jujutsu";
 
   config = lib.modules.mkIf config.euvlok.home.jujutsu.enable {
-    home.packages = builtins.attrValues { inherit (pkgs.unstable) watchman; };
+    home.packages = builtins.attrValues { inherit (pkgs.stable) watchman; };
     programs.jujutsu = {
       enable = true;
       settings = {

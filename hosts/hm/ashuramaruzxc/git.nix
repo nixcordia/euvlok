@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = builtins.attrValues { inherit (pkgs) watchman; };
+  home.packages = builtins.attrValues { inherit (pkgs.stable) watchman; };
 
   programs = {
     gh.gitCredentialHelper.enable = true;

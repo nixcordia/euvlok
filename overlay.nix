@@ -1,6 +1,7 @@
 {
   inputs,
   hostPlatform ? null,
+  stableSource ? inputs.nixpkgs-stable,
   unstableSource ? inputs.nixpkgs-unstable-small,
 }:
 let
@@ -13,15 +14,17 @@ let
     };
   };
 
+  stableOverlay = _final: prev: {
+    stable = import stableSource {
+      localSystem = if hostPlatform == null then prev.stdenv.hostPlatform else hostPlatform;
+    };
+  };
+
   eupkgsOverlay = final: _prev: {
     eupkgs = final.unstable.extend inputs.eupkgs.overlays.default;
   };
 
-  localPackagesOverlay = final: prev: {
-    # Backport facebook/folly@ac1bb81 until the pinned Nixpkgs package includes it.
-    folly = prev.folly.overrideAttrs (oldAttrs: {
-      patches = (oldAttrs.patches or [ ]) ++ [ ./packages/folly-missing-cstring.patch ];
-    });
+  localPackagesOverlay = final: _prev: {
     linux-rt-upscaler = final.callPackage ./packages/linux-rt-upscaler.nix { };
     lsfg-vk = final.callPackage ./packages/lsfg-vk.nix { };
   };
@@ -31,6 +34,7 @@ inputs.nixpkgs.lib.fixedPoints.composeManyExtensions [
   # extend the final package set. This keeps stdenv evaluation acyclic on
   # custom platform bootstraps such as nixos-raspberrypi.
   unstableOverlay
+  stableOverlay
   eupkgsOverlay
   localPackagesOverlay
   inputs.nix4vscode.overlays.default
