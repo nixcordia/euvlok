@@ -7,6 +7,11 @@
       unstableSource ? inputs.nixpkgs-unstable-small,
     }:
     import ../overlay.nix {
-      inherit inputs hostPlatform stableSource unstableSource;
+      inherit
+        inputs
+        hostPlatform
+        stableSource
+        unstableSource
+        ;
     };
 }
