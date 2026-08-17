@@ -1,31 +1,42 @@
-# ignore macOS and Linux files
+# Operating-system files
 .DS_Store
 Thumbs.db
-*.DS_Store
+
+# Editor files
 *.swp
+*.swo
+*~
+.idea/
 
-.devenv/
-.direnv/
-result
-result-*
-/.pre-commit-config.yaml
-.pre-commit-config.yaml
-
-# SDK junk
-node_modules/
-target/
-**/target/
-.jj/
-.zig-cache/
-zig-cache/
-zig-out/
-
-# VS Code workspace junk; keep shared project config
+# Keep shared VS Code configuration, but ignore local workspace files
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
 !.vscode/tasks.json
 
-# AI stuff
-.codex
-.idea/
+# Local development environments and tooling
+.devenv/
+.direnv/
+.jj/
+.codex/
+/.pre-commit-config.yaml
+
+# Local environment variables
+.env
+.env.*
+!.env.example
+
+# Dependencies, caches, and build outputs
+node_modules/
+coverage/
+dist/
+*.tsbuildinfo
+target/
+.zig-cache/
+zig-cache/
+zig-out/
+result
+result-*
+
+# Logs
+*.log
