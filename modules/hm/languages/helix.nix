@@ -9,11 +9,8 @@ let
   enabledLanguages = lib.attrsets.filterAttrs (
     name: _: config.euvlok.home.languages.${name}.enable or false
   ) languageDefinitions;
-  collectLists =
-    selector: lib.lists.flatten (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
-  mergeAttrs =
-    selector:
-    lib.attrsets.mergeAttrsList (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
+  collectLists = selector: lib.lists.concatMap selector (lib.attrsets.attrValues enabledLanguages);
+  mergeAttrs = selector: lib.attrsets.concatMapAttrs (_: selector) enabledLanguages;
 in
 {
   config = lib.modules.mkIf config.euvlok.home.helix.enable {

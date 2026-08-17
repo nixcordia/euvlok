@@ -16,56 +16,38 @@ in
 
   options.euvlok.home.languages = lib.attrsets.mapAttrs (
     name: def:
+    let
+      displayName = lib.strings.toSentenceCase name;
+    in
     lib.options.mkOption {
       default = { };
-      description = "Manages the development environment for the ${lib.strings.toSentenceCase name} language.";
-      type =
-        if def ? versionMap then
-          lib.types.submodule {
-            options = {
-              enable = lib.options.mkOption {
-                type = lib.types.bool;
-                default = false;
-                description = "Whether to enable the development environment and tools for ${lib.strings.toSentenceCase name}.";
-              };
-              version = lib.options.mkOption {
-                type = lib.types.enum (lib.attrsets.attrNames def.versionMap);
-                default = def.defaultVersion;
-                description = ''
-                  Select the version of the ${lib.strings.toSentenceCase name} SDK to install
-
-                  **Available versions:**
-                  ${lib.strings.concatStringsSep "\n" (map (v: "- `${v}`") (lib.attrsets.attrNames def.versionMap))}
-
-                  The default is `${def.defaultVersion}`
-                '';
-              };
-              extraPackages = lib.options.mkOption {
-                type = lib.types.listOf lib.types.package;
-                default = [ ];
-                description = ''
-                  A list of extra packages to install alongside the standard ${lib.strings.toSentenceCase name} toolchain.
-                '';
-              };
-            };
-          }
-        else
-          lib.types.submodule {
-            options = {
-              enable = lib.options.mkOption {
-                type = lib.types.bool;
-                default = false;
-                description = "Whether to enable the development environment and tools for ${lib.strings.toSentenceCase name}.";
-              };
-              extraPackages = lib.options.mkOption {
-                type = lib.types.listOf lib.types.package;
-                default = [ ];
-                description = ''
-                  A list of extra packages to install alongside the standard ${lib.strings.toSentenceCase name} toolchain.
-                '';
-              };
-            };
+      description = "Manages the development environment for the ${displayName} language.";
+      type = lib.types.submodule {
+        options = {
+          enable = lib.options.mkEnableOption "the ${displayName} development environment and tools";
+          extraPackages = lib.options.mkOption {
+            type = lib.types.listOf lib.types.package;
+            default = [ ];
+            description = "Extra packages to install alongside the standard ${displayName} toolchain.";
           };
+        }
+        // lib.attrsets.optionalAttrs (def ? versionMap) {
+          version = lib.options.mkOption {
+            type = lib.types.enum (lib.attrsets.attrNames def.versionMap);
+            default = def.defaultVersion;
+            description = ''
+              Select the version of the ${displayName} SDK to install.
+
+              **Available versions:**
+              ${lib.strings.concatMapStringsSep "\n" (version: "- `${version}`") (
+                lib.attrsets.attrNames def.versionMap
+              )}
+
+              The default is `${def.defaultVersion}`.
+            '';
+          };
+        };
+      };
     }
   ) languageDefinitions;
 
@@ -75,16 +57,17 @@ in
         name: _: config.euvlok.home.languages.${name}.enable or false
       ) languageDefinitions;
 
-      enabledLanguagePackageLists = lib.attrsets.mapAttrsToList (
-        name: def:
-        let
-          langCfg = config.euvlok.home.languages.${name};
-          basePackages = def.packages or [ ];
-          versionedPackage = if (def ? versionMap) then [ def.versionMap.${langCfg.version} ] else [ ];
-          extraPkgs = langCfg.extraPackages;
-        in
-        basePackages ++ versionedPackage ++ extraPkgs
-      ) enabledLanguages;
+      enabledLanguagePackages = lib.lists.concatLists (
+        lib.attrsets.mapAttrsToList (
+          name: def:
+          let
+            langCfg = config.euvlok.home.languages.${name};
+          in
+          (def.packages or [ ])
+          ++ lib.lists.optional (def ? versionMap) def.versionMap.${langCfg.version}
+          ++ langCfg.extraPackages
+        ) enabledLanguages
+      );
     in
     {
       # assertions = [
@@ -106,6 +89,6 @@ in
             yaml-language-server
             ;
         })
-        ++ (lib.lists.flatten enabledLanguagePackageLists);
+        ++ enabledLanguagePackages;
     };
 }

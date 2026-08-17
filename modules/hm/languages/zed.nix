@@ -17,16 +17,13 @@ let
     in
     (def.packages or [ ]) ++ versionedPackage ++ langCfg.extraPackages
   ) enabledLanguages;
-  collectLists =
-    selector: lib.lists.flatten (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
-  mergeAttrs =
-    selector:
-    lib.attrsets.mergeAttrsList (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
+  collectLists = selector: lib.lists.concatMap selector (lib.attrsets.attrValues enabledLanguages);
+  mergeAttrs = selector: lib.attrsets.concatMapAttrs (_: selector) enabledLanguages;
 in
 {
   config = lib.modules.mkIf config.euvlok.home.zed-editor.enable {
     programs.zed-editor.extensions =
-      lib.lists.optionals config.programs.fish.enable [ "fish" ]
+      lib.lists.optional config.programs.fish.enable "fish"
       ++ collectLists (def: def.zed.extensions or [ ]);
 
     programs.zed-editor.extraPackages = lib.lists.flatten collectPackageLists;
