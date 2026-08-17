@@ -89,7 +89,10 @@ in
               catppuccinModule
               personalModule
               ;
+            coreModule = config.flake.homeModules.core;
             homeManagerModule = inputs.home-manager.nixosModules.home-manager;
+            serverModule = config.flake.homeModules.server;
+            serverPersonalModule = ../../hosts/hm/ashuramaruzxc/server.nix;
             sharedModule = sharedHomeModule;
           };
         })

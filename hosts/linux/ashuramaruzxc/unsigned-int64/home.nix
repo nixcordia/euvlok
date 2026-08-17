@@ -1,28 +1,47 @@
 {
   catppuccinModule,
+  coreModule,
   homeManagerModule,
   personalModule,
+  serverModule,
+  serverPersonalModule,
   sharedModule,
 }:
 _:
 let
   baseImports = [
     { home.stateVersion = "26.05"; }
+  ];
+
+  workstationImports = [
     catppuccinModule
+    sharedModule
+    personalModule
   ];
 
   rootHmConfig = {
     euvlok.home = {
       bash.enable = true;
       direnv.enable = true;
+      fastfetch.enable = true;
       fzf.enable = true;
       helix.enable = true;
       nh.enable = true;
+      yazi.enable = true;
       zsh.enable = true;
     };
   };
 
-  commonHmConfig = [
+  serverHmConfig = {
+    euvlok.home = {
+      fastfetch.enable = true;
+      helix.enable = true;
+      nh.enable = true;
+      yazi.enable = true;
+    };
+  };
+
+  workstationHmConfig = [
     {
       euvlok.home = {
         fastfetch.enable = true;
@@ -47,25 +66,36 @@ in
     useUserPackages = true;
     useGlobalPkgs = true;
     backupFileExtension = "bak";
-    sharedModules = [
-      sharedModule
-      personalModule
-    ];
+    sharedModules = [ coreModule ];
   };
 
   home-manager.users.root = {
-    imports = baseImports ++ globalImports ++ [ rootHmConfig ] ++ commonHmConfig;
+    imports =
+      baseImports
+      ++ [
+        serverModule
+        serverPersonalModule
+      ]
+      ++ globalImports
+      ++ [ rootHmConfig ];
   };
 
   home-manager.users.ashuramaru = {
-    imports = baseImports ++ globalImports ++ commonHmConfig;
+    imports = baseImports ++ workstationImports ++ globalImports ++ workstationHmConfig;
   };
 
   home-manager.users.fumono = {
-    imports = baseImports ++ globalImports ++ commonHmConfig;
+    imports = baseImports ++ workstationImports ++ globalImports ++ workstationHmConfig;
   };
 
   home-manager.users.minecraft = {
-    imports = baseImports ++ globalImports ++ commonHmConfig;
+    imports =
+      baseImports
+      ++ [
+        serverModule
+        serverPersonalModule
+      ]
+      ++ globalImports
+      ++ [ serverHmConfig ];
   };
 }

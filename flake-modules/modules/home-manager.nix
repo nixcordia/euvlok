@@ -3,8 +3,10 @@
   applyEuvlokInputsWith,
 }:
 {
+  core = applyEuvlokInputsWith ../../modules/hm/core.nix { includeNixpkgs = false; };
   default = applyEuvlokInputsWith ../../modules/hm/common.nix { includeNixpkgs = true; };
   integrated = applyEuvlokInputsWith ../../modules/hm/common.nix { includeNixpkgs = false; };
+  server = applyEuvlokInputs ../../modules/hm/server.nix;
   os = applyEuvlokInputs ../../modules/hm/os;
   nixpkgs = applyEuvlokInputs ../../modules/hm/nixpkgs.nix;
   catppuccin = {

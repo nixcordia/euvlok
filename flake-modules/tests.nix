@@ -54,6 +54,27 @@ let
     ];
   };
 
+  serverHome = providerInputs.home-manager.lib.homeManagerConfiguration {
+    inherit pkgs;
+    modules = [
+      config.flake.homeModules.nixpkgs
+      config.flake.homeModules.server
+      {
+        home = {
+          username = "consumer";
+          homeDirectory = "/home/consumer";
+          stateVersion = "26.11";
+        };
+        euvlok.home = {
+          fastfetch.enable = true;
+          helix.enable = true;
+          nh.enable = true;
+          yazi.enable = true;
+        };
+      }
+    ];
+  };
+
   integratedNixos = providerInputs.nixpkgs.lib.nixosSystem {
     modules = [
       config.flake.nixosModules.default
@@ -116,10 +137,15 @@ let
   results =
     assert hasDesktopPackages;
     assert hasLldb;
+    assert !(serverHome.config.euvlok.home ? languages);
+    assert !(serverHome.config.euvlok.home ? vscode);
+    assert !serverHome.config.programs.ghostty.enable;
+    assert !serverHome.config.programs.vscode.enable;
     {
       darwinSystem = darwinConsumer.system.drvPath;
       integratedHome = integratedNixos.config.home-manager.users.consumer.home.activationPackage.drvPath;
       nixosSystem = nixosConsumer.config.system.build.toplevel.drvPath;
+      serverHome = serverHome.activationPackage.drvPath;
       standaloneHome = standaloneHome.activationPackage.drvPath;
     };
 in

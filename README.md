@@ -68,7 +68,9 @@ its matrix from that output rather than duplicating the list
 inputs.euvlok.nixosModules.default
 inputs.euvlok.darwinModules.default
 inputs.euvlok.homeModules.default
+inputs.euvlok.homeModules.core
 inputs.euvlok.homeModules.integrated
+inputs.euvlok.homeModules.server
 inputs.euvlok.overlays.default
 inputs.euvlok.flakeModules.default
 inputs.euvlok.lib.supportedSystems
@@ -85,6 +87,12 @@ list
 
 `homeModules.integrated` is for `home-manager.users` under NixOS or nix-darwin with
 `home-manager.useGlobalPkgs = true`
+
+`homeModules.core` is the minimal integrated Determinate foundation. `homeModules.server`
+adds the explicitly curated shell, Git, SSH, Helix, and Yazi server profile without
+importing the GUI, language-catalog, terminal-emulator, Codex, or devenv modules. Both
+expect `home-manager.useGlobalPkgs = true`; standalone users should use
+`homeModules.default`
 
 Personal profiles are intentionally internal and are not part of the public module API
 
