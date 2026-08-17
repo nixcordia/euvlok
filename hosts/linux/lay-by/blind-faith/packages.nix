@@ -26,11 +26,6 @@
       bc
       ninja
 
-      # Misc System
-      gnome-tweaks
-      ssh-askpass-fullscreen
-      oterm
-
       # QEMU
       #qemu
       #quickemu

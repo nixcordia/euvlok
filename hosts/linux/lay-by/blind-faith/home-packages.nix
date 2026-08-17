@@ -32,9 +32,6 @@
       python3
       uv
       ;
-    inherit (pkgs.jetbrains)
-      pycharm
-      ;
     inherit (pkgs.unstable)
       # nim
       nim
@@ -77,7 +74,6 @@
     inherit (pkgs.unstable)
       # Security
       nmap
-      scanmem
       keepassxc
       ;
     inherit (pkgs.unstable.kdePackages)

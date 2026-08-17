@@ -5,10 +5,6 @@
       enable = true;
       plugins = builtins.attrValues { inherit (pkgs) thunar-archive-plugin thunar-volman; };
     };
-    gamescope = {
-      enable = true;
-      # capSysNice = true;
-    };
     steam = {
       enable = true;
       extest.enable = lib.modules.mkForce false;
