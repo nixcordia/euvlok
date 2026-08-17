@@ -22,6 +22,7 @@
     ];
     programs.nixcord = {
       enable = true;
+      useGlobalPkgs = true;
       discord.krisp.enable = true;
       discord.vencord.enable = true;
       discord.openASAR.enable = true;
