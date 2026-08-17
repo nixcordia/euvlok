@@ -34,6 +34,9 @@ on:
       matrix:
         description: Changed hosts for this native platform.
         value: ${{ jobs.select.outputs.matrix }}
+      has_hosts:
+        description: Whether this native platform selected at least one host.
+        value: ${{ jobs.select.outputs.has_hosts }}
 
 permissions:
   contents: read
@@ -44,15 +47,18 @@ jobs:
     runs-on: ${{ inputs.runner }}
     outputs:
       matrix: ${{ steps.hosts.outputs.matrix }}
+      has_hosts: ${{ steps.hosts.outputs.has-hosts }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
       - name: Checkout comparison revision
         if: inputs.event-name == 'push'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 2
           persist-credentials: false
@@ -70,7 +76,7 @@ jobs:
         run: |
           has_base=true
 
-          if [ "${BEFORE_REVISION}" = "0000000000000000000000000000000000000000" ]; then
+          if [[ "${BEFORE_REVISION}" == "0000000000000000000000000000000000000000" ]]; then
             if git -C .host-base rev-parse --verify HEAD^ >/dev/null; then
               git -C .host-base checkout --detach HEAD^
             else
@@ -78,7 +84,7 @@ jobs:
             fi
           fi
 
-          echo "has_base=${has_base}" >> "${GITHUB_OUTPUT}"
+          echo "has_base=${has_base}" >>"${GITHUB_OUTPUT}"
 
       - name: Install Nix
         uses: ./.github/actions/setup-nix
@@ -96,12 +102,14 @@ jobs:
           RETRY_KIND: ${{ inputs.retry-kind }}
           RETRY_NAME: ${{ inputs.retry-name }}
         run: |
+          host_metadata="$(nix eval --json .#hostMetadata)"
           metadata="$(
-            nix eval --json .#hostMetadata |
-              jq --arg system "${HOST_SYSTEM}" 'with_entries(select(.value.system == $system))'
+            jq --arg system "${HOST_SYSTEM}" \
+              'with_entries(select(.value.system == $system))' \
+              <<<"${host_metadata}"
           )"
 
-          if [ "${EVENT_NAME}" = "push" ] && [ "${BASE_AVAILABLE}" = "true" ]; then
+          if [[ "${EVENT_NAME}" == "push" && "${BASE_AVAILABLE}" == "true" ]]; then
             # Force only derivations native to this runner. Some host modules
             # use import-from-derivation and cannot be evaluated cross-platform.
             current_checks="$(nix eval --json ".#hostChecksBySystem.${HOST_SYSTEM}")"
@@ -131,7 +139,7 @@ jobs:
                   ]
                 }'
             )"
-          elif [ -n "${RETRY_KIND}" ] || [ -n "${RETRY_NAME}" ]; then
+          elif [[ -n "${RETRY_KIND}" || -n "${RETRY_NAME}" ]]; then
             matrix="$(
               jq --compact-output \
                 --arg kind "${RETRY_KIND}" \
@@ -142,7 +150,7 @@ jobs:
                     select(.value.class == $kind and .key == $name) |
                     .value + { name: .key }
                   ]
-                }' <<< "${metadata}"
+                }' <<<"${metadata}"
             )"
           else
             matrix="$(
@@ -151,8 +159,29 @@ jobs:
                   to_entries[] |
                   .value + { name: .key }
                 ]
-              }' <<< "${metadata}"
+              }' <<<"${metadata}"
             )"
           fi
 
-          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
+          host_count="$(jq '.include | length' <<<"${matrix}")"
+
+          {
+            if ((host_count > 0)); then
+              echo "has-hosts=true"
+            else
+              echo "has-hosts=false"
+            fi
+            echo "matrix=${matrix}"
+          } >>"${GITHUB_OUTPUT}"
+
+          {
+            echo "### Selected ${HOST_SYSTEM} configurations"
+            echo
+            if ((host_count == 0)); then
+              echo "No native host derivation changed."
+            else
+              jq --raw-output \
+                '.include[] | "- `\(.class) / \(.owner) / \(.name)`"' \
+                <<<"${matrix}"
+            fi
+          } >>"${GITHUB_STEP_SUMMARY}"

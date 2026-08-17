@@ -1,5 +1,5 @@
 name: Set up Nix
-description: Install Nix and configure Cachix for repository workflows.
+description: Install Determinate Nix and configure Cachix for repository workflows.
 
 inputs:
   github-token:
@@ -31,7 +31,8 @@ runs:
   using: composite
   steps:
     - name: Install Nix
-      uses: DeterminateSystems/determinate-nix-action@61cbfe2efc2d4e7a8a6d56967c3c1058e846c858  # v3.21.9
+      # v3.21.9
+      uses: DeterminateSystems/determinate-nix-action@61cbfe2efc2d4e7a8a6d56967c3c1058e846c858
       with:
         github-token: ${{ inputs.github-token }}
         extra-conf: |
@@ -45,7 +46,8 @@ runs:
       # Read-only consumers may fall back to building locally, but builders
       # that promise to populate Cachix must stop if upload setup fails.
       continue-on-error: ${{ inputs.cachix-skip-push == 'true' }}
-      uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71  # v17
+      # v17
+      uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71
       with:
         name: ${{ inputs.cachix-cache }}
         extraPullNames: ${{ inputs.extra-cachix-caches }}
@@ -62,19 +64,6 @@ runs:
       shell: bash
       run: |
         echo "::warning::Cachix setup failed. Continuing because this job is configured for read-only cache access."
-
-    - name: Configure supplemental binary caches
-      shell: bash
-      run: | # zizmor: ignore[github-env] RUNNER_TEMP supplies the generated configuration path.
-        supplemental_nix_config="${RUNNER_TEMP}/supplemental-nix.conf"
-
-        {
-          echo "extra-substituters = https://cache.flox.dev https://cache.nixos-cuda.org"
-          echo "extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-        } > "${supplemental_nix_config}"
-
-        export NIX_USER_CONF_FILES="${supplemental_nix_config}:${NIX_USER_CONF_FILES}"
-        echo "NIX_USER_CONF_FILES=${NIX_USER_CONF_FILES}" >> "${GITHUB_ENV}"
 
     - name: Show Nix cache configuration
       shell: bash

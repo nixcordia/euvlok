@@ -1,5 +1,5 @@
 name: Build Nix flake target
-description: Install Nix, configure Cachix, and build one flake target.
+description: Install Determinate Nix, configure Cachix, and build one flake target.
 
 inputs:
   configuration-kind:
@@ -7,6 +7,9 @@ inputs:
     required: true
   configuration-name:
     description: Configuration name from the flake output.
+    required: true
+  configuration-system:
+    description: Nix system used to verify exact derivation failures against Hydra.
     required: true
   cachix-cache:
     description: Cachix cache name.
@@ -38,6 +41,10 @@ inputs:
     description: Number of cores each builder may use. Use 0 to allow all cores.
     required: false
     default: "0"
+  hydra-user-agent:
+    description: User agent used for advisory Zero Hydra Failures and Hydra requests.
+    required: false
+    default: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36
 
 outputs:
   exit-code:
@@ -49,6 +56,21 @@ outputs:
   timeout-drv:
     description: Last derivation observed in Nix build logs when the soft deadline fired.
     value: ${{ steps.build.outputs.timeout-drv }}
+  failed-drv:
+    description: First directly failing derivation reported by Nix.
+    value: ${{ steps.build.outputs.failed-drv }}
+  failure-kind:
+    description: Classified result (success, timeout, hydra, transient, deterministic, or unknown).
+    value: ${{ steps.build.outputs.failure-kind }}
+  failure-summary:
+    description: Short explanation of the classified result.
+    value: ${{ steps.build.outputs.failure-summary }}
+  hydra-url:
+    description: Exact matching failed Hydra build, when found.
+    value: ${{ steps.build.outputs.hydra-url }}
+  retryable:
+    description: Whether another isolated run can reasonably make progress.
+    value: ${{ steps.build.outputs.retryable }}
 
 runs:
   using: composite
@@ -59,7 +81,8 @@ runs:
         CACHIX_AUTH_TOKEN: ${{ inputs.cachix-auth-token }}
         CACHIX_SKIP_PUSH: ${{ inputs.cachix-skip-push }}
       run: |
-        if [ "${CACHIX_SKIP_PUSH}" != "true" ] && [ -z "${CACHIX_AUTH_TOKEN}" ]; then
+        if [[ "${CACHIX_SKIP_PUSH}" != "true" &&
+          -z "${CACHIX_AUTH_TOKEN}" ]]; then
           echo "::error::CACHIX_AUTH_TOKEN is required unless cachix-skip-push is true."
           exit 1
         fi
@@ -86,90 +109,26 @@ runs:
       shell: bash
       run: sudo install -d -m 0770 -o root -g nixbld /var/cache/ccache
 
+    - name: Install Bun
+      # v2
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+      with:
+        bun-version: 1.3.14
+
+    - name: Install build helper dependencies
+      shell: bash
+      run: bun install --cwd="${GITHUB_ACTION_PATH}" --frozen-lockfile
+
     - name: Build flake target
       id: build
       shell: bash
       env:
         CONFIGURATION_KIND: ${{ inputs.configuration-kind }}
         CONFIGURATION_NAME: ${{ inputs.configuration-name }}
+        CONFIGURATION_SYSTEM: ${{ inputs.configuration-system }}
         BUILD_TIMEOUT_SECONDS: ${{ inputs.build-timeout-seconds }}
         BUILD_STARTED_AT_EPOCH: ${{ inputs.build-started-at-epoch }}
         BUILD_MAX_JOBS: ${{ inputs.build-max-jobs }}
         BUILD_CORES: ${{ inputs.build-cores }}
-      run: |
-        set +e
-
-        case "${CONFIGURATION_KIND}" in
-          nixos)
-            target=".#nixosConfigurations.${CONFIGURATION_NAME}.config.system.build.toplevel"
-            ;;
-          darwin)
-            target=".#darwinConfigurations.${CONFIGURATION_NAME}.system"
-            ;;
-          *)
-            echo "::error::Unsupported configuration kind: ${CONFIGURATION_KIND}"
-            exit 1
-            ;;
-        esac
-
-        build_log="$(mktemp)"
-        start_time="${BUILD_STARTED_AT_EPOCH:-$(date +%s)}"
-        deadline="$((start_time + BUILD_TIMEOUT_SECONDS))"
-        timed_out=false
-        timeout_drv=""
-        exit_code=0
-
-        nix build --print-build-logs \
-          --option max-jobs "${BUILD_MAX_JOBS}" \
-          --option cores "${BUILD_CORES}" \
-          "${target}" > >(tee "${build_log}") 2>&1 &
-        build_pid="$!"
-
-        while kill -0 "${build_pid}" 2>/dev/null; do
-          now="$(date +%s)"
-
-          if [ "${now}" -ge "${deadline}" ]; then
-            timed_out=true
-            timeout_drv="$(sed -n "s/.*building '\([^']*\.drv\)'.*/\1/p" "${build_log}" | tail -n 1)"
-
-            echo "::error::Nix build exceeded soft timeout of ${BUILD_TIMEOUT_SECONDS}s."
-            if [ -n "${timeout_drv}" ]; then
-              echo "::error::Last observed building derivation: ${timeout_drv}"
-            else
-              echo "::warning::No building derivation was observed before the soft timeout."
-            fi
-
-            kill -TERM "${build_pid}" 2>/dev/null
-
-            for _ in 1 2 3 4 5 6 7 8 9 10; do
-              if ! kill -0 "${build_pid}" 2>/dev/null; then
-                break
-              fi
-
-              sleep 1
-            done
-
-            if kill -0 "${build_pid}" 2>/dev/null; then
-              kill -KILL "${build_pid}" 2>/dev/null
-            fi
-
-            wait "${build_pid}" 2>/dev/null
-            exit_code=124
-            break
-          fi
-
-          sleep 5
-        done
-
-        if [ "${timed_out}" != "true" ]; then
-          wait "${build_pid}"
-          exit_code="$?"
-        fi
-
-        echo "exit-code=${exit_code}" >> "${GITHUB_OUTPUT}"
-        echo "timed-out=${timed_out}" >> "${GITHUB_OUTPUT}"
-        echo "timeout-drv=${timeout_drv}" >> "${GITHUB_OUTPUT}"
-
-        rm -f "${build_log}"
-
-        exit "${exit_code}"
+        HYDRA_USER_AGENT: ${{ inputs.hydra-user-agent }}
+      run: bun run "${GITHUB_ACTION_PATH}/build.ts"

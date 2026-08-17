@@ -1,11 +1,15 @@
 name: Build Configurations
 run-name: >-
-  ${{ inputs['retry-kind'] && inputs['retry-name'] && format('Retry {0} / {1} (attempt {2})', inputs['retry-kind'], inputs['retry-name'], inputs['retry-attempt'] || '0') || github.event.head_commit.message || github.workflow }}
+  ${{ inputs['retry-kind'] && inputs['retry-name'] && format('Retry {0} / {1} on {2} (attempt {3}, {4})', inputs['retry-kind'], inputs['retry-name'], inputs['retry-system'], inputs['retry-attempt'] || '0', inputs['retry-reason'] || 'unspecified') || github.event.head_commit.message || github.workflow }}
 
 on:
   push:
   workflow_dispatch:
     inputs:
+      retry-system:
+        description: Native Nix system to retry.
+        required: false
+        type: string
       retry-kind:
         description: Configuration kind to retry.
         required: false
@@ -19,21 +23,25 @@ on:
         required: false
         default: "0"
         type: string
+      retry-reason:
+        description: Failure class that caused the retry.
+        required: false
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  # Keep retries for different matrix entries from evicting each other while a
-  # full push build is still running. Retries for the same entry remain
-  # serialized, and a newer push still supersedes an older full push build.
+  # A retry only competes with retries for the same host. A newer push still
+  # supersedes an older full build without cancelling unrelated retry lanes.
   group: >-
-    ${{ github.workflow }}-${{ github.ref }}-${{ inputs['retry-kind'] || 'all' }}-${{ inputs['retry-name'] || 'all' }}
+    ${{ github.workflow }}-${{ github.ref }}-${{ inputs['retry-system'] || 'all' }}-${{ inputs['retry-kind'] || 'all' }}-${{ inputs['retry-name'] || 'all' }}
   cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   matrix-x86-64-linux:
     name: Host Matrix (x86_64-linux)
+    if: inputs['retry-system'] == '' || inputs['retry-system'] == 'x86_64-linux'
     uses: ./.github/workflows/host-matrix.yml
     with:
       runner: ubuntu-latest
@@ -43,8 +51,25 @@ jobs:
       retry-kind: ${{ inputs['retry-kind'] || '' }}
       retry-name: ${{ inputs['retry-name'] || '' }}
 
+  build-x86-64-linux:
+    name: Build Hosts (x86_64-linux)
+    needs: matrix-x86-64-linux
+    if: needs.matrix-x86-64-linux.outputs.has_hosts == 'true'
+    permissions:
+      actions: write  # The called workflow may dispatch one isolated retry.
+      contents: read
+    uses: ./.github/workflows/build-hosts.yml
+    with:
+      hosts: ${{ needs.matrix-x86-64-linux.outputs.matrix }}
+      has-hosts: ${{ needs.matrix-x86-64-linux.outputs.has_hosts }}
+      max-parallel: 2
+      retry-attempt: ${{ inputs['retry-attempt'] || '0' }}
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
   matrix-aarch64-linux:
     name: Host Matrix (aarch64-linux)
+    if: inputs['retry-system'] == '' || inputs['retry-system'] == 'aarch64-linux'
     uses: ./.github/workflows/host-matrix.yml
     with:
       runner: ubuntu-24.04-arm
@@ -54,8 +79,25 @@ jobs:
       retry-kind: ${{ inputs['retry-kind'] || '' }}
       retry-name: ${{ inputs['retry-name'] || '' }}
 
+  build-aarch64-linux:
+    name: Build Hosts (aarch64-linux)
+    needs: matrix-aarch64-linux
+    if: needs.matrix-aarch64-linux.outputs.has_hosts == 'true'
+    permissions:
+      actions: write  # The called workflow may dispatch one isolated retry.
+      contents: read
+    uses: ./.github/workflows/build-hosts.yml
+    with:
+      hosts: ${{ needs.matrix-aarch64-linux.outputs.matrix }}
+      has-hosts: ${{ needs.matrix-aarch64-linux.outputs.has_hosts }}
+      max-parallel: 1
+      retry-attempt: ${{ inputs['retry-attempt'] || '0' }}
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
   matrix-aarch64-darwin:
     name: Host Matrix (aarch64-darwin)
+    if: inputs['retry-system'] == '' || inputs['retry-system'] == 'aarch64-darwin'
     uses: ./.github/workflows/host-matrix.yml
     with:
       runner: macos-latest
@@ -65,208 +107,18 @@ jobs:
       retry-kind: ${{ inputs['retry-kind'] || '' }}
       retry-name: ${{ inputs['retry-name'] || '' }}
 
-  matrix:
-    name: Host Matrix
-    needs:
-      - matrix-x86-64-linux
-      - matrix-aarch64-linux
-      - matrix-aarch64-darwin
-    runs-on: ubuntu-latest
-    outputs:
-      has_hosts: ${{ steps.hosts.outputs.has_hosts }}
-      hosts: ${{ steps.hosts.outputs.matrix }}
-    steps:
-      - name: Combine native host matrices
-        id: hosts
-        shell: bash
-        env:
-          X86_64_LINUX: ${{ needs.matrix-x86-64-linux.outputs.matrix }}
-          AARCH64_LINUX: ${{ needs.matrix-aarch64-linux.outputs.matrix }}
-          AARCH64_DARWIN: ${{ needs.matrix-aarch64-darwin.outputs.matrix }}
-        run: |
-          matrix="$(
-            jq --compact-output --null-input \
-              --argjson x86_64_linux "${X86_64_LINUX}" \
-              --argjson aarch64_linux "${AARCH64_LINUX}" \
-              --argjson aarch64_darwin "${AARCH64_DARWIN}" \
-              '{
-                include: (
-                  $x86_64_linux.include
-                  + $aarch64_linux.include
-                  + $aarch64_darwin.include
-                )
-              }'
-          )"
-
-          host_count="$(jq '.include | length' <<< "${matrix}")"
-
-          {
-            echo "has_hosts=$([ "${host_count}" -gt 0 ] && echo true || echo false)"
-            echo "matrix=${matrix}"
-          } >> "${GITHUB_OUTPUT}"
-
-          {
-            echo "### Selected configuration builds"
-            echo
-            if [ "${host_count}" -eq 0 ]; then
-              echo "No native host derivation changed; no configurations will be built."
-            else
-              jq --raw-output '.include[] | "- `\(.class) / \(.owner) / \(.name)`"' <<< "${matrix}"
-            fi
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-  build:
-    name: ${{ matrix.class }} / ${{ matrix.owner }} / ${{ matrix.name }}
-    needs: matrix
-    if: needs.matrix.outputs.has_hosts == 'true'
-    runs-on: ${{ matrix.runner }}
+  build-aarch64-darwin:
+    name: Build Hosts (aarch64-darwin)
+    needs: matrix-aarch64-darwin
+    if: needs.matrix-aarch64-darwin.outputs.has_hosts == 'true'
     permissions:
-      actions: write
+      actions: write  # The called workflow may dispatch one isolated retry.
       contents: read
-      id-token: write
-    env:
-      CACHIX_CACHE: euvlok
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix: ${{ fromJSON(needs.matrix.outputs.hosts) }}
-    steps:
-      - name: Check retry target
-        id: retry-target
-        shell: bash
-        env:
-          RETRY_KIND: ${{ inputs['retry-kind'] }}
-          RETRY_NAME: ${{ inputs['retry-name'] }}
-          MATRIX_KIND: ${{ matrix.class }}
-          MATRIX_NAME: ${{ matrix.name }}
-        run: |
-          should_build=true
-
-          if [ -n "${RETRY_KIND}" ] || [ -n "${RETRY_NAME}" ]; then
-            should_build=false
-
-            if [ "${RETRY_KIND}" = "${MATRIX_KIND}" ] && [ "${RETRY_NAME}" = "${MATRIX_NAME}" ]; then
-              should_build=true
-            fi
-          fi
-
-          echo "should-build=${should_build}" >> "${GITHUB_OUTPUT}"
-
-      - name: Record build start
-        id: build-start
-        if: steps.retry-target.outputs.should-build == 'true'
-        shell: bash
-        run: echo "epoch=$(date +%s)" >> "${GITHUB_OUTPUT}"
-
-      - name: Checkout repository
-        if: steps.retry-target.outputs.should-build == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Reclaim maximum Nix store space
-        if: steps.retry-target.outputs.should-build == 'true'
-        uses: ./.github/actions/nothing-but-nix
-        with:
-          hatchet-protocol: rampage
-          witness-carnage: true
-
-      - name: Build and cache configuration
-        id: build
-        if: steps.retry-target.outputs.should-build == 'true'
-        continue-on-error: true
-        uses: ./.github/actions/build-nix-flake-target
-        with:
-          configuration-kind: ${{ matrix.class }}
-          configuration-name: ${{ matrix.name }}
-          cachix-cache: ${{ env.CACHIX_CACHE }}
-          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          # Configuration builds exist to warm the binary cache. Never spend
-          # runner time building if Cachix cannot accept the outputs.
-          cachix-skip-push: false
-          github-token: ${{ github.token }}
-          build-started-at-epoch: ${{ steps.build-start.outputs.epoch }}
-
-      - name: Dispatch retry after soft timeout
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          steps.build.outputs.timed-out == 'true' &&
-          fromJSON(inputs['retry-attempt'] || '0') < 3
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RETRY_KIND: ${{ matrix.class }}
-          RETRY_NAME: ${{ matrix.name }}
-          RETRY_ATTEMPT: ${{ inputs['retry-attempt'] || '0' }}
-          TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
-        run: |
-          next_attempt=$((RETRY_ATTEMPT + 1))
-
-          dispatch_payload="$(
-            jq --null-input \
-              --arg ref "${GITHUB_REF_NAME}" \
-              --arg retry_kind "${RETRY_KIND}" \
-              --arg retry_name "${RETRY_NAME}" \
-              --arg retry_attempt "${next_attempt}" \
-              '{
-                ref: $ref,
-                return_run_details: true,
-                inputs: {
-                  "retry-kind": $retry_kind,
-                  "retry-name": $retry_name,
-                  "retry-attempt": $retry_attempt
-                }
-              }'
-          )"
-
-          dispatch_response="$(
-            gh api \
-              --method POST \
-              "repos/${GITHUB_REPOSITORY}/actions/workflows/build-configurations.yml/dispatches" \
-              --input - <<< "${dispatch_payload}"
-          )"
-          retry_run_url="$(jq --raw-output '.html_url // empty' <<< "${dispatch_response}")"
-
-          {
-            echo "### Soft timeout retry dispatched"
-            echo
-            echo "- Configuration: \`${RETRY_KIND} / ${RETRY_NAME}\`"
-            echo "- Retry attempt: \`${next_attempt}\`"
-            if [ -n "${TIMEOUT_DRV}" ]; then
-              echo "- Last derivation shown in the build log: \`${TIMEOUT_DRV}\`"
-            fi
-            if [ -n "${retry_run_url}" ]; then
-              echo "- Retry run: ${retry_run_url}"
-            fi
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-      - name: Stop retrying after attempt limit
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          steps.build.outputs.timed-out == 'true' &&
-          fromJSON(inputs['retry-attempt'] || '0') >= 3
-        shell: bash
-        env:
-          RETRY_ATTEMPT: ${{ inputs['retry-attempt'] || '0' }}
-          TIMEOUT_DRV: ${{ steps.build.outputs.timeout-drv }}
-        run: |
-          {
-            echo "### Stopping retries"
-            echo
-            echo "Retry attempt \`${RETRY_ATTEMPT}\` reached the configured attempt limit."
-            if [ -n "${TIMEOUT_DRV}" ]; then
-              echo
-              echo "Last derivation shown in the build log: \`${TIMEOUT_DRV}\`"
-            fi
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-      - name: Fail failed build
-        if: >-
-          steps.retry-target.outputs.should-build == 'true' &&
-          (steps.build.outcome == 'failure' || steps.build.outputs.exit-code != '0')
-        shell: bash
-        env:
-          EXIT_CODE: ${{ steps.build.outputs.exit-code || '1' }}
-        run: |
-          echo "::error::Build failed with exit code ${EXIT_CODE}."
-          exit "${EXIT_CODE}"
+    uses: ./.github/workflows/build-hosts.yml
+    with:
+      hosts: ${{ needs.matrix-aarch64-darwin.outputs.matrix }}
+      has-hosts: ${{ needs.matrix-aarch64-darwin.outputs.has_hosts }}
+      max-parallel: 1
+      retry-attempt: ${{ inputs['retry-attempt'] || '0' }}
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
