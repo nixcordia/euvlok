@@ -25,6 +25,12 @@ let
   };
 
   localPackagesOverlay = final: _prev: {
+    euvlokVscodeExtensions =
+      { version, extensions }:
+      import (inputs.nix4vscode + /nix/forVscodeVersionRaw.nix) {
+        inherit extensions version;
+        pkgs = final.unstable;
+      };
     linux-rt-upscaler = final.callPackage ./packages/linux-rt-upscaler.nix { };
     lsfg-vk = final.callPackage ./packages/lsfg-vk.nix { };
   };

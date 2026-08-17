@@ -1,32 +1,32 @@
 {
   lib,
   config,
-  pkgs,
   ...
 }:
 {
   config = lib.modules.mkIf config.euvlok.home.vscode.enable {
+    euvlok.home.vscode.extensionIds = [
+      "bbenoist.nix"
+      "jnoortheen.nix-ide"
+      "kamadorueda.alejandra"
+      "bmalehorn.shell-syntax"
+      "mads-hartmann.bash-ide-vscode"
+      "rogalmic.bash-debug"
+      "timonwong.shellcheck"
+      "usernamehw.errorlens"
+      "davidanson.vscode-markdownlint"
+      "redhat.vscode-xml"
+      "redhat.vscode-yaml"
+      "tamasfe.even-better-toml"
+      "yzhang.markdown-all-in-one"
+      "zainchen.json"
+      "dbaeumer.vscode-eslint"
+      "mgmcdermott.vscode-language-babel"
+      "editorconfig.editorconfig"
+      "oderwat.indent-rainbow"
+    ];
+
     programs.vscode.profiles.default = {
-      extensions = pkgs.nix4vscode.forVscodeVersion config.programs.vscode.package.version [
-        "bbenoist.nix"
-        "jnoortheen.nix-ide"
-        "kamadorueda.alejandra"
-        "bmalehorn.shell-syntax"
-        "mads-hartmann.bash-ide-vscode"
-        "rogalmic.bash-debug"
-        "timonwong.shellcheck"
-        "usernamehw.errorlens"
-        "davidanson.vscode-markdownlint"
-        "redhat.vscode-xml"
-        "redhat.vscode-yaml"
-        "tamasfe.even-better-toml"
-        "yzhang.markdown-all-in-one"
-        "zainchen.json"
-        "dbaeumer.vscode-eslint"
-        "mgmcdermott.vscode-language-babel"
-        "editorconfig.editorconfig"
-        "oderwat.indent-rainbow"
-      ];
       userSettings = {
         security.workspace.trust.enabled = false;
         nix.enableLanguageServer = true;

@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+_:
 let
   extensionStrings = [
     ## -- Programming languages/lsp support -- ##
@@ -250,7 +250,8 @@ in
           };
         };
       };
-      extensions = pkgs.nix4vscode.forVscodeVersion config.programs.vscode.package.version extensionStrings;
     };
   };
+
+  euvlok.home.vscode.extensionIds = extensionStrings;
 }

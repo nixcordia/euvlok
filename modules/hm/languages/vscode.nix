@@ -9,28 +9,20 @@ let
   enabledLanguages = lib.attrsets.filterAttrs (
     name: _: config.euvlok.home.languages.${name}.enable or false
   ) languageDefinitions;
-  collectLists =
-    selector: lib.lists.flatten (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
-  mergeAttrs =
-    selector:
-    lib.attrsets.mergeAttrsList (lib.attrsets.mapAttrsToList (_: def: selector def) enabledLanguages);
+  collectLists = selector: lib.lists.concatMap selector (lib.attrsets.attrValues enabledLanguages);
+  mergeAttrs = selector: lib.attrsets.concatMapAttrs (_: selector) enabledLanguages;
   extensionStrings = lib.lists.unique (
-    lib.lists.optionals
-      (
-        config.euvlok.home.languages.cpp.enable
-        || config.euvlok.home.languages.rust.enable
-        || config.euvlok.home.languages.swift.enable
-      )
-      [
-        "vadimcn.vscode-lldb"
-      ]
+    lib.lists.optional (
+      config.euvlok.home.languages.cpp.enable
+      || config.euvlok.home.languages.rust.enable
+      || config.euvlok.home.languages.swift.enable
+    ) "vadimcn.vscode-lldb"
     ++ collectLists (def: def.vscode.extensions or [ ])
   );
 in
 {
   config = lib.modules.mkIf config.euvlok.home.vscode.enable {
-    programs.vscode.profiles.default.extensions =
-      pkgs.nix4vscode.forVscodeVersion config.programs.vscode.package.version extensionStrings;
+    euvlok.home.vscode.extensionIds = extensionStrings;
 
     programs.vscode.profiles.default.userSettings = mergeAttrs (def: def.vscode.settings or { }) // {
       "[toml]" = {
