@@ -11,7 +11,7 @@
   ...
 }:
 let
-  homePackages = import ../shared/home/packages.nix { inherit pkgs; };
+  homePackages = import ../shared/home/packages.nix { inherit pkgs lib; };
   cursorModule = lib.modules.importApply ../shared/home/cursor.nix {
     cursorName = "touhou-reimu";
     cursorPackage = animeCursorsSource.packages.${pkgs.stdenvNoCC.hostPlatform.system}.cursors;

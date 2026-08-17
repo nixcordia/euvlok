@@ -80,6 +80,6 @@ python3Packages.buildPythonApplication (finalAttrs: {
     changelog = "https://github.com/baronsmv/linux-rt-upscaler/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.gpl3Plus;
     mainProgram = "upscale-gui";
-    platforms = lib.platforms.linux;
+    platforms = lib.systems.doubles.linux;
   };
 })

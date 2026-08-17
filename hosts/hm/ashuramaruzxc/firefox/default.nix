@@ -107,11 +107,10 @@ let
     "sync.services.mozilla.com"
   ];
 
-  defaultExtensionsList = builtins.filter (lib.attrsets.isDerivation) (
-    builtins.attrValues (
+  defaultExtensionsList = lib.lists.filter lib.attrsets.isDerivation (
+    lib.attrsets.attrValues (
       pkgs.callPackage ./extensions.nix {
-        buildFirefoxXpiAddon =
-          (pkgs.callPackage ../../../../lib/firefox-addons.nix { }).buildFirefoxXpiAddon;
+        inherit ((pkgs.callPackage ../../../../lib/firefox-addons.nix { })) buildFirefoxXpiAddon;
       }
     )
   );

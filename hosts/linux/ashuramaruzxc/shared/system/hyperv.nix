@@ -48,7 +48,7 @@
     qemu.members = [ "ashuramaru" ];
   };
 
-  environment.systemPackages = (
+  environment.systemPackages =
     builtins.attrValues {
       inherit (pkgs)
         virt-manager
@@ -65,8 +65,7 @@
     }
     ++ lib.lists.optionals (pkgs.stdenvNoCC.hostPlatform.system != "aarch64-linux") (
       builtins.attrValues { inherit (pkgs) looking-glass-client; }
-    )
-  );
+    );
   environment.etc = {
     "ovmf/edk2-x86_64-code.fd" = {
       source = config.virtualisation.libvirtd.qemu.package + "/share/qemu/edk2-x86_64-code.fd";
@@ -103,7 +102,7 @@
           mode = "0600";
         };
       };
-  systemd.services.libvirtd.path = (
+  systemd.services.libvirtd.path =
     builtins.attrValues {
       inherit (pkgs)
         virtiofsd
@@ -114,6 +113,5 @@
     }
     ++ lib.lists.optionals (pkgs.stdenvNoCC.hostPlatform.system != "aarch64-linux") (
       builtins.attrValues { inherit (pkgs) looking-glass-client; }
-    )
-  );
+    );
 }

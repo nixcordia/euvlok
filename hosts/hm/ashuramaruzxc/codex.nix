@@ -9,7 +9,7 @@ let
   inherit (config.catppuccin) accent flavor;
   inherit (pkgs.stdenvNoCC) isDarwin;
 
-  palette = lib.importJSON "${config.catppuccin.sources.palette}/palette.json";
+  palette = lib.trivial.importJSON "${config.catppuccin.sources.palette}/palette.json";
   lightColors = palette.latte.colors;
   darkColors = palette.${flavor}.colors;
   terminalFont = "Hack Nerd Font Mono";
@@ -66,7 +66,7 @@ in
 
       mcp_servers = {
         nixos = {
-          command = lib.getExe pkgs.mcp-nixos;
+          command = lib.meta.getExe pkgs.mcp-nixos;
           enabled = true;
           startup_timeout_sec = 20;
           tool_timeout_sec = 120;

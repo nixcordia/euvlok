@@ -49,9 +49,9 @@ in
             ;
           inherit (pkgs.unstable.gnomeExtensions) appindicator clipboard-indicator;
         }
-        ++ lib.lists.optionals config.catppuccin.enable [
-          (mkCatppuccinGtk { tweaks = [ "normal" ]; })
-        ];
+        ++ lib.lists.optional config.catppuccin.enable (mkCatppuccinGtk {
+          tweaks = [ "normal" ];
+        });
 
       gnome.excludePackages = builtins.attrValues {
         inherit (pkgs.unstable)

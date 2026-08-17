@@ -20,20 +20,18 @@ let
     )
   ];
 
-  omzPlugins =
-    let
-      enablePlugin = n: lib.lists.optionals hmConfig.programs.${n}.enable [ n ];
-    in
-    [
-      "colorize"
-      "dotnet"
-      "podman"
-    ]
-    ++ enablePlugin "fzf"
-    ++ enablePlugin "ssh"
-    ++ enablePlugin "git"
-    ++ enablePlugin "direnv"
-    ++ enablePlugin "vscode";
+  omzPlugins = [
+    "colorize"
+    "dotnet"
+    "podman"
+  ]
+  ++ lib.lists.filter (name: hmConfig.programs.${name}.enable) [
+    "direnv"
+    "fzf"
+    "git"
+    "ssh"
+    "vscode"
+  ];
 
   customPlugins = [
     {
@@ -41,16 +39,13 @@ let
       src = "${pkgs.zsh-nix-shell}/share/zsh-nix-shell/nix-shell.plugin.zsh";
     }
   ]
-  ++ lib.lists.optionals hmConfig.euvlok.home.fzf.enable [
-    {
-      name = "fzf-tab";
-      src = "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh";
-    }
-  ];
-  customPluginsStr = lib.trivial.pipe customPlugins [
-    (pluginsList: map (p: "source ${p.src}") pluginsList)
-    (builtins.concatStringsSep "\n")
-  ];
+  ++ lib.lists.optional hmConfig.euvlok.home.fzf.enable {
+    name = "fzf-tab";
+    src = "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh";
+  };
+  customPluginsStr = lib.strings.concatMapStringsSep "\n" (
+    plugin: "source ${plugin.src}"
+  ) customPlugins;
 
   omzPluginsStr = "plugins=(${lib.strings.concatStringsSep " " omzPlugins})";
 in
@@ -79,7 +74,7 @@ in
       customPluginsStr
     ];
 
-    promptInit = lib.modules.mkMerge [
+    promptInit = lib.strings.concatStrings [
       (lib.strings.optionalString hmConfig.euvlok.home.ghostty.enable ''
         if [[ -r "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration ]]; then
           source "$GHOSTTY_RESOURCES_DIR"/shell-integration/zsh/ghostty-integration
@@ -108,7 +103,7 @@ in
     { config, lib, ... }:
     {
       home.file =
-        lib.genAttrs
+        lib.attrsets.genAttrs
           [
             ".zprofile"
             ".zshenv"
@@ -116,7 +111,7 @@ in
           ]
           (name: {
             force = true;
-            source = config.lib.file.mkOutOfStoreSymlink "/etc/${lib.removePrefix "." name}";
+            source = config.lib.file.mkOutOfStoreSymlink "/etc/${lib.strings.removePrefix "." name}";
           });
     };
 }

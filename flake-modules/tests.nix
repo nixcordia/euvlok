@@ -106,11 +106,11 @@ let
   };
 
   hasDesktopPackages = lib.lists.any (
-    package: lib.getName package == "pavucontrol"
+    package: lib.strings.getName package == "pavucontrol"
   ) nvidiaGuiConsumer.config.environment.systemPackages;
 
   hasLldb = lib.lists.any (
-    extension: lib.strings.hasInfix "vscode-lldb" (lib.getName extension)
+    extension: lib.strings.hasInfix "vscode-lldb" (lib.strings.getName extension)
   ) standaloneHome.config.programs.vscode.profiles.default.extensions;
 
   results =

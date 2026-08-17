@@ -57,7 +57,7 @@ let
   browserRuntimeRoot = "${config.xdg.cacheHome}/browser";
   browserBinDir = "${config.xdg.dataHome}/browser/bin";
 
-  extensionCatalog = lib.attrsets.zipAttrsWith (_: builtins.concatLists) [
+  extensionCatalog = lib.attrsets.zipAttrsWith (_: lib.lists.concatLists) [
     (import ./extensions.nix { inherit config lib; })
     cfg.extraExtensions
   ];
@@ -69,8 +69,8 @@ let
   ];
   managedExtensions = lib.attrsets.mapAttrs (
     _: extensions:
-    builtins.filter (
-      extension: cfg.browser != "helium-browser" || !(builtins.elem extension.id heliumExtensionIds)
+    lib.lists.filter (
+      extension: cfg.browser != "helium-browser" || !(lib.lists.elem extension.id heliumExtensionIds)
     ) extensions
   ) extensionCatalog;
 in
@@ -88,7 +88,7 @@ in
       type = lib.types.attrsOf (lib.types.listOf lib.types.attrs);
       default = { };
       description = "Extra 4evy/browser extension catalog entries to append to the base catalog.";
-      example = lib.literalExpression ''
+      example = lib.options.literalExpression ''
         {
           chrome_store = [
             {
@@ -131,9 +131,9 @@ in
         "--enable-logging=stderr"
         "--enable-features=${lib.strings.concatStringsSep "," chromiumFeatures}"
       ]
-      ++ lib.lists.optionals (chromiumDisabledFeatures != [ ]) [
-        "--disable-features=${lib.strings.concatStringsSep "," chromiumDisabledFeatures}"
-      ]
+      ++ lib.lists.optional (
+        chromiumDisabledFeatures != [ ]
+      ) "--disable-features=${lib.strings.concatStringsSep "," chromiumDisabledFeatures}"
       ++ lib.lists.optionals pkgs.stdenvNoCC.isLinux [
         "--ignore-gpu-blocklist"
 
@@ -172,11 +172,11 @@ in
 
     home.activation.configureChromium = lib.modules.mkIf cfg.configureOnActivation (
       lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        run ${lib.getExe config.programs.browser.package} configure \
+        run ${lib.meta.getExe config.programs.browser.package} configure \
           --config ${config.programs.browser.configFile} \
           --mode linux \
-          --root ${lib.escapeShellArg browserRuntimeRoot} \
-          --bin-dir ${lib.escapeShellArg browserBinDir} \
+          --root ${lib.strings.escapeShellArg browserRuntimeRoot} \
+          --bin-dir ${lib.strings.escapeShellArg browserBinDir} \
           --no-apply-settings
       ''
     );

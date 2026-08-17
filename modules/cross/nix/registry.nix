@@ -8,22 +8,17 @@
   ...
 }:
 let
-  inherit (lib)
-    mapAttrs
-    mkDefault
-    mkOption
-    types
-    ;
-
-  registry = mapAttrs (_: flake: mkDefault { inherit flake; }) config.euvlok.nix.registryInputs;
+  registry = lib.attrsets.mapAttrs (
+    _: flake: lib.modules.mkDefault { inherit flake; }
+  ) config.euvlok.nix.registryInputs;
   nixPathEntries = [ "nixpkgs=flake:nixpkgs" ];
 in
 {
 
-  options.euvlok.nix.registryInputs = mkOption {
-    type = types.attrsOf (types.addCheck types.raw (lib.isType "flake"));
+  options.euvlok.nix.registryInputs = lib.options.mkOption {
+    type = lib.types.attrsOf (lib.types.addCheck lib.types.raw (lib.types.isType "flake"));
     default = {
-      nixpkgs = euvlokInputs.nixpkgs;
+      inherit (euvlokInputs) nixpkgs;
     };
     description = "Locked flake inputs exposed through the system Nix registry.";
   };

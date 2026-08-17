@@ -8,21 +8,17 @@ let
   # prefix: the base name for the keybinding (e.g., "switch-to-workspace")
   # super: the super key modifier (e.g., "<Super>")
   # modifiers: additional modifiers as a list (e.g., ["<Shift>"])
-  # range: number of keybindings to generate
+  # count: number of keybindings to generate
   generateKeybindings =
-    prefix: super: modifiers: range:
-    builtins.listToAttrs (
-      builtins.genList (
-        x:
-        let
-          num = toString (x + 1);
-          modifierStr = builtins.concatStringsSep "" modifiers;
-        in
-        {
-          name = "${prefix}-${num}";
-          value = [ "${super}${modifierStr}${num}" ];
-        }
-      ) range
+    prefix: super: modifiers: count:
+    lib.attrsets.genAttrs' (lib.lists.range 1 count) (
+      number:
+      let
+        numberString = toString number;
+      in
+      lib.attrsets.nameValuePair "${prefix}-${numberString}" [
+        "${super}${lib.strings.concatStrings modifiers}${numberString}"
+      ]
     );
 in
 {
@@ -67,7 +63,7 @@ in
         ];
       };
       # Shell Keybindings - Disable default app switcher keybindings (Super+1-9)
-      "org/gnome/shell/keybindings" = lib.attrsets.genAttrs (map (
+      "org/gnome/shell/keybindings" = lib.attrsets.genAttrs (lib.lists.map (
         n: "switch-to-application-${toString n}"
       ) (lib.lists.range 1 9)) (_: [ ]);
 

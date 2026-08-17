@@ -14,7 +14,7 @@
         inherit (pkgs) libva libva-vdpau-driver libvdpau-va-gl;
       };
     })
-    ({
+    {
       environment.systemPackages = builtins.attrValues { inherit (pkgs) libva-utils; };
       hardware = {
         graphics = {
@@ -26,6 +26,6 @@
         bluetooth.enable = true;
         bluetooth.powerOnBoot = false;
       };
-    })
+    }
   ];
 }

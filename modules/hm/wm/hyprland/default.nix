@@ -33,22 +33,17 @@
         " ,XF86AudioNext, exec, playerctl next"
         " ,XF86AudioPrev, exec, playerctl previous"
       ]
-      ++ (builtins.concatLists (
-        builtins.genList (
-          x:
-          let
-            ws =
-              let
-                c = (x + 1) / 10;
-              in
-              builtins.toString (x + 1 - (c * 10));
-          in
-          [
-            "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
-            "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-          ]
-        ) 10
-      ));
+      ++ lib.lists.concatMap (
+        workspace:
+        let
+          key = toString (lib.trivial.mod workspace 10);
+          workspaceString = toString workspace;
+        in
+        [
+          "$mainMod, ${key}, workspace, ${workspaceString}"
+          "$mainMod SHIFT, ${key}, movetoworkspace, ${workspaceString}"
+        ]
+      ) (lib.lists.range 1 10);
 
       windowrule = [
         {

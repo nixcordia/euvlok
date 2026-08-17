@@ -2,7 +2,7 @@
   inputs,
   supportedSystems,
 }:
-{ ... }:
+_:
 let
   euvlokLib = import ../lib { inherit inputs; };
 in

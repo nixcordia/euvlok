@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   config,
   ...
@@ -17,9 +16,7 @@
     users = {
       root = {
         initialHashedPassword = "";
-        openssh.authorizedKeys.keys = lib.lists.flatten [
-          config.users.users.ashuramaru.openssh.authorizedKeys.keys
-        ];
+        openssh.authorizedKeys.keys = config.users.users.ashuramaru.openssh.authorizedKeys.keys;
         shell = pkgs.zsh;
       };
       ashuramaru = {

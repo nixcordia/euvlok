@@ -13,7 +13,7 @@
   ...
 }:
 let
-  homePackages = import ../shared/home/packages.nix { inherit pkgs; };
+  homePackages = import ../shared/home/packages.nix { inherit pkgs lib; };
   codexLinuxFeatures = [
     "appshots"
     "directory-only-working-tree-watch"

@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, lib }:
 let
   categories = {
     audio = builtins.attrValues { inherit (pkgs) crosspipe pavucontrol qpwgraph; };
@@ -114,17 +114,10 @@ let
     };
   };
 
-  mkPackages =
-    names:
-    let
-      fetch =
-        name:
-        if builtins.hasAttr name categories then
-          categories.${name}
-        else
-          throw "home-packages: category '${name}' not defined";
-    in
-    builtins.concatLists (map fetch names);
+  mkPackages = lib.lists.concatMap (
+    name:
+    lib.attrsets.attrByPath [ name ] (throw "home-packages: category '${name}' not defined") categories
+  );
 in
 {
   inherit categories mkPackages;

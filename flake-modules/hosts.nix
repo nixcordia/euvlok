@@ -8,49 +8,40 @@
   ...
 }:
 let
-  inherit (lib)
-    filterAttrs
-    genAttrs
-    mapAttrs
-    mkDefault
-    mkOption
-    types
-    ;
-
-  hostType = types.submodule (
+  hostType = lib.types.submodule (
     { name, ... }:
     {
       options = {
-        owner = mkOption {
-          type = types.nonEmptyStr;
+        owner = lib.options.mkOption {
+          type = lib.types.nonEmptyStr;
           description = "Contributor responsible for ${name}.";
         };
 
-        class = mkOption {
-          type = types.enum [
+        class = lib.options.mkOption {
+          type = lib.types.enum [
             "nixos"
             "darwin"
           ];
           description = "Module class and configuration output used by ${name}.";
         };
 
-        system = mkOption {
-          type = types.enum supportedSystems;
+        system = lib.options.mkOption {
+          type = lib.types.enum supportedSystems;
           description = "Nix platform evaluated for ${name}.";
         };
 
-        runner = mkOption {
-          type = types.nonEmptyStr;
+        runner = lib.options.mkOption {
+          type = lib.types.nonEmptyStr;
           description = "Native GitHub Actions runner used to build ${name}.";
         };
 
-        modules = mkOption {
-          type = types.listOf types.deferredModule;
+        modules = lib.options.mkOption {
+          type = lib.types.listOf lib.types.deferredModule;
           description = "Complete module graph for ${name}.";
         };
 
-        builder = mkOption {
-          type = types.nullOr (types.functionTo types.raw);
+        builder = lib.options.mkOption {
+          type = lib.types.nullOr (lib.types.functionTo lib.types.raw);
           default = null;
           description = "Optional replacement for nixosSystem/darwinSystem.";
         };
@@ -59,8 +50,8 @@ let
   );
 
   hostSpecs = config.euvlok.hosts;
-  nixosSpecs = filterAttrs (_: host: host.class == "nixos") hostSpecs;
-  darwinSpecs = filterAttrs (_: host: host.class == "darwin") hostSpecs;
+  nixosSpecs = lib.attrsets.filterAttrs (_: host: host.class == "nixos") hostSpecs;
+  darwinSpecs = lib.attrsets.filterAttrs (_: host: host.class == "darwin") hostSpecs;
 
   mkConfiguration =
     name: host:
@@ -77,7 +68,7 @@ let
         modules = host.modules ++ [
           {
             _file = "${toString ./hosts.nix}#euvlok.hosts.${name}.system";
-            nixpkgs.hostPlatform = mkDefault host.system;
+            nixpkgs.hostPlatform = lib.modules.mkDefault host.system;
           }
         ];
       };
@@ -89,10 +80,10 @@ let
     else
       throw "euvlok host ${name} declares ${host.system} but evaluates with ${actualSystem}";
 
-  nixosConfigurations = mapAttrs mkConfiguration nixosSpecs;
-  darwinConfigurations = mapAttrs mkConfiguration darwinSpecs;
+  nixosConfigurations = lib.attrsets.mapAttrs mkConfiguration nixosSpecs;
+  darwinConfigurations = lib.attrsets.mapAttrs mkConfiguration darwinSpecs;
 
-  hostMetadata = mapAttrs (name: host: {
+  hostMetadata = lib.attrsets.mapAttrs (name: host: {
     inherit name;
     inherit (host)
       class
@@ -103,17 +94,17 @@ let
   }) hostSpecs;
 
   hostChecks =
-    mapAttrs (_: host: host.config.system.build.toplevel.drvPath) nixosConfigurations
-    // mapAttrs (_: host: host.system.drvPath) darwinConfigurations;
+    lib.attrsets.mapAttrs (_: host: host.config.system.build.toplevel.drvPath) nixosConfigurations
+    // lib.attrsets.mapAttrs (_: host: host.system.drvPath) darwinConfigurations;
 
-  hostChecksBySystem = genAttrs supportedSystems (
-    system: filterAttrs (name: _: hostSpecs.${name}.system == system) hostChecks
+  hostChecksBySystem = lib.attrsets.genAttrs supportedSystems (
+    system: lib.attrsets.filterAttrs (name: _: hostSpecs.${name}.system == system) hostChecks
   );
 in
 {
 
-  options.euvlok.hosts = mkOption {
-    type = types.attrsOf hostType;
+  options.euvlok.hosts = lib.options.mkOption {
+    type = lib.types.attrsOf hostType;
     default = { };
     description = "Typed inventory of all NixOS and nix-darwin machines.";
   };

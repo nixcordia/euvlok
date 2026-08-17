@@ -1,5 +1,4 @@
-{ config, ... }:
-{
+_: {
   # sops.secrets.gh_token = {
   #   mode = "0440";
   #   group = "users";

@@ -15,7 +15,7 @@
           "fr-FR"
         ];
       }
-      (lib.modules.mkIf (builtins.elem "forklift" config.homebrew.casks) {
+      (lib.modules.mkIf (lib.lists.elem "forklift" config.homebrew.casks) {
         NSGlobalDomain.NSFileViewer = "com.binarynights.ForkLift";
         "com.apple.LaunchServices/com.apple.launchservices.secure" = {
           LSHandlers = [

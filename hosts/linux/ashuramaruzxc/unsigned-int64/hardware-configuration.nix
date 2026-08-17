@@ -67,7 +67,7 @@
         hostKeys = [
           config.sops.secrets.ssh-initrd-key.path
         ];
-        authorizedKeys = lib.lists.flatten [
+        authorizedKeys = lib.lists.concatLists [
           config.users.users.ashuramaru.openssh.authorizedKeys.keys
           config.users.users.fumono.openssh.authorizedKeys.keys
         ];

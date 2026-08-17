@@ -64,7 +64,7 @@ in
             "vivaldi"
           ];
         in
-        (map (browser: _: prev: {
+        (lib.lists.map (browser: _: prev: {
           ${browser} = prev.${browser}.override { inherit commandLineArgs; };
         }) browsers)
         ++ [ euvlokInputs.nvidia-patch.overlays.default ];

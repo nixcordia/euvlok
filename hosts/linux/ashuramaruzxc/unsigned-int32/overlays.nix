@@ -48,7 +48,7 @@
           description = "LD_PRELOAD library to disable GTK client side decorations";
           homepage = "https://codeberg.org/MorsMortium/GTK-NoCSD";
           license = final.lib.licenses.gpl3Plus;
-          platforms = final.lib.platforms.linux;
+          platforms = final.lib.systems.doubles.linux;
         };
       };
 

@@ -70,7 +70,7 @@
   };
   users.users.transmission = {
     homeMode = "0770";
-    openssh.authorizedKeys.keys = lib.lists.flatten [
+    openssh.authorizedKeys.keys = lib.lists.concatLists [
       config.users.users.ashuramaru.openssh.authorizedKeys.keys
       config.users.users.fumono.openssh.authorizedKeys.keys
     ];

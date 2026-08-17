@@ -1,5 +1,5 @@
 { isDarwin }:
-{ ... }:
+_:
 let
   settings = {
     # Determinate owns its performance defaults (including eval-cores and

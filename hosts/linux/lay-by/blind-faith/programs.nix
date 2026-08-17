@@ -11,7 +11,7 @@
     };
     steam = {
       enable = true;
-      extest.enable = lib.mkForce false;
+      extest.enable = lib.modules.mkForce false;
     };
 
     hyprland.enable = true;

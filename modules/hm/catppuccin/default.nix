@@ -1,7 +1,7 @@
 { euvlokInputs }:
 { lib, ... }:
 let
-  sourceLocks = builtins.fromJSON (builtins.readFile (euvlokInputs.catppuccin + /pkgs/sources.json));
+  sourceLocks = lib.trivial.importJSON (euvlokInputs.catppuccin + /pkgs/sources.json);
   fetchCatppuccinSource =
     repo:
     let
@@ -29,6 +29,7 @@ in
   # evaluator-native sources for catppuccin/nix's fetchFromGitHub derivations.
   catppuccin.sources = {
     gitui = lib.modules.mkDefault "${gituiSource}/themes";
+    palette = lib.modules.mkDefault paletteSource;
     starship = lib.modules.mkDefault "${starshipSource}/themes";
   };
 }

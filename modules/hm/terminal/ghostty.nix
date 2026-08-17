@@ -70,7 +70,7 @@ in
         clipboard-paste-protection = false;
         confirm-close-surface = false;
         cursor-style-blink = false;
-        keybind = lib.lists.flatten (lib.attrsets.attrValues mkKeybindings);
+        keybind = lib.lists.concatLists (lib.attrsets.attrValues mkKeybindings);
         quit-after-last-window-closed = true;
         scrollback-limit = 10 * 10000000;
       };

@@ -4,7 +4,7 @@
   flavor,
 }:
 let
-  palette = builtins.fromJSON (builtins.readFile (paletteSource + /palette.json));
+  palette = lib.trivial.importJSON (paletteSource + /palette.json);
   colors = lib.attrsets.mapAttrs (_: color: color.rgb) palette.${flavor}.colors;
   accentColor = colors.${accent};
 in

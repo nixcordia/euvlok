@@ -108,10 +108,12 @@
       "docker"
       "nginx"
     ];
-    openssh.authorizedKeys.keys = lib.lists.flatten [
+    openssh.authorizedKeys.keys = lib.lists.concatLists [
       config.users.users.ashuramaru.openssh.authorizedKeys.keys
       config.users.users.fumono.openssh.authorizedKeys.keys
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILzAn2WaivFLvPqaB77TvUaH87Cw1VJcIb0VDsPRpcXh sokol@PekPC"
+      [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILzAn2WaivFLvPqaB77TvUaH87Cw1VJcIb0VDsPRpcXh sokol@PekPC"
+      ]
     ];
     shell = pkgs.zsh;
   };
