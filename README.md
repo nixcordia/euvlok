@@ -9,8 +9,8 @@
 Shared NixOS, nix-darwin, and Home Manager configurations for a few friends' machines
 
 > [!IMPORTANT]
-> This is a live configuration, not a starter template. It includes personal
-> defaults and SOPS-encrypted secrets, so copy modules deliberately.
+> This is a live configuration, not a starter template. It includes personal defaults
+> and SOPS-encrypted secrets, so copy modules deliberately.
 
 ## Quick Start
 
@@ -91,10 +91,9 @@ Custom options live below `euvlok.nixos.*` and `euvlok.home.*`
 
 ## Determinate Nix
 
-The default NixOS and nix-darwin modules use
-[Determinate Nix](https://docs.determinate.systems/determinate-nix/), pinned by
-`flake.lock`. When migrating an existing NixOS host, use its cache for the first
-switch:
+The default NixOS and nix-darwin modules use [Determinate
+Nix](https://docs.determinate.systems/determinate-nix/), pinned by `flake.lock`. When
+migrating an existing NixOS host, use its cache for the first switch:
 
 ```sh
 sudo nixos-rebuild switch \
@@ -107,3 +106,29 @@ sudo nixos-rebuild switch \
 After that, rebuild normally
 
 Install Determinate separately on macOS before activating the nix-darwin configuration
+
+## Evaluation Performance
+
+The evaluation benchmark records warm no-cache timings, peak memory, and the same
+evaluator allocation and call counters used by Nixpkgs. With Nix 2.30 or newer it also
+collects a sampling profile and renders an SVG flamegraph when `flamegraph.pl` is on
+`PATH` (it is included in this repository's devenv shell):
+
+```sh
+EVAL_RUNS=5 ./scripts/eval_performance.sh \
+  .#darwinConfigurations.faputa.system.drvPath
+```
+
+Run Darwin evaluations locally. Run Linux evaluations on the Linux host, from its
+`~/euvlok` checkout:
+
+```sh
+ssh evy@100.123.214.78
+cd ~/euvlok
+EVAL_RUNS=5 ./scripts/eval_performance.sh \
+  .#nixosConfigurations.blind-faith.config.system.build.toplevel.drvPath
+```
+
+The output directory contains `summary.json`, the raw statistics and timing for
+every run, and `profile.folded`. When the renderer is available it also contains the
+interactive `profile.svg` flamegraph

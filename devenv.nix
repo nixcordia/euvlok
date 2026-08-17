@@ -9,9 +9,13 @@
 
   packages = builtins.attrValues {
     inherit (pkgs)
+      flamegraph
       git
+      hyperfine
       jujutsu
+      jq
       nix-index
+      time
       ;
     nix-prefetch-github = pkgs.nix-prefetch-github.override {
       nix = inputs.determinate.packages.${pkgs.stdenv.hostPlatform.system}.default;
