@@ -31,12 +31,14 @@ runs:
   using: composite
   steps:
     - name: Install Nix
-      # v3.21.9
+      # Action v3.21.9, installing Determinate Nix v3.22.0.
       uses: DeterminateSystems/determinate-nix-action@61cbfe2efc2d4e7a8a6d56967c3c1058e846c858
       with:
         github-token: ${{ inputs.github-token }}
+        source-tag: v3.22.0
         extra-conf: |
           accept-flake-config = true
+          extra-experimental-features = parallel-eval
           extra-substituters = https://cache.flox.dev https://cache.nixos-cuda.org
           extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
           ${{ inputs.extra-nix-config }}
@@ -80,4 +82,4 @@ runs:
         esac
 
         nix config show | sed -n \
-          '/^eval-cores = /p;/^lazy-trees = /p;/^substituters = /p;/^trusted-public-keys = /p'
+          '/^eval-cores = /p;/^experimental-features = /p;/^lazy-trees = /p;/^substituters = /p;/^trusted-public-keys = /p'

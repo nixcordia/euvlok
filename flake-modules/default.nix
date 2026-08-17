@@ -65,6 +65,7 @@ in
     hostChecks = "users";
     hostChecksBySystem = "users";
     hostMetadata = "users";
+    nixosBuilds = "users";
     nixosConfigurations = "users";
   };
 

@@ -34,7 +34,7 @@ devenv test
 Build a configuration:
 
 ```sh
-nix build .#nixosConfigurations.blind-faith.config.system.build.toplevel
+nix build .#nixosBuilds.blind-faith
 nix build .#darwinConfigurations.faputa.system
 ```
 
@@ -74,6 +74,7 @@ inputs.euvlok.flakeModules.default
 inputs.euvlok.lib.supportedSystems
 inputs.euvlok.hostMetadata
 inputs.euvlok.hostChecks
+inputs.euvlok.nixosBuilds
 ```
 
 Named modules such as `nixosModules.nvidia`, `darwinModules.system`, and
@@ -88,6 +89,11 @@ list
 Personal profiles are intentionally internal and are not part of the public module API
 
 Custom options live below `euvlok.nixos.*` and `euvlok.home.*`
+
+`nixosBuilds` returns the same system derivations as `nixosConfigurations`, but on
+Determinate Nix it overlaps the system environment, each integrated Home Manager
+package environment, and each Home Manager activation with `builtins.parallel`. It
+requires Determinate Nix with `parallel-eval`.
 
 ## Determinate Nix
 
@@ -125,8 +131,12 @@ Run Darwin evaluations locally. Run Linux evaluations on the Linux host, from it
 ```sh
 ssh evy@100.123.214.78
 cd ~/euvlok
+pinned_nix="$(nix eval --raw \
+  .#nixosConfigurations.blind-faith.config.nix.package.outPath)"
+PATH="${pinned_nix}/bin:${PATH}" \
+NIX_CONFIG='extra-experimental-features = parallel-eval' \
 EVAL_RUNS=5 ./scripts/eval_performance.sh \
-  .#nixosConfigurations.blind-faith.config.system.build.toplevel.drvPath
+  .#nixosBuilds.blind-faith.drvPath
 ```
 
 The output directory contains `summary.json`, the raw statistics and timing for

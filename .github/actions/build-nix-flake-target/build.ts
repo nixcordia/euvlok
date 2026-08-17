@@ -159,8 +159,7 @@ const VERIFIED_HYDRA_FAILURES = new Set([1, 6, 10, 11, 12]);
 
 const CONFIGURATION_TARGETS = {
   darwin: (name: string) => `.#darwinConfigurations.${name}.system`,
-  nixos: (name: string) =>
-    `.#nixosConfigurations.${name}.config.system.build.toplevel`,
+  nixos: (name: string) => `.#nixosBuilds.${name}`,
 } satisfies Record<ConfigurationKind, (name: string) => string>;
 
 const DIRECT_FAILURE_PATTERNS = [

@@ -6,12 +6,13 @@
 }:
 let
   languageDefinitions = import ./catalog { inherit pkgs lib; };
+  editorModule = module: lib.modules.importApply module { inherit languageDefinitions; };
 in
 {
   imports = [
-    ./helix.nix
-    ./vscode.nix
-    ./zed.nix
+    (editorModule ./helix.nix)
+    (editorModule ./vscode.nix)
+    (editorModule ./zed.nix)
   ];
 
   options.euvlok.home.languages = lib.attrsets.mapAttrs (

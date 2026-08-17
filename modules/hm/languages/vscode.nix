@@ -1,11 +1,10 @@
+{ languageDefinitions }:
 {
-  pkgs,
   config,
   lib,
   ...
 }:
 let
-  languageDefinitions = import ./catalog { inherit pkgs lib; };
   enabledLanguages = lib.attrsets.filterAttrs (
     name: _: config.euvlok.home.languages.${name}.enable or false
   ) languageDefinitions;
