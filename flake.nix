@@ -10,7 +10,6 @@
 
   inputs = {
     # --- Shared ---
-    devenv.url = "github:cachix/devenv/v2.2.1";
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     eupkgs.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     eupkgs.url = "github:euvlok/pkgs";
