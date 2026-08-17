@@ -14,7 +14,7 @@ in
     # machine-level theming opt-in so existing boot/display behavior is stable.
     autoEnable = false;
     image = pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/lay-by/wallpapers/refs/heads/main/starfighter2.png";
+      url = "https://raw.githubusercontent.com/lay-by/wallpapers/00fb754880396b15a536964499bcce25208fae48/starfighter2.png";
       hash = "sha256-eDeJpTVmEt6Ty0HL7KVKe+O6Sgcv8lKX2FlLQwm+v+I";
     };
     base16Scheme = ../../../hm/lay-by/tokyo-night-terminal-dark.yaml;
