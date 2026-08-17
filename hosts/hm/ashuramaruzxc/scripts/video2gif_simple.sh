@@ -21,13 +21,13 @@ parse_args() {
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
-    --fps | -f)
-      shift
-      fps="${1:-24}"
-      ;;
-    *)
-      usage
-      ;;
+      --fps | -f)
+        shift
+        fps="${1:-24}"
+        ;;
+      *)
+        usage
+        ;;
     esac
     shift
   done
