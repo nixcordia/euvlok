@@ -4,9 +4,21 @@ _: {
     BindReadOnlyPaths = [ "/media/HDD/spotmusic/" ];
   };
   services = {
+    tailscale = {
+      enable = true;
+      extraSetFlags = [ "--ssh" ];
+    };
+
     xserver.xkb = {
       layout = "us";
       variant = "";
+    };
+
+    # Enable systemd-resolved to properly manage dynamic interfaces like tailscale0
+    resolved = {
+      enable = true;
+      dnssec = "true";
+      domains = [ "~." ];
     };
 
     displayManager = {
