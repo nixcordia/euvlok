@@ -43,6 +43,7 @@ nix build .#darwinConfigurations.faputa.system
 | Output           | Owner           | Platform         | CI runner          |
 | ---------------- | --------------- | ---------------- | ------------------ |
 | `blind-faith`    | `lay-by`        | `x86_64-linux`   | `ubuntu-latest`    |
+| `nyx`            | `lay-by`        | `x86_64-linux`   | `ubuntu-latest`    |
 | `unsigned-int16` | `ashuramaruzxc` | `aarch64-linux`  | `ubuntu-24.04-arm` |
 | `unsigned-int32` | `ashuramaruzxc` | `x86_64-linux`   | `ubuntu-latest`    |
 | `unsigned-int64` | `ashuramaruzxc` | `x86_64-linux`   | `ubuntu-latest`    |
