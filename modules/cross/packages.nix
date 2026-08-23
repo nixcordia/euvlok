@@ -142,7 +142,6 @@ let
           ;
 
         inherit (pkgs.unstable.kdePackages) ffmpegthumbs;
-        inherit (pkgs.unstable) nufraw-thumbnailer;
         inherit (pkgs.unstable.kdePackages) breeze breeze-gtk breeze-icons;
       }
     );
