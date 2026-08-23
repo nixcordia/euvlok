@@ -56,6 +56,10 @@
       ++ [
         {
           euvlok.home = {
+            chromium = {
+              enable = true;
+              browser = "helium-browser";
+            };
             fastfetch.enable = true;
             firefox = {
               enable = true;

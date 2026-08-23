@@ -7,11 +7,16 @@
 }:
 let
   cfg = config.euvlok.home.chromium;
+  isDarwin = pkgs.stdenvNoCC.hostPlatform.isDarwin;
+  isLinux = pkgs.stdenvNoCC.hostPlatform.isLinux;
+  platform = if isDarwin then "macos" else "linux";
 
   chromiumFeatures = [
     "ForceEnableWebGpuInterop"
     "ReduceOpsTaskSplitting"
     "TouchpadOverscrollHistoryNavigation"
+  ]
+  ++ lib.lists.optionals isLinux [
     "VaapiVideoDecoder"
     "VaapiVideoEncoder"
   ]
@@ -46,16 +51,86 @@ let
   };
   browserExecutable = browserExecutables.${cfg.browser};
 
-  browserPaths = {
-    brave = "BraveSoftware/Brave-Browser";
-    chromium = "chromium";
-    google-chrome = "google-chrome";
-    helium-browser = "net.imput.helium";
-    ungoogled-chromium = "chromium";
+  browserMacOSAppDirs = {
+    brave = "/Applications/Brave Browser.app";
+    chromium = "/Applications/Chromium.app";
+    google-chrome = "/Applications/Google Chrome.app";
+    helium-browser = "${browserPackage}/Applications/Helium.app";
+    ungoogled-chromium = "/Applications/Chromium.app";
   };
-  browserPath = browserPaths.${cfg.browser};
-  browserRuntimeRoot = "${config.xdg.cacheHome}/browser";
-  browserBinDir = "${config.xdg.dataHome}/browser/bin";
+
+  browserMacOSLaunchers = {
+    brave = "Contents/MacOS/Brave Browser";
+    chromium = "Contents/MacOS/Chromium";
+    google-chrome = "Contents/MacOS/Google Chrome";
+    helium-browser = "Contents/MacOS/Helium";
+    ungoogled-chromium = "Contents/MacOS/Chromium";
+  };
+
+  browserProfileRoots =
+    if isDarwin then
+      {
+        brave = "BraveSoftware/Brave-Browser";
+        chromium = "Chromium";
+        google-chrome = "Google/Chrome";
+        helium-browser = "net.imput.helium";
+        ungoogled-chromium = "Chromium";
+      }
+    else
+      {
+        brave = "BraveSoftware/Brave-Browser";
+        chromium = "chromium";
+        google-chrome = "google-chrome";
+        helium-browser = "net.imput.helium";
+        ungoogled-chromium = "chromium";
+      };
+  browserProfileRoot = browserProfileRoots.${cfg.browser};
+
+  chromiumCommandLineArgs = [
+    # Debug
+    "--enable-logging=stderr"
+    "--enable-features=${lib.strings.concatStringsSep "," chromiumFeatures}"
+  ]
+  ++ lib.lists.optional (
+    chromiumDisabledFeatures != [ ]
+  ) "--disable-features=${lib.strings.concatStringsSep "," chromiumDisabledFeatures}"
+  ++ lib.lists.optionals isLinux [
+    "--ignore-gpu-blocklist"
+
+    # Wayland
+    "--enable-wayland-ime"
+    "--wayland-text-input-version=3"
+  ];
+
+  browserSettings = {
+    name = cfg.browser;
+    executable_name = browserExecutable;
+    flags = chromiumCommandLineArgs;
+  }
+  // lib.attrsets.optionalAttrs isLinux {
+    linux = {
+      app_dir = "${config.home.profileDirectory}/bin";
+      launcher_name = browserExecutable;
+    };
+
+    paths.linux = {
+      profile_dir = "\${config_home}/${browserProfileRoot}/Default";
+      external_extension_dirs = [ "\${config_home}/${browserProfileRoot}/External Extensions" ];
+    };
+  }
+  // lib.attrsets.optionalAttrs isDarwin {
+    macos = {
+      app_dir = browserMacOSAppDirs.${cfg.browser};
+      launcher_path = browserMacOSLaunchers.${cfg.browser};
+    };
+
+    paths.macos = {
+      profile_dir = "\${home}/Library/Application Support/${browserProfileRoot}/Default";
+      external_extension_dirs = [
+        "\${home}/Library/Application Support/${browserProfileRoot}/External Extensions"
+      ];
+    };
+  };
 
   extensionCatalog = lib.attrsets.zipAttrsWith (_: lib.lists.concatLists) [
     (import ./extensions.nix { inherit config lib; })
@@ -112,11 +187,11 @@ in
   config = lib.modules.mkIf cfg.enable {
     assertions = [
       {
-        assertion = pkgs.stdenvNoCC.isLinux;
-        message = "euvlok.home.chromium is only available on Linux";
+        assertion = isLinux || isDarwin;
+        message = "euvlok.home.chromium is only available on Linux and macOS";
       }
     ];
-    programs.chromium = {
+    programs.chromium = lib.modules.mkIf isLinux {
       enable = true;
       package = browserPackage;
       dictionaries = builtins.attrValues {
@@ -126,41 +201,13 @@ in
       # 4evy/browser is the single extension installer.
       extensions = lib.modules.mkForce [ ];
 
-      commandLineArgs = [
-        # Debug
-        "--enable-logging=stderr"
-        "--enable-features=${lib.strings.concatStringsSep "," chromiumFeatures}"
-      ]
-      ++ lib.lists.optional (
-        chromiumDisabledFeatures != [ ]
-      ) "--disable-features=${lib.strings.concatStringsSep "," chromiumDisabledFeatures}"
-      ++ lib.lists.optionals pkgs.stdenvNoCC.isLinux [
-        "--ignore-gpu-blocklist"
-
-        # Wayland
-        "--enable-wayland-ime"
-        "--wayland-text-input-version=3"
-      ];
+      commandLineArgs = chromiumCommandLineArgs;
     };
 
     programs.browser = {
       enable = true;
       settings = {
-        browser = {
-          name = cfg.browser;
-          executable_name = browserExecutable;
-          flags = config.programs.chromium.commandLineArgs;
-
-          linux = {
-            app_dir = "${config.home.profileDirectory}/bin";
-            launcher_name = browserExecutable;
-          };
-
-          paths.linux = {
-            profile_dir = "\${config_home}/${browserPath}/Default";
-            external_extension_dirs = [ "\${config_home}/${browserPath}/External Extensions" ];
-          };
-        };
+        browser = browserSettings;
 
         extensions = managedExtensions // {
           chrome_store_update_url = "https://clients2.google.com/service/update2/crx";
@@ -168,16 +215,14 @@ in
       };
     };
 
-    home.sessionPath = lib.lists.optional cfg.configureOnActivation browserBinDir;
+    home.packages = lib.lists.optional isDarwin browserPackage;
 
     home.activation.configureChromium = lib.modules.mkIf cfg.configureOnActivation (
       lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        run ${lib.meta.getExe config.programs.browser.package} configure \
-          --config ${config.programs.browser.configFile} \
-          --mode linux \
-          --root ${lib.strings.escapeShellArg browserRuntimeRoot} \
-          --bin-dir ${lib.strings.escapeShellArg browserBinDir} \
-          --no-apply-settings
+        run ${lib.meta.getExe config.programs.browser.package} apply \
+          ${config.programs.browser.configFile} \
+          --platform ${platform} \
+          --no-profile
       ''
     );
   };
