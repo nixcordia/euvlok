@@ -4,6 +4,108 @@
   pkgs,
   ...
 }:
+let
+  protonPortForwardScript = pkgs.writeTextFile {
+    name = "protonvpn-update-port";
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+
+      set -euo pipefail
+
+      # shellcheck source=/dev/null
+      . /etc/transmission/environment-variables.sh
+
+      TRANSMISSION_PASSWD_FILE=/config/transmission-credentials.txt
+
+      transmission_username=$(head -1 "''${TRANSMISSION_PASSWD_FILE}")
+      transmission_passwd=$(tail -1 "''${TRANSMISSION_PASSWD_FILE}")
+      transmission_settings_file=''${TRANSMISSION_HOME}/settings.json
+
+      box_out() {
+          local message="$*"
+          printf '\033[36m╭─%s─╮\n\033[36m│ \033[34m%s\033[36m │\n\033[36m╰─%s─╯\033[0;39m\n' \
+              "''${message//?/─}" "$message" "''${message//?/─}"
+      }
+
+      open_port() {
+          timeout 5 natpmpc -a 1 0 udp 60 >/dev/null 2>&1 &&
+              timeout 5 natpmpc -a 1 0 tcp 60
+      }
+
+      remote() {
+          if test -n "$myauth"; then
+              transmission-remote "$TRANSMISSION_RPC_PORT" --auth "$myauth" --json "$@"
+          else
+              transmission-remote "$TRANSMISSION_RPC_PORT" --json "$@"
+          fi
+      }
+
+      bind_transmission() {
+          local new_port=$forwarded_port
+          local current_port
+
+          if test "$(jq -r '.["rpc-authentication-required"]' "$transmission_settings_file")" == "true"; then
+              myauth="$transmission_username:$transmission_passwd"
+          else
+              myauth=""
+          fi
+
+          get_peer_port() {
+              remote --session-info | jq -r '
+                if (.arguments? | type) == "object" then
+                  .arguments["peer-port"]
+                elif (.result? | type) == "object" then
+                  (.result.peer_port // .result["peer-port"])
+                else
+                  empty
+                end
+              '
+          }
+
+          echo "Waiting for Transmission RPC"
+          until remote --list >/dev/null 2>&1; do sleep 5; done
+
+          current_port=$(get_peer_port)
+          if test "$new_port" -ne "$current_port"; then
+              echo "Setting Transmission peer port to $new_port"
+              until remote --port "$new_port" >/dev/null 2>&1; do sleep 5; done
+          fi
+
+          if test "$(get_peer_port)" != "$new_port"; then
+              echo "Transmission did not adopt port $new_port"
+              return 1
+          fi
+
+          echo "Transmission is listening on port $new_port"
+      }
+
+      for dependency in jq natpmpc timeout; do
+          if ! command -v "$dependency" >/dev/null; then
+              echo "$dependency is required for ProtonVPN port forwarding"
+              exit 1
+          fi
+      done
+
+      box_out "ProtonVPN Port Forwarding"
+
+      while true; do
+          date
+          forwarded_port="$(open_port | sed -nr '1,//s/Mapped public port ([0-9]{4,5}) protocol.*/\1/p')"
+          if test "''${forwarded_port:-0}" -gt 1024; then
+              if bind_transmission; then
+                  box_out "The Forwarded Port is: $forwarded_port"
+              else
+                  box_out "The Forwarded Port is: Unavailable"
+              fi
+          else
+              box_out "No port returned from natpmpc"
+          fi
+          sleep 45
+      done
+    '';
+  };
+in
 {
   sops.secrets.transmission_env = {
     mode = "0640";
@@ -12,7 +114,7 @@
   };
   services.transmission = {
     enable = true;
-    openPeerPorts = true;
+    openPeerPorts = false;
     downloadDirPermissions = "775";
     home = "/var/lib/transmission/public";
     settings = {
@@ -22,7 +124,7 @@
       incomplete-dir-enabled = true;
       incomplete-dir = "${config.services.transmission.home}/incomplete";
       download-dir = "${config.services.transmission.home}/Downloads";
-      rpc-bind-address = "0.0.0.0";
+      rpc-bind-address = "172.16.31.1";
       rpc-port = 18765;
       rpc-whitelist-enabled = true;
       rpc-whitelist = "172.16.31.*";
@@ -33,6 +135,16 @@
       lpd-enabled = false;
     };
     webHome = pkgs.flood-for-transmission;
+  };
+  systemd.services.transmission = {
+    after = [ "wg-quick-wireguard0.service" ];
+    wants = [ "wg-quick-wireguard0.service" ];
+  };
+
+  # The public peer port is deliberately exposed only on the WAN interface.
+  networking.firewall.interfaces.enp5s0 = {
+    allowedTCPPorts = [ 51413 ];
+    allowedUDPPorts = [ 51413 ];
   };
   services.radarr = {
     enable = true;
@@ -174,12 +286,15 @@
       "/var/lib/transmission/private:/data:rw"
       "/var/lib/transmission/private/config:/config:rw"
       "/var/lib/transmission/private/protonvpn:/etc/openvpn/custom"
+      "${protonPortForwardScript}:/etc/openvpn/custom/update-port.sh:ro"
     ];
     ports = [ "172.16.31.1:9091:9091/tcp" ];
     log-driver = "journald";
     extraOptions = [
       "--device=/dev/net/tun"
-      "--cap-add=NET_ADMIN,mknod"
+      "--cap-drop=NET_BIND_SERVICE"
+      "--cap-add=NET_ADMIN,MKNOD"
+      "--security-opt=no-new-privileges"
       "--network-alias=transmission-ovpn"
       "--network=transmission_openvpn-default"
 

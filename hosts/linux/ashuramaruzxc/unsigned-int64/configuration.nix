@@ -40,9 +40,14 @@
     image = "ghcr.io/thephaseless/byparr:latest";
     autoStart = true;
     environment = {
-      HOST = "172.16.31.1";
+      HOST = "0.0.0.0";
       PORT = "8191";
     };
+    ports = [ "172.16.31.1:8191:8191/tcp" ];
+    extraOptions = [
+      "--cap-drop=ALL"
+      "--security-opt=no-new-privileges"
+    ];
   };
   nixpkgs.config.permittedInsecurePackages = [
     "mbedtls-2.28.10"
