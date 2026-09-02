@@ -30,6 +30,10 @@
         name = "cvat";
         ensureDBOwnership = true;
       }
+      {
+        name = "immich";
+        ensureDBOwnership = true;
+      }
     ];
     authentication = lib.modules.mkOverride 10 ''
       #type database DBuser origin-address auth-method
@@ -45,6 +49,7 @@
       "nextcloud"
       "vaultwarden"
       "grafana"
+      "immich"
     ];
     location = "/var/lib/backup/postgresql";
   };

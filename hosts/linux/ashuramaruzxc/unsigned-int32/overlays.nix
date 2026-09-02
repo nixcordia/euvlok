@@ -4,14 +4,14 @@
     (final: _prev: {
       gtk-nocsd = final.stdenv.mkDerivation {
         pname = "gtk-nocsd";
-        version = "4.4";
+        version = "4.7";
 
         src = final.fetchFromGitea {
           domain = "codeberg.org";
           owner = "MorsMortium";
           repo = "GTK-NoCSD";
-          rev = "981788a080d419057089eb1cfe0eb10d45ab81bb";
-          hash = "sha256-8aLvA5znz9DL+kAlSckOaErS7Xv7enQIoExaad3AQtc=";
+          rev = "0fd0613242a8338bd6ba712d2f45773147fae155";
+          hash = "sha256-oPBGS8/oqdVEBqVBMTEl7Umygr27hHlUd51jR3BbfRM=";
         };
 
         nativeBuildInputs = [
@@ -37,10 +37,17 @@
           runHook postInstall
         '';
 
-        # Upstream deliberately dlopens GLib instead of linking it. Keep that
-        # behavior while making its bare sonames discoverable in the Nix store.
+        # Upstream deliberately dlopens GLib and Libadwaita instead of linking
+        # them. Keep that behavior while making their bare sonames discoverable
+        # in the Nix store.
         postFixup = ''
-          patchelf --add-rpath ${final.lib.attrsets.getLib final.glib}/lib \
+          patchelf --add-rpath \
+            ${
+              final.lib.makeLibraryPath [
+                final.glib
+                final.libadwaita
+              ]
+            } \
             "$out/lib/libgtk-nocsd.so.0"
         '';
 
