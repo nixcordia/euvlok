@@ -8,6 +8,7 @@
       "vaultwarden"
       "grafana"
       "cvat"
+      "immich"
     ];
     ensureUsers = [
       {
