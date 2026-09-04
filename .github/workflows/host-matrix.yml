@@ -87,7 +87,7 @@ jobs:
           echo "has_base=${has_base}" >>"${GITHUB_OUTPUT}"
 
       - name: Install Nix
-        uses: ./.github/actions/setup-nix
+        uses: ./.github/actions/setup-nix # zizmor: ignore[self-repository]
         with:
           github-token: ${{ github.token }}
           cachix-skip-push: true

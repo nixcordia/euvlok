@@ -65,7 +65,7 @@ jobs:
       - name: Build and cache configuration
         id: build
         continue-on-error: true
-        uses: ./.github/actions/build-nix-flake-target
+        uses: ./.github/actions/build-nix-flake-target # zizmor: ignore[self-repository]
         with:
           configuration-kind: ${{ matrix.class }}
           configuration-name: ${{ matrix.name }}

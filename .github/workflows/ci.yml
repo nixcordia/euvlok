@@ -34,8 +34,34 @@ jobs:
           args: --no-progress --verbose --exclude '^https://nixos.org/manual/nixpkgs/stable/?$' README.md
           fail: true
 
+  github-actions:
+    name: GitHub Actions
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      (github.event.pull_request.user.type == 'Bot' &&
+      contains(fromJSON('[29139614, 41898282, 49699333]'), github.event.pull_request.user.id))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Verify immutable action pins
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/verify-action-pins.sh
+
   typescript:
     name: TypeScript 7
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      (github.event.pull_request.user.type == 'Bot' &&
+      contains(fromJSON('[29139614, 41898282, 49699333]'), github.event.pull_request.user.id))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -69,6 +95,11 @@ jobs:
 
   flake:
     name: Flake
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      (github.event.pull_request.user.type == 'Bot' &&
+      contains(fromJSON('[29139614, 41898282, 49699333]'), github.event.pull_request.user.id))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -81,7 +112,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: ./.github/actions/setup-nix
+        uses: ./.github/actions/setup-nix # zizmor: ignore[self-repository]
         with:
           github-token: ${{ github.token }}
           cachix-auth-token: >-
@@ -94,6 +125,11 @@ jobs:
 
   development:
     name: Development (${{ matrix.system }})
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+      (github.event.pull_request.user.type == 'Bot' &&
+      contains(fromJSON('[29139614, 41898282, 49699333]'), github.event.pull_request.user.id))
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     permissions:
@@ -114,7 +150,7 @@ jobs:
           persist-credentials: false
 
       - name: Install Nix
-        uses: ./.github/actions/setup-nix
+        uses: ./.github/actions/setup-nix # zizmor: ignore[self-repository]
         with:
           github-token: ${{ github.token }}
           cachix-auth-token: >-
