@@ -134,12 +134,10 @@ EVAL_RUNS=5 ./scripts/eval_performance.sh \
   .#darwinConfigurations.faputa.system.drvPath
 ```
 
-Run Darwin evaluations locally. Run Linux evaluations on the Linux host, from its
-`~/euvlok` checkout:
+Run Darwin evaluations locally. Run Linux evaluations from the repository checkout
+on a Linux host:
 
 ```sh
-ssh evy@100.123.214.78
-cd ~/euvlok
 pinned_nix="$(nix eval --raw \
   .#nixosConfigurations.blind-faith.config.nix.package.outPath)"
 PATH="${pinned_nix}/bin:${PATH}" \
