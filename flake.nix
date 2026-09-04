@@ -1,5 +1,5 @@
 {
-  description = "EUVlok Communal Dotfiles";
+  description = "EUVlok shared NixOS, nix-darwin, and Home Manager configurations";
 
   nixConfig = {
     extra-substituters = [ "https://catppuccin.cachix.org" ];
