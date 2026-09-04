@@ -21,5 +21,8 @@ _: {
     ./vaultwarden.nix
     ./nextcloud.nix
     ./cvat.nix
+
+    # Kunny
+    ./freshrss.nix
   ];
 }
