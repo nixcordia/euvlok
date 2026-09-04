@@ -57,8 +57,8 @@ jobs:
           persist-credentials: false
 
       - name: Reclaim maximum Nix store space
-        # v4 is the last release without an unpinned transitive action.
-        uses: wimpysworld/nothing-but-nix@9158d9c31bf7650c681de426def914646d9a8b7f
+        # v10
+        uses: wimpysworld/nothing-but-nix@687c797a730352432950c707ab493fcc951818d7
         with:
           hatchet-protocol: rampage
 
