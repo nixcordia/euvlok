@@ -16,7 +16,7 @@
   config = lib.modules.mkIf config.euvlok.home.nixcord.enable {
     assertions = [
       {
-        assertion = pkgs.stdenvNoCC.isx86_64 || pkgs.stdenvNoCC.isDarwin;
+        assertion = pkgs.stdenvNoCC.hostPlatform.isx86_64 || pkgs.stdenvNoCC.hostPlatform.isDarwin;
         message = "You cannot use Nixcord (Discord) on aarch64-linux";
       }
     ];

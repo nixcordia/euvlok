@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.euvlok.home.codex;
-  inherit (pkgs.stdenvNoCC) isDarwin;
+  inherit (pkgs.stdenvNoCC.hostPlatform) isDarwin;
 
   codexConfigDir =
     if config.home.preferXdgDirectories then
