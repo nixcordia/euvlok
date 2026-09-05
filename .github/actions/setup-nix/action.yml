@@ -13,7 +13,7 @@ inputs:
   extra-cachix-caches:
     description: Additional Cachix cache names used as substituters.
     required: false
-    default: devenv,eupkgs,hyprland,nix-community,nixos-raspberrypi
+    default: eupkgs,hyprland,nix-community,nixos-raspberrypi
   cachix-auth-token:
     description: Cachix auth token used to push build results.
     required: false
@@ -38,7 +38,6 @@ runs:
         source-tag: v3.22.3
         extra-conf: |
           accept-flake-config = true
-          extra-experimental-features = parallel-eval
           extra-substituters = https://cache.flox.dev https://cache.nixos-cuda.org
           extra-trusted-public-keys = flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
           ${{ inputs.extra-nix-config }}
