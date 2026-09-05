@@ -12,6 +12,10 @@
     webserver = "nginx";
     defaultUser = "admin";
     passwordFile = config.sops.secrets.freshrss.path;
+    database = {
+      type = "pgsql";
+      port = 3306;
+    };
   };
 
   services.nginx.virtualHosts."freshrss.tenjin-dk.com" = {
