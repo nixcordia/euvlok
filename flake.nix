@@ -13,6 +13,7 @@
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     eupkgs.inputs.nixpkgs.follows = "nixpkgs-unstable-small";
     eupkgs.url = "github:euvlok/pkgs";
+    flake-schemas.url = "https://flakehub.com/f/DeterminateSystems/flake-schemas/*.tar.gz";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
