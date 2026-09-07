@@ -29,8 +29,6 @@
       meson
       cmake
       font-manager
-      python3
-      uv
       ;
     inherit (pkgs.unstable)
       # nim
