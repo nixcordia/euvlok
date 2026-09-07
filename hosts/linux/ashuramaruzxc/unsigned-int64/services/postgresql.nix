@@ -4,11 +4,16 @@
     enable = true;
     enableJIT = true;
     enableTCPIP = true;
+    settings = {
+      max_worker_processes = 16;
+      max_parallel_workers = 12;
+      max_parallel_workers_per_gather = 4;
+      max_parallel_maintenance_workers = 4;
+    };
     ensureDatabases = [
       "vaultwarden"
       "grafana"
       "cvat"
-      "immich"
     ];
     ensureUsers = [
       {
@@ -29,10 +34,6 @@
       }
       {
         name = "cvat";
-        ensureDBOwnership = true;
-      }
-      {
-        name = "immich";
         ensureDBOwnership = true;
       }
     ];
