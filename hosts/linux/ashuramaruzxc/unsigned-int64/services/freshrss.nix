@@ -14,7 +14,6 @@
     passwordFile = config.sops.secrets.freshrss.path;
     database = {
       type = "pgsql";
-      port = 3306;
     };
   };
 
