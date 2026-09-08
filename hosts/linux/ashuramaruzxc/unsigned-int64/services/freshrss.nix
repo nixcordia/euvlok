@@ -1,7 +1,7 @@
 { config, ... }:
 {
   sops.secrets.freshrss = {
-    mode = ""; # Not sure what to set
+    mode = "0640";
     owner = config.users.users.freshrss.name;
     group = config.users.users.freshrss.group;
   };
